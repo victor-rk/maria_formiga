@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maria Formiga - Recuperação de Senha</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Soft Glassmorphism Background -->
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <main class="auth-container glass-panel">
+        <img src="logo.jfif" alt="Logo Maria Formiga" class="logo-img" onerror="this.src='https://ui-avatars.com/api/?name=Maria+Formiga&background=FCC0C5&color=fff&rounded=true&size=100'">
+        <h1>Recuperar Senha</h1>
+        <p class="subtitle">Digite seu e-mail cadastrado para receber um link de recuperação.</p>
+
+        <form action="index.html" method="GET" style="width: 100%;">
+            <div class="input-group">
+                <label for="email">E-mail</label>
+                <div class="input-wrapper">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Digite seu e-mail" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary">Enviar link de recuperação</button>
+        </form>
+
+        <a href="index.html" class="link-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Voltar para o Login
+        </a>
+    </main>
+
+</body>
+</html>

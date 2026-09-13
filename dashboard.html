@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maria Formiga - Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-body">
+
+    <!-- Soft Glassmorphism Background -->
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="dashboard-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar glass-panel">
+            <div class="sidebar-header">
+                <img src="logo.jfif" alt="Logo" class="logo-img" onerror="this.src='https://ui-avatars.com/api/?name=M+F&background=FCC0C5&color=fff&rounded=true&size=50'">
+                <h2>Maria Formiga</h2>
+            </div>
+
+            <nav class="sidebar-menu">
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span><i class="fa-solid fa-store"></i> Vendas & Operação</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="accordion-content">
+                        <ul>
+                            <li><a href="#">Pedidos</a></li>
+                            <li><a href="#">Vendas</a></li>
+                            <li><a href="#">Entregas</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span><i class="fa-solid fa-boxes-stacked"></i> Estoque</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="accordion-content">
+                        <ul>
+                            <li><a href="#">Matéria-Prima</a></li>
+                            <li><a href="#">Produtos (Pronta-Entrega)</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span><i class="fa-solid fa-address-book"></i> Cadastros</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="accordion-content">
+                        <ul>
+                            <li><a href="#">Clientes</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span><i class="fa-solid fa-chart-pie"></i> Relatórios</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="accordion-content">
+                        <ul>
+                            <li><a href="#">Gerar Relatórios</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-icon" id="btnConfig" aria-label="Configurações">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Visão Geral</h1>
+                <p class="subtitle" style="margin-bottom:0;">Acompanhe o desempenho da confeitaria hoje.</p>
+            </header>
+
+            <!-- Bento Box Grid -->
+            <div class="bento-grid">
+                
+                <!-- 1. Ações Principais -->
+                <section class="bento-card glass-panel card-acoes">
+                    <h3><i class="fa-solid fa-bolt"></i> Ações Rápidas</h3>
+                    <div class="actions-grid">
+                        <a href="#" class="action-btn">
+                            <i class="fa-solid fa-receipt"></i>
+                            <span>Novo Pedido</span>
+                        </a>
+                        <a href="#" class="action-btn">
+                            <i class="fa-solid fa-cash-register"></i>
+                            <span>Nova Venda</span>
+                        </a>
+                        <a href="#" class="action-btn">
+                            <i class="fa-solid fa-box-open"></i>
+                            <span>Add Insumo</span>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- 2. Faturamento do Mês e Metas -->
+                <section class="bento-card glass-panel card-faturamento">
+                    <h3><i class="fa-solid fa-chart-line"></i> Faturamento (Mês)</h3>
+                    <div class="faturamento-content">
+                        <span class="valor-destaque">R$ 8.500,00</span>
+                        <div class="meta-container">
+                            <div class="meta-texto">
+                                <span>Meta: R$ 10.000,00</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. Ticket Médio -->
+                <section class="bento-card glass-panel card-ticket">
+                    <h3><i class="fa-solid fa-ticket"></i> Ticket Médio</h3>
+                    <div class="ticket-content">
+                        <span class="ticket-valor">R$ 45,00</span>
+                    </div>
+                </section>
+
+                <!-- 3. Fila de Pedidos de Hoje -->
+                <section class="bento-card glass-panel card-pedidos">
+                    <h3><i class="fa-solid fa-clipboard-list"></i> Pedidos de Hoje</h3>
+                    <ul class="lista-pedidos">
+                        <li class="pedido-item">
+                            <span>#102 - Bolo de Morango</span>
+                            <span class="status-badge status-producao">Em Produção</span>
+                        </li>
+                        <li class="pedido-item">
+                            <span>#103 - Kit Festa (50 doces)</span>
+                            <span class="status-badge status-producao">Em Produção</span>
+                        </li>
+                        <li class="pedido-item">
+                            <span>#101 - Torta de Limão</span>
+                            <span class="status-badge status-pronto">Pronto</span>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- 4. Alerta de Matéria-Prima -->
+                <section class="bento-card glass-panel card-alerta">
+                    <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--alert)"></i> Alerta de Estoque Baixo</h3>
+                    <ul class="lista-alerta">
+                        <li class="alerta-item">
+                            <i class="fa-solid fa-cube"></i>
+                            <span>Açúcar Refinado (Restam 2kg)</span>
+                        </li>
+                        <li class="alerta-item">
+                            <i class="fa-solid fa-box"></i>
+                            <span>Embalagens P (Restam 15 un.)</span>
+                        </li>
+                    </ul>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="configModal">
+        <div class="modal-content glass-panel">
+            <button class="modal-close" id="closeModal"><i class="fa-solid fa-xmark"></i></button>
+            <h2 style="margin-bottom: 20px;">Meu Perfil</h2>
+            
+            <form id="profileForm">
+                <div class="input-group">
+                    <label>Nome</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-user"></i>
+                        <input type="text" value="Maria Proprietária">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>E-mail</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" value="contato@mariaformiga.com.br">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Nova Senha</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" placeholder="••••••••">
+                    </div>
+                </div>
+                <button class="btn-primary" id="btnSaveModal" style="margin-top: 10px;">Salvar Alterações</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
