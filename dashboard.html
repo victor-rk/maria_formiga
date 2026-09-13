@@ -3,324 +3,488 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maria Formiga - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Maria Formiga — Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="dashboard-layout">
-        
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <img src="img/cupcake.png" alt="Maria Formiga Logo" class="brand-logo">
-                <h2>Maria Formiga</h2>
-            </div>
+<div class="dashboard-layout">
 
-            <nav class="sidebar-menu">
-                <div class="accordion-item">
-                    <button class="accordion-header active">
-                        <div class="accordion-title">
-                            <i class="fa-solid fa-store"></i> <span>Vendas & Operação</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </button>
-                    <div class="accordion-content" style="max-height: 120px;">
-                        <ul>
-                            <li><a href="#" style="color:var(--text-main); font-weight:600;">Pedidos</a></li>
-                            <li><a href="#">Vendas</a></li>
-                            <li><a href="#">Entregas</a></li>
-                        </ul>
-                    </div>
-                </div>
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+    <aside class="sidebar" aria-label="Menu principal">
+        <div class="sidebar-header">
+            <img src="img/cupcake.png" alt="Logotipo Maria Formiga" class="brand-logo">
+            <h2>Maria Formiga</h2>
+        </div>
 
-                <div class="accordion-item">
-                    <button class="accordion-header">
-                        <div class="accordion-title">
-                            <i class="fa-solid fa-boxes-stacked"></i> <span>Estoque</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </button>
-                    <div class="accordion-content">
-                        <ul>
-                            <li><a href="#">Matéria-Prima</a></li>
-                            <li><a href="#">Produtos (Pronta-Entrega)</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <button class="accordion-header">
-                        <div class="accordion-title">
-                            <i class="fa-solid fa-address-book"></i> <span>Cadastros</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </button>
-                    <div class="accordion-content">
-                        <ul>
-                            <li><a href="#">Clientes</a></li>
-                            <li><a href="#">Fornecedores</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <button class="accordion-header">
-                        <div class="accordion-title">
-                            <i class="fa-solid fa-chart-pie"></i> <span>Relatórios</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </button>
-                    <div class="accordion-content">
-                        <ul>
-                            <li><a href="#">Gerar Relatórios</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-
-            <div class="sidebar-footer">
-                <button class="btn-icon" id="btnConfig" aria-label="Configurações" title="Configurações">
-                    <i class="fa-solid fa-gear"></i>
-                </button>
-                <a href="index.html" class="btn-icon" aria-label="Sair" title="Sair do Sistema" style="text-decoration: none;">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        <nav class="sidebar-menu">
+            <div class="nav-group">
+                <span class="nav-group-title">Operação</span>
+                <a href="#" class="nav-link active" aria-current="page">
+                    <i class="fa-solid fa-house" aria-hidden="true"></i> Dashboard
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-receipt" aria-hidden="true"></i> Pedidos
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-cash-register" aria-hidden="true"></i> Vendas
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-truck" aria-hidden="true"></i> Entregas
                 </a>
             </div>
-        </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="top-bar">
+            <div class="nav-group">
+                <span class="nav-group-title">Estoque</span>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i> Matéria-Prima
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-cookie-bite" aria-hidden="true"></i> Produtos Prontos
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <span class="nav-group-title">Gestão</span>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-address-book" aria-hidden="true"></i> Clientes
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-building" aria-hidden="true"></i> Fornecedores
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-file-invoice" aria-hidden="true"></i> Relatórios
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="#" class="nav-link" id="btnConfig" aria-haspopup="dialog">
+                <i class="fa-solid fa-gear" aria-hidden="true"></i> Configurações
+            </a>
+            <a href="index.html" class="nav-link">
+                <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i> Sair
+            </a>
+        </div>
+    </aside>
+
+    <!-- =========================================
+         CONTEÚDO PRINCIPAL
+    ========================================== -->
+    <main class="main-content">
+      <div class="main-inner">
+
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div>
                 <h1>Painel de Controle</h1>
                 <p class="subtitle">Visão executiva e operação diária.</p>
-            </header>
+            </div>
+            <div class="top-bar-right">
+                <span class="top-bar-date" id="currentDate" aria-label="Data atual"></span>
+            </div>
+        </header>
 
-            <!-- Bento Box Grid -->
-            <div class="bento-grid">
-                
-                <!-- Ações Rápidas -->
-                <section class="bento-card card-solid card-acoes">
-                    <h3><i class="fa-solid fa-bolt"></i> Ações Rápidas</h3>
-                    <div class="actions-grid">
-                        <a href="#" class="action-btn">
-                            <i class="fa-solid fa-receipt"></i>
-                            <span>Novo Pedido</span>
-                        </a>
-                        <a href="#" class="action-btn">
-                            <i class="fa-solid fa-cash-register"></i>
-                            <span>Nova Venda</span>
-                        </a>
-                        <a href="#" class="action-btn">
-                            <i class="fa-solid fa-box-open"></i>
-                            <span>Add Insumo</span>
-                        </a>
-                    </div>
-                </section>
+        <!-- KPIs -->
+        <div class="kpi-grid" role="list" aria-label="Indicadores principais">
+            <div class="kpi-card" role="listitem">
+                <div class="kpi-header">
+                    <span class="kpi-title">Faturamento do Mês</span>
+                    <span class="kpi-icon pink" aria-hidden="true"><i class="fa-solid fa-chart-line"></i></span>
+                </div>
+                <div class="kpi-value">R$ 8.500,00</div>
+                <div class="kpi-trend positive" aria-label="Aumento de 12,4% em relação ao mês anterior">
+                    <i class="fa-solid fa-arrow-trend-up" aria-hidden="true"></i> +12,4% vs. mês anterior
+                </div>
+            </div>
+            <div class="kpi-card" role="listitem">
+                <div class="kpi-header">
+                    <span class="kpi-title">Pedidos Concluídos</span>
+                    <span class="kpi-icon blue" aria-hidden="true"><i class="fa-solid fa-receipt"></i></span>
+                </div>
+                <div class="kpi-value">142</div>
+                <div class="kpi-trend positive" aria-label="Aumento de 8,2% em relação ao mês anterior">
+                    <i class="fa-solid fa-arrow-trend-up" aria-hidden="true"></i> +8,2% vs. mês anterior
+                </div>
+            </div>
+            <div class="kpi-card" role="listitem">
+                <div class="kpi-header">
+                    <span class="kpi-title">Ticket Médio</span>
+                    <span class="kpi-icon green" aria-hidden="true"><i class="fa-solid fa-tag"></i></span>
+                </div>
+                <div class="kpi-value">R$ 169,05</div>
+                <div class="kpi-trend neutral" aria-label="Sem variação significativa">
+                    <i class="fa-solid fa-minus" aria-hidden="true"></i> Estável
+                </div>
+            </div>
+            <div class="kpi-card" role="listitem">
+                <div class="kpi-header">
+                    <span class="kpi-title">Em Produção Agora</span>
+                    <span class="kpi-icon orange" aria-hidden="true"><i class="fa-solid fa-fire-burner"></i></span>
+                </div>
+                <div class="kpi-value">8</div>
+                <div class="kpi-trend neutral">Pedidos em andamento</div>
+            </div>
+        </div>
 
-                <!-- Faturamento e Gráfico -->
-                <section class="bento-card card-solid card-faturamento">
-                    <h3><i class="fa-solid fa-chart-line"></i> Faturamento</h3>
-                    <div class="faturamento-content">
-                        
-                        <!-- Título com Mês Dinâmico e Valor Isolado -->
-                        <div class="faturamento-header">
-                            <span class="faturamento-mes" id="mesFaturamento">Faturamento — Agosto</span>
-                            <div class="valor-destaque" id="valorFaturamento">R$ 8.500,00</div>
-                        </div>
-                        
-                        <!-- Gráfico com Eixo Y e Grid lines Matemáticos Absolutos -->
-                        <div class="chart-wrapper">
-                            
-                            <!-- Eixo Y Absoluto -->
-                            <div class="y-axis-labels">
-                                <span style="bottom: 100%;">R$ 9k</span>
-                                <span style="bottom: 66.66%;">R$ 6k</span>
-                                <span style="bottom: 33.33%;">R$ 3k</span>
-                                <span style="bottom: 0%;">R$ 0</span>
-                            </div>
-                            
-                            <!-- Linhas Horizontais Absolutas -->
-                            <div class="chart-grid-absolute">
-                                <div class="grid-line" style="bottom: 100%;"></div>
-                                <div class="grid-line" style="bottom: 66.66%;"></div>
-                                <div class="grid-line" style="bottom: 33.33%;"></div>
-                                <div class="grid-line" style="bottom: 0%;"></div>
-                            </div>
-                            
-                            <!-- Container das Barras -->
-                            <div class="chart-bars">
-                                <!-- Proporção Matemática exata: (valor/9000)*100 -->
-                                <div class="bar-col" data-valor="R$ 7.100,00" data-mes="Faturamento — Junho">
-                                    <div class="bar" style="height: 78.88%;"></div>
-                                    <span class="bar-label">Jun</span>
-                                </div>
-                                <div class="bar-col" data-valor="R$ 7.950,00" data-mes="Faturamento — Julho">
-                                    <div class="bar" style="height: 88.33%;"></div>
-                                    <span class="bar-label">Jul</span>
-                                </div>
-                                <div class="bar-col" data-valor="R$ 8.500,00" data-mes="Faturamento — Agosto">
-                                    <div class="bar active" style="height: 94.44%;"></div>
-                                    <span class="bar-label">Ago</span>
-                                </div>
-                            </div>
-                            
+        <!-- Bento Grid -->
+        <div class="bento-grid">
+
+            <!-- Card: Faturamento -->
+            <section class="card-solid card-faturamento" aria-labelledby="titleFaturamento">
+                <h3 id="titleFaturamento">
+                    <i class="fa-solid fa-chart-bar" aria-hidden="true"></i>
+                    Faturamento Mensal
+                </h3>
+
+                <div class="faturamento-header">
+                    <div class="faturamento-info">
+                        <span class="faturamento-mes" id="mesFaturamento">Agosto 2026</span>
+                        <div class="valor-destaque" id="valorFaturamento">R$ 8.500,00</div>
+                        <div class="faturamento-trend">
+                            <i class="fa-solid fa-arrow-trend-up" aria-hidden="true"></i> +7,0% vs. mês anterior
                         </div>
                     </div>
-                </section>
+                </div>
 
-                <!-- Fila de Pedidos de Hoje -->
-                <section class="bento-card card-solid card-pedidos">
-                    <h3><i class="fa-solid fa-clipboard-list"></i> Pedidos de Hoje</h3>
-                    <ul class="lista-pedidos">
-                        <li class="pedido-item">
-                            <div>
-                                <strong>#102</strong> - Bolo de Morango
-                            </div>
-                            <span class="status-badge status-producao">Em Produção</span>
-                        </li>
-                        <li class="pedido-item">
-                            <div>
-                                <strong>#103</strong> - Kit Festa (50)
-                            </div>
-                            <span class="status-badge status-producao">Em Produção</span>
-                        </li>
-                        <li class="pedido-item">
-                            <div>
-                                <strong>#101</strong> - Torta de Limão
-                            </div>
-                            <span class="status-badge status-pronto">Pronto</span>
-                        </li>
-                    </ul>
-                </section>
+                <div class="chart-wrapper" role="img" aria-label="Gráfico de barras de faturamento mensal">
+                    <!-- Eixo Y -->
+                    <div class="y-axis-labels" aria-hidden="true">
+                        <span>R$ 9k</span>
+                        <span>R$ 6k</span>
+                        <span>R$ 3k</span>
+                        <span>0</span>
+                    </div>
 
-                <!-- Alerta de Matéria-Prima -->
-                <section class="bento-card card-solid card-alerta">
-                    <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--alert-color)"></i> Atenção ao Estoque</h3>
-                    <ul class="lista-alerta">
-                        <li class="alerta-item">
-                            <i class="fa-solid fa-cube"></i>
-                            <span>Açúcar Refinado (Restam 2kg)</span>
-                        </li>
-                        <li class="alerta-item">
-                            <i class="fa-solid fa-box"></i>
-                            <span>Embalagens P (Restam 15 un.)</span>
-                        </li>
-                    </ul>
-                </section>
+                    <!-- Grid lines -->
+                    <div class="chart-grid-absolute" aria-hidden="true">
+                        <div class="grid-line" style="bottom: 100%;"></div>
+                        <div class="grid-line" style="bottom: 66.66%;"></div>
+                        <div class="grid-line" style="bottom: 33.33%;"></div>
+                        <div class="grid-line" style="bottom: 0%;"></div>
+                    </div>
 
-            </div>
-        </main>
-    </div>
-
-    <!-- Settings Modal -->
-    <div class="modal-overlay" id="configModal">
-        <div class="modal-content card-solid">
-            <button class="modal-close" id="closeModal"><i class="fa-solid fa-xmark"></i></button>
-            
-            <div class="modal-header">
-                <h2>Configurações</h2>
-            </div>
-            
-            <div class="tabs">
-                <button class="tab-btn active" data-target="tab-usuarios">Gerenciar Usuários</button>
-                <button class="tab-btn" data-target="tab-perfil">Meu Perfil</button>
-            </div>
-
-            <!-- Aba Gerenciar Usuários -->
-            <div id="tab-usuarios" class="tab-content active">
-                <ul class="user-list">
-                    <li class="user-item">
-                        <div class="user-info">
-                            <strong>Maria Proprietária</strong>
-                            <span>Admin</span>
+                    <!-- Barras interativas -->
+                    <div class="chart-bars">
+                        <div class="bar-col" data-valor="R$ 7.100,00" data-mes="Junho 2026" role="button" tabindex="0" aria-label="Junho: R$ 7.100,00">
+                            <div class="bar" style="height: 78.88%;" aria-hidden="true"></div>
+                            <span class="bar-label" aria-hidden="true">Jun</span>
                         </div>
-                        <div class="user-actions">
-                            <button><i class="fa-solid fa-pen"></i></button>
-                            <button><i class="fa-solid fa-trash"></i></button>
+                        <div class="bar-col" data-valor="R$ 7.950,00" data-mes="Julho 2026" role="button" tabindex="0" aria-label="Julho: R$ 7.950,00">
+                            <div class="bar" style="height: 88.33%;" aria-hidden="true"></div>
+                            <span class="bar-label" aria-hidden="true">Jul</span>
+                        </div>
+                        <div class="bar-col" data-valor="R$ 8.500,00" data-mes="Agosto 2026" role="button" tabindex="0" aria-label="Agosto: R$ 8.500,00 (mês atual)">
+                            <div class="bar active" style="height: 94.44%;" aria-hidden="true"></div>
+                            <span class="bar-label" aria-hidden="true">Ago</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Card: Ações Rápidas -->
+            <section class="card-solid card-acoes" aria-labelledby="titleAcoes">
+                <h3 id="titleAcoes">
+                    <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+                    Ações Rápidas
+                </h3>
+                <div class="actions-container">
+                    <a href="#" class="btn-action primary" role="button">
+                        <i class="fa-solid fa-circle-plus" aria-hidden="true"></i>
+                        <span>Novo Pedido</span>
+                    </a>
+                    <a href="#" class="btn-action secondary" role="button">
+                        <i class="fa-solid fa-cash-register" aria-hidden="true"></i>
+                        <span>Nova Venda</span>
+                    </a>
+                    <a href="#" class="btn-action secondary" role="button">
+                        <i class="fa-solid fa-box-open" aria-hidden="true"></i>
+                        <span>Adicionar insumo</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Card: Pedidos de Hoje -->
+            <section class="card-solid card-pedidos" aria-labelledby="titlePedidos">
+                <h3 id="titlePedidos">
+                    <i class="fa-solid fa-clipboard-list" aria-hidden="true"></i>
+                    Pedidos de Hoje
+                </h3>
+                <div class="table-responsive">
+                    <table class="orders-table" aria-label="Lista de pedidos do dia">
+                        <thead>
+                            <tr>
+                                <th scope="col">Pedido</th>
+                                <th scope="col">Produto</th>
+                                <th scope="col">Cliente / Hora</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>#102</strong></td>
+                                <td>Bolo de Morango</td>
+                                <td>
+                                    <div class="client-info">
+                                        João Silva
+                                        <small>Entrega: 14:30</small>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-warning" aria-label="Status: Em Produção">Em Produção</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>#103</strong></td>
+                                <td>Kit Festa (50 un.)</td>
+                                <td>
+                                    <div class="client-info">
+                                        Mariana Costa
+                                        <small>Entrega: 15:00</small>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-warning" aria-label="Status: Em Produção">Em Produção</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>#101</strong></td>
+                                <td>Torta de Limão</td>
+                                <td>
+                                    <div class="client-info">
+                                        Carlos Ramos
+                                        <small>Retirada: 11:00</small>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-success" aria-label="Status: Pronto">Pronto</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>#100</strong></td>
+                                <td>Caixa Doces Finos</td>
+                                <td>
+                                    <div class="client-info">
+                                        Aline Torres
+                                        <small>Entregue: 09:45</small>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-info" aria-label="Status: Entregue">Entregue</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>#99</strong></td>
+                                <td>Brownie Recheado (12)</td>
+                                <td>
+                                    <div class="client-info">
+                                        Pedro Alves
+                                        <small>Recebido: 08:20</small>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-neutral" aria-label="Status: Recebido">Recebido</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Card: Estoque Crítico -->
+            <section class="card-solid card-alerta" aria-labelledby="titleEstoque">
+                <h3 id="titleEstoque">
+                    <i class="fa-solid fa-triangle-exclamation" style="color: var(--warning);" aria-hidden="true"></i>
+                    Atenção ao Estoque
+                </h3>
+                <ul class="stock-list" aria-label="Insumos com estoque baixo">
+                    <li class="stock-item">
+                        <div class="stock-info">
+                            <span class="stock-name">Açúcar Refinado</span>
+                            <span class="stock-qty danger" aria-label="Estoque crítico: 2 kg restantes">2 kg — Crítico</span>
+                        </div>
+                        <div class="stock-progress-bg" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" aria-label="10% restante">
+                            <div class="stock-progress-fill bg-danger" style="width: 10%;"></div>
                         </div>
                     </li>
-                    <li class="user-item">
+                    <li class="stock-item">
+                        <div class="stock-info">
+                            <span class="stock-name">Embalagens P</span>
+                            <span class="stock-qty warning" aria-label="Estoque baixo: 15 unidades restantes">15 un. — Baixo</span>
+                        </div>
+                        <div class="stock-progress-bg" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" aria-label="25% restante">
+                            <div class="stock-progress-fill bg-warning" style="width: 25%;"></div>
+                        </div>
+                    </li>
+                    <li class="stock-item">
+                        <div class="stock-info">
+                            <span class="stock-name">Manteiga sem Sal</span>
+                            <span class="stock-qty warning" aria-label="Estoque baixo: 500g restantes">500 g — Baixo</span>
+                        </div>
+                        <div class="stock-progress-bg" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" aria-label="30% restante">
+                            <div class="stock-progress-fill bg-warning" style="width: 30%;"></div>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+        </div><!-- /bento-grid -->
+      </div><!-- /main-inner -->
+    </main>
+</div><!-- /dashboard-layout -->
+
+<!-- =========================================
+     MODAL CONFIGURAÇÕES
+========================================== -->
+<div class="modal-overlay" id="configModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content card-solid">
+        <button class="modal-close" id="closeModal" aria-label="Fechar configurações">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+
+        <div class="modal-header">
+            <h2 id="modalTitle">Configurações</h2>
+            <p>Gerencie usuários e preferências do sistema.</p>
+        </div>
+
+        <div class="tabs" role="tablist">
+            <button class="tab-btn active" role="tab" aria-selected="true" data-target="tab-usuarios">Gerenciar Usuários</button>
+            <button class="tab-btn" role="tab" aria-selected="false" data-target="tab-perfil">Meu Perfil</button>
+        </div>
+
+        <!-- Aba: Gerenciar Usuários -->
+        <div id="tab-usuarios" class="tab-content active" role="tabpanel">
+            <div class="user-list-header">
+                <h4>2 usuários cadastrados</h4>
+                <button type="button" class="btn-secondary" style="font-size: 12px; padding: 7px 12px;">
+                    <i class="fa-solid fa-user-plus" aria-hidden="true"></i> Novo usuário
+                </button>
+            </div>
+            <ul class="user-list" aria-label="Lista de usuários">
+                <li class="user-item">
+                    <div class="user-details">
+                        <div class="user-avatar" aria-hidden="true">M</div>
+                        <div class="user-info">
+                            <strong>Maria Proprietária</strong>
+                            <span>Administrador</span>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <button aria-label="Editar Maria Proprietária"><i class="fa-solid fa-pen" aria-hidden="true"></i></button>
+                        <button class="btn-delete" aria-label="Excluir Maria Proprietária" data-user="Maria Proprietária">
+                            <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </li>
+                <li class="user-item">
+                    <div class="user-details">
+                        <div class="user-avatar" aria-hidden="true" style="background-color: var(--info-bg); color: var(--info);">J</div>
                         <div class="user-info">
                             <strong>João Auxiliar</strong>
                             <span>Operacional</span>
                         </div>
-                        <div class="user-actions">
-                            <button><i class="fa-solid fa-pen"></i></button>
-                            <button><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </li>
-                </ul>
-            </div>
+                    </div>
+                    <div class="user-actions">
+                        <button aria-label="Editar João Auxiliar"><i class="fa-solid fa-pen" aria-hidden="true"></i></button>
+                        <button class="btn-delete" aria-label="Excluir João Auxiliar" data-user="João Auxiliar">
+                            <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </li>
+            </ul>
+        </div>
 
-            <!-- Aba Meu Perfil -->
-            <div id="tab-perfil" class="tab-content">
-                <form id="profileForm">
+        <!-- Aba: Meu Perfil -->
+        <div id="tab-perfil" class="tab-content" role="tabpanel">
+            <form id="profileForm" novalidate>
+                <p class="profile-section-title">Dados cadastrais</p>
+
+                <div class="input-group">
+                    <label for="profileName">Nome completo</label>
+                    <div class="input-flex-row">
+                        <div class="input-wrapper">
+                            <i class="fa-regular fa-user input-icon" aria-hidden="true"></i>
+                            <input type="text" id="profileName" value="Maria Proprietária" readonly aria-label="Nome completo">
+                        </div>
+                        <button type="button" class="btn-secondary" aria-label="Editar nome">Editar</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="profileEmail">E-mail corporativo</label>
+                    <div class="input-flex-row">
+                        <div class="input-wrapper">
+                            <i class="fa-regular fa-envelope input-icon" aria-hidden="true"></i>
+                            <input type="email" id="profileEmail" value="admin@mariaformiga.com" readonly aria-label="E-mail corporativo">
+                        </div>
+                        <button type="button" class="btn-secondary" aria-label="Editar e-mail">Editar</button>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-secondary" id="btnTrocarSenha" aria-expanded="false" aria-controls="passwordFlow">
+                    <i class="fa-solid fa-lock" aria-hidden="true"></i> Alterar senha
+                </button>
+
+                <!-- Fluxo de alteração de senha -->
+                <div id="passwordFlow" style="display: none;" aria-live="polite">
+                    <p class="profile-section-title" style="margin-top: 20px;">Alterar senha</p>
+
                     <div class="input-group">
-                        <label>Nome Completo</label>
-                        <div class="input-flex-row">
-                            <div class="input-wrapper">
-                                <i class="fa-regular fa-user"></i>
-                                <input type="text" value="Maria Proprietária" readonly>
-                            </div>
-                            <button type="button" class="btn-secondary">Editar</button>
+                        <label for="pwdAtual">Senha atual</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-key input-icon" aria-hidden="true"></i>
+                            <input type="password" id="pwdAtual" placeholder="Digite sua senha atual" autocomplete="current-password">
+                            <button type="button" class="pwd-toggle" aria-label="Mostrar ou ocultar senha atual">
+                                <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                            </button>
                         </div>
                     </div>
                     <div class="input-group">
-                        <label>E-mail Corporativo</label>
-                        <div class="input-flex-row">
-                            <div class="input-wrapper">
-                                <i class="fa-regular fa-envelope"></i>
-                                <input type="email" value="admin@mariaformiga.com" readonly>
-                            </div>
-                            <button type="button" class="btn-secondary">Editar</button>
+                        <label for="pwdNova">Nova senha</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-lock input-icon" aria-hidden="true"></i>
+                            <input type="password" id="pwdNova" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+                            <button type="button" class="pwd-toggle" aria-label="Mostrar ou ocultar nova senha">
+                                <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                            </button>
                         </div>
                     </div>
-                    
-                    <button type="button" class="btn-secondary" id="btnTrocarSenha" style="width:100%; margin-top:16px;">
-                        <i class="fa-solid fa-lock" style="margin-right:8px;"></i> Trocar Senha
-                    </button>
-
-                    <!-- Fluxo de troca de senha -->
-                    <div id="passwordFlow" style="display: none;">
-                        <h4 style="margin-bottom: 16px;">Atualização de Segurança</h4>
-                        <div class="input-group">
-                            <label>Senha Atual</label>
-                            <div class="input-wrapper">
-                                <i class="fa-solid fa-key"></i>
-                                <input type="password" placeholder="Digite sua senha atual">
-                                <i class="fa-solid fa-eye pwd-toggle" title="Mostrar/Ocultar Senha"></i>
-                            </div>
+                    <div class="input-group">
+                        <label for="pwdConfirmar">Confirmar nova senha</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-check input-icon" aria-hidden="true"></i>
+                            <input type="password" id="pwdConfirmar" placeholder="Repita a nova senha" autocomplete="new-password">
+                            <button type="button" class="pwd-toggle" aria-label="Mostrar ou ocultar confirmação de senha">
+                                <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                            </button>
                         </div>
-                        <div class="input-group">
-                            <label>Nova Senha</label>
-                            <div class="input-wrapper">
-                                <i class="fa-solid fa-lock"></i>
-                                <input type="password" placeholder="Mínimo 8 caracteres">
-                                <i class="fa-solid fa-eye pwd-toggle" title="Mostrar/Ocultar Senha"></i>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label>Confirmar Nova Senha</label>
-                            <div class="input-wrapper">
-                                <i class="fa-solid fa-check"></i>
-                                <input type="password" placeholder="Repita a nova senha">
-                                <i class="fa-solid fa-eye pwd-toggle" title="Mostrar/Ocultar Senha"></i>
-                            </div>
-                        </div>
-                        <div class="flow-actions">
-                            <button type="button" class="btn-primary" style="padding: 12px;">Confirmar Alteração</button>
-                            <button type="button" class="btn-secondary" id="btnCancelarSenha" style="padding: 12px;">Cancelar</button>
+                        <div id="pwdMismatch" class="field-error" style="display:none;">
+                            <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> As senhas não coincidem.
                         </div>
                     </div>
-                </form>
-            </div>
 
+                    <div class="flow-actions">
+                        <button type="button" class="btn-primary" id="btnSalvarSenha">Salvar alterações</button>
+                        <button type="button" class="btn-secondary" id="btnCancelarSenha">Cancelar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Exclusão -->
+<div class="confirm-overlay" id="confirmDeleteModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="confirm-box">
+        <div class="confirm-icon" aria-hidden="true">
+            <i class="fa-solid fa-trash"></i>
+        </div>
+        <h3 id="confirmTitle">Excluir usuário?</h3>
+        <p id="confirmText">Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.</p>
+        <div class="confirm-actions">
+            <button type="button" class="btn-secondary" id="btnCancelDelete">Cancelar</button>
+            <button type="button" class="btn-danger" id="btnConfirmDelete">
+                <i class="fa-solid fa-trash" aria-hidden="true"></i> Excluir usuário
+            </button>
         </div>
     </div>
+</div>
 
-    <script src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

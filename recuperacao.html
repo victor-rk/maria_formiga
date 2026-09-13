@@ -3,36 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maria Formiga - Recuperação de Senha</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Maria Formiga — Recuperação de Senha</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <main class="auth-wrapper">
         <div class="auth-card card-solid">
-            <img src="img/cupcake.png" alt="Maria Formiga Logo" class="brand-logo">
+            <img src="img/cupcake.png" alt="Logotipo Maria Formiga" class="brand-logo">
             <h1>Recuperação de Senha</h1>
             <p class="subtitle">Enviaremos instruções de acesso seguras para o seu e-mail corporativo.</p>
 
-            <form action="index.html" method="GET">
+            <!-- Estado de sucesso (oculto por padrão) -->
+            <div class="auth-success-msg" id="recoverySuccess" role="alert" aria-live="polite">
+                <i class="fa-solid fa-circle-check" style="margin-right: 8px;" aria-hidden="true"></i>
+                Se o endereço informado estiver cadastrado, você receberá um e-mail em breve.
+            </div>
+
+            <form id="recoveryForm" novalidate>
                 <div class="input-group">
-                    <label for="email">E-mail cadastrado</label>
+                    <label for="email">E-mail corporativo</label>
                     <div class="input-wrapper">
-                        <i class="fa-regular fa-envelope"></i>
-                        <input type="email" id="email" placeholder="nome@mariaformiga.com" required>
+                        <i class="fa-regular fa-envelope input-icon" aria-hidden="true"></i>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="admin@mariaformiga.com"
+                            autocomplete="email"
+                            required
+                            aria-label="E-mail corporativo para recuperação"
+                        >
                     </div>
                 </div>
 
-                <button type="submit" class="btn-primary">Enviar link de recuperação</button>
+                <button type="submit" id="btnRecover" class="btn-primary">
+                    Enviar instruções
+                </button>
             </form>
 
             <a href="index.html" class="link-back">
-                <i class="fa-solid fa-arrow-left"></i> Voltar ao Login
+                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                Voltar ao Login
             </a>
         </div>
     </main>
 
+    <script>
+        const form = document.getElementById('recoveryForm');
+        const btn = document.getElementById('btnRecover');
+        const successMsg = document.getElementById('recoverySuccess');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Simula loading e exibe mensagem genérica segura
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+            setTimeout(() => {
+                form.style.display = 'none';
+                successMsg.classList.add('show');
+            }, 1200);
+        });
+    </script>
 </body>
 </html>

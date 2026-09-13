@@ -3,47 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maria Formiga - Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Maria Formiga — Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <main class="auth-wrapper">
         <div class="auth-card card-solid">
-            <img src="img/cupcake.png" alt="Maria Formiga Logo" class="brand-logo">
-            
-            <h1>Acesso ao Sistema</h1>
-            <p class="subtitle">Bem-vindo ao backoffice profissional.</p>
+            <img src="img/cupcake.png" alt="Logotipo Maria Formiga" class="brand-logo">
+            <h1>Entrar no Sistema</h1>
+            <p class="subtitle">Backoffice exclusivo da confeitaria Maria Formiga.</p>
 
-            <form action="dashboard.html" method="GET">
+            <form id="loginForm" action="dashboard.html" method="GET" novalidate>
                 <div class="input-group">
-                    <label for="email">E-mail corporativo ou Usuário</label>
+                    <label for="email">E-mail ou usuário</label>
                     <div class="input-wrapper">
-                        <i class="fa-regular fa-envelope"></i>
-                        <input type="text" id="email" placeholder="E-mail" required>
+                        <i class="fa-regular fa-envelope input-icon" aria-hidden="true"></i>
+                        <input
+                            type="text"
+                            id="email"
+                            name="email"
+                            placeholder="admin@mariaformiga.com"
+                            autocomplete="username"
+                            required
+                            aria-label="E-mail ou usuário"
+                        >
                     </div>
                 </div>
 
                 <div class="input-group">
                     <label for="password">Senha</label>
                     <div class="input-wrapper">
-                        <i class="fa-solid fa-lock"></i>
-                        <input type="password" id="password" placeholder="Senha" required>
-                        <i class="fa-solid fa-eye pwd-toggle" title="Mostrar/Ocultar Senha"></i>
+                        <i class="fa-solid fa-lock input-icon" aria-hidden="true"></i>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="••••••••"
+                            autocomplete="current-password"
+                            required
+                            aria-label="Senha"
+                        >
+                        <button type="button" class="pwd-toggle" aria-label="Mostrar ou ocultar senha">
+                            <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                        </button>
                     </div>
                 </div>
 
                 <div class="login-options">
                     <label class="checkbox-group">
-                        <input type="checkbox">
-                        Manter-se conectado
+                        <input type="checkbox" name="remember">
+                        Manter-me conectado
                     </label>
                     <a href="recuperacao.html" class="link-primary">Esqueci minha senha</a>
                 </div>
 
-                <button type="submit" class="btn-primary">Entrar no Dashboard</button>
+                <button type="submit" id="btnLogin" class="btn-primary">
+                    Entrar
+                </button>
             </form>
         </div>
     </main>
