@@ -4,49 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maria Formiga - Login</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome for Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Soft Glassmorphism Background -->
-    <div class="bg-blobs">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-    </div>
+    <main class="auth-wrapper">
+        <div class="auth-card card-solid">
+            <img src="img/cupcake.png" alt="Maria Formiga Logo" class="brand-logo">
+            
+            <h1>Acesso ao Sistema</h1>
+            <p class="subtitle">Bem-vindo ao backoffice profissional.</p>
 
-    <main class="auth-container glass-panel">
-        <img src="logo.jfif" alt="Logo Maria Formiga" class="logo-img" onerror="this.src='https://ui-avatars.com/api/?name=Maria+Formiga&background=FCC0C5&color=fff&rounded=true&size=100'">
-        <h1>Bem-vinda de volta!</h1>
-        <p class="subtitle">Acesse o backoffice da Maria Formiga.</p>
-
-        <form action="dashboard.html" method="GET" style="width: 100%;">
-            <div class="input-group">
-                <label for="email">E-mail ou Usuário</label>
-                <div class="input-wrapper">
-                    <i class="fa-regular fa-envelope"></i>
-                    <input type="text" id="email" placeholder="Digite seu e-mail" required>
+            <form action="dashboard.html" method="GET">
+                <div class="input-group">
+                    <label for="email">E-mail corporativo ou Usuário</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="text" id="email" placeholder="E-mail" required>
+                    </div>
                 </div>
-            </div>
 
-            <div class="input-group">
-                <label for="password">Senha</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-lock"></i>
-                    <input type="password" id="password" placeholder="Digite sua senha" required>
+                <div class="input-group">
+                    <label for="password">Senha</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password" placeholder="Senha" required>
+                        <i class="fa-solid fa-eye pwd-toggle" title="Mostrar/Ocultar Senha"></i>
+                    </div>
                 </div>
-            </div>
 
-            <a href="recuperacao.html" class="forgot-pwd">Esqueci minha senha</a>
+                <div class="login-options">
+                    <label class="checkbox-group">
+                        <input type="checkbox">
+                        Manter-se conectado
+                    </label>
+                    <a href="recuperacao.html" class="link-primary">Esqueci minha senha</a>
+                </div>
 
-            <!-- Using type="submit" will simulate navigation via the form action -->
-            <button type="submit" class="btn-primary">Entrar</button>
-        </form>
+                <button type="submit" class="btn-primary">Entrar no Dashboard</button>
+            </form>
+        </div>
     </main>
 
+    <script src="app.js"></script>
 </body>
 </html>
