@@ -364,7 +364,9 @@
                         </div>
                     </div>
                     <div class="user-actions">
-                        <button aria-label="Editar Maria Proprietária"><i class="fa-solid fa-pen" aria-hidden="true"></i></button>
+                        <label for="edit-user-maria" class="btn-edit-trigger" aria-label="Editar Maria Proprietária">
+                            <i class="fa-solid fa-pen" aria-hidden="true"></i>
+                        </label>
                         <button class="btn-delete" aria-label="Excluir Maria Proprietária" data-user="Maria Proprietária">
                             <i class="fa-solid fa-trash" aria-hidden="true"></i>
                         </button>
@@ -379,7 +381,9 @@
                         </div>
                     </div>
                     <div class="user-actions">
-                        <button aria-label="Editar João Auxiliar"><i class="fa-solid fa-pen" aria-hidden="true"></i></button>
+                        <label for="edit-user-joao" class="btn-edit-trigger" aria-label="Editar João Auxiliar">
+                            <i class="fa-solid fa-pen" aria-hidden="true"></i>
+                        </label>
                         <button class="btn-delete" aria-label="Excluir João Auxiliar" data-user="João Auxiliar">
                             <i class="fa-solid fa-trash" aria-hidden="true"></i>
                         </button>
@@ -482,6 +486,89 @@
                 <i class="fa-solid fa-trash" aria-hidden="true"></i> Excluir usuário
             </button>
         </div>
+    </div>
+</div>
+
+<!-- =========================================
+     MODAIS DE EDIÇÃO DE USUÁRIO (CSS-only)
+========================================== -->
+<input type="checkbox" id="edit-user-maria" class="css-modal-toggle" aria-hidden="true" tabindex="-1">
+<div class="edit-user-overlay" role="dialog" aria-modal="true" aria-labelledby="editMariaTitle">
+    <label for="edit-user-maria" class="edit-user-backdrop" aria-label="Fechar edição de usuário"></label>
+    <div class="edit-user-dialog">
+        <div class="edit-user-header">
+            <h2 id="editMariaTitle">Editar usuário</h2>
+            <p>Atualize os dados cadastrais de Maria Proprietária.</p>
+        </div>
+        <form class="edit-user-form" action="#" method="get">
+            <div class="edit-user-field">
+                <label for="edit-maria-nome">Nome</label>
+                <input type="text" id="edit-maria-nome" name="nome" value="Maria Proprietária" autocomplete="name">
+            </div>
+            <div class="edit-user-field">
+                <label for="edit-maria-nascimento">Data de Nascimento</label>
+                <input type="date" id="edit-maria-nascimento" name="nascimento" value="1984-06-18">
+            </div>
+            <div class="edit-user-field">
+                <label for="edit-maria-telefone">Telefone(s)</label>
+                <input type="tel" id="edit-maria-telefone" name="telefone" value="(11) 99876-5432" autocomplete="tel">
+            </div>
+            <div class="edit-user-field">
+                <label for="edit-maria-perfil">Perfil de Acesso</label>
+                <select id="edit-maria-perfil" name="perfil">
+                    <option value="administrador" selected>Administrador</option>
+                    <option value="operacional">Operacional</option>
+                </select>
+            </div>
+            <div class="edit-user-field">
+                <label for="edit-maria-senha">Senha</label>
+                <input type="password" id="edit-maria-senha" name="senha" value="confeitaria123" autocomplete="current-password">
+            </div>
+            <div class="edit-user-actions">
+                <label for="edit-user-maria" class="btn-edit-save">Salvar Alterações</label>
+                <label for="edit-user-maria" class="btn-edit-cancel">Cancelar</label>
+            </div>
+        </form>
+    </div>
+</div>
+
+<input type="checkbox" id="edit-user-joao" class="css-modal-toggle" aria-hidden="true" tabindex="-1">
+<div class="edit-user-overlay" role="dialog" aria-modal="true" aria-labelledby="editJoaoTitle">
+    <label for="edit-user-joao" class="edit-user-backdrop" aria-label="Fechar edição de usuário"></label>
+    <div class="edit-user-dialog">
+        <div class="edit-user-header">
+            <h2 id="editJoaoTitle">Editar usuário</h2>
+            <p>Atualize os dados cadastrais de João Auxiliar.</p>
+        </div>
+        <form class="edit-user-form" action="#" method="get">
+            <div class="edit-user-field">
+                <label for="edit-joao-nome">Nome</label>
+                <input type="text" id="edit-joao-nome" name="nome" value="João Auxiliar" autocomplete="name">
+            </div>
+            <div class="edit-user-field">
+                <label for="edit-joao-nascimento">Data de Nascimento</label>
+                <input type="date" id="edit-joao-nascimento" name="nascimento" value="1995-11-03">
+            </div>
+            <div class="edit-user-field">
+                <label for="edit-joao-telefone">Telefone(s)</label>
+                <input type="tel" id="edit-joao-telefone" name="telefone" value="(11) 98765-4321" autocomplete="tel">
+            </div>
+            <div class="edit-user-field">
+                <label for="edit-joao-perfil">Perfil de Acesso</label>
+                <select id="edit-joao-perfil" name="perfil">
+                    <option value="administrador">Administrador</option>
+                    <option value="operacional" selected>Operacional</option>
+                </select>
+            </div>
+            <div class="edit-user-field">
+                <label for="edit-joao-senha">Senha</label>
+                <input type="password" id="edit-joao-senha" name="senha" value="auxiliar123" autocomplete="current-password">
+            </div>
+            <div class="edit-user-actions">
+                <label for="edit-user-joao" class="btn-edit-save">Salvar Alterações</label>
+                <label for="edit-user-joao" class="btn-edit-cancel">Cancelar</label>
+            </div>
+        </form>
     </div>
 </div>
 
