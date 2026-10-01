@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maria Formiga — Gestão de Pedidos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" aria-label="Menu principal">
+        <div class="sidebar-header">
+            <img src="img/cupcake.png" alt="Logotipo Maria Formiga" class="brand-logo">
+            <h2>Maria Formiga</h2>
+        </div>
+
+        <nav class="sidebar-menu">
+            <div class="nav-group">
+                <span class="nav-group-title">Operação</span>
+                <a href="home.html" class="nav-link">
+                    <i class="fa-solid fa-house" aria-hidden="true"></i> Dashboard
+                </a>
+                <a href="pedidos.html" class="nav-link active" aria-current="page">
+                    <i class="fa-solid fa-receipt" aria-hidden="true"></i> Pedidos
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-cash-register" aria-hidden="true"></i> Vendas
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-truck" aria-hidden="true"></i> Entregas
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <span class="nav-group-title">Estoque</span>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i> Matéria-Prima
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-cookie-bite" aria-hidden="true"></i> Produtos Prontos
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <span class="nav-group-title">Gestão</span>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-address-book" aria-hidden="true"></i> Clientes
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-building" aria-hidden="true"></i> Fornecedores
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-file-invoice" aria-hidden="true"></i> Relatórios
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="#" class="nav-link" id="btnConfig" aria-haspopup="dialog">
+                <i class="fa-solid fa-gear" aria-hidden="true"></i> Configurações
+            </a>
+            <a href="index.html" class="nav-link">
+                <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i> Sair
+            </a>
+        </div>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL (PEDIDOS) -->
+    <main class="main-content">
+      <div class="main-inner">
+        
+        <!-- Header da Página -->
+        <header class="page-header">
+            <div class="header-titles">
+                <span class="breadcrumb">Operação</span>
+                <h1>Gestão de Pedidos</h1>
+                <p>Acompanhe e registre as encomendas da confeitaria.</p>
+            </div>
+            <div class="header-date">
+                <span id="currentDateFull">sábado, 19 de setembro de 2026</span>
+            </div>
+        </header>
+
+        <!-- Barra de Ferramentas (Toolbar) -->
+        <div class="toolbar">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar por cliente ou número...">
+            </div>
+            <div class="filters">
+                <button class="filter-btn active">Todos</button>
+                <button class="filter-btn">Pendente</button>
+                <button class="filter-btn">Em Produção</button>
+                <button class="filter-btn">Pronto</button>
+                <button class="filter-btn">Entregue/Finalizado</button>
+            </div>
+            <button class="btn-novo">Novo Pedido</button>
+        </div>
+
+        <!-- Tabela de Pedidos -->
+        <div class="table-card">
+            <div class="table-header-row">
+                <div>
+                    <h2>Pedidos ativos</h2>
+                    <p>Acompanhe o andamento das encomendas registradas.</p>
+                </div>
+                <span class="count-badge">4 pedidos</span>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nº do Pedido</th>
+                            <th>Cliente</th>
+                            <th>Itens</th>
+                            <th>Valor Total</th>
+                            <th>Data/Hora</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="pedidosTableBody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; color: #A8A29E; padding: 40px;">
+                                <i class="fa-solid fa-inbox" style="font-size: 24px; margin-bottom: 12px; display: block;"></i>
+                                Nenhum pedido encontrado no momento.<br>Clique em "Novo Pedido" para começar.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+      </div>
+    </main>
+</div>
+
+<!-- Modal Novo Pedido -->
+<div class="modal-overlay" id="modalNovoPedido" role="dialog" aria-modal="true" aria-labelledby="modalPedidoTitle">
+    <div class="modal-content card-solid" style="max-width: 600px;">
+        <button class="modal-close" id="closePedidoModal" aria-label="Fechar janela">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="modal-header">
+            <h2 id="modalPedidoTitle">Registrar Novo Pedido</h2>
+            <p>Preencha os detalhes da nova encomenda.</p>
+        </div>
+
+        <form id="formNovoPedido">
+            <div class="input-group">
+                <label for="pedidoCliente">Cliente</label>
+                <div class="input-wrapper">
+                    <i class="fa-regular fa-user input-icon"></i>
+                    <input type="text" id="pedidoCliente" placeholder="Nome do cliente" required>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="pedidoItens">Produtos/Itens</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-cake-candles input-icon"></i>
+                    <input type="text" id="pedidoItens" placeholder="Ex: 1 Bolo de Morango, 50 Brigadeiros" required>
+                </div>
+            </div>
+
+            <div class="input-flex-row">
+                <div class="input-group">
+                    <label for="pedidoValor">Valor Total (R$)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-dollar-sign input-icon"></i>
+                        <input type="number" step="0.01" id="pedidoValor" placeholder="0.00" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="pedidoStatus">Status Inicial</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-tag input-icon"></i>
+                        <select id="pedidoStatus" style="width: 100%; padding: 11px 40px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background-color: #FAFAF9; font-family: inherit; font-size: 14px; color: var(--text-main); outline: none;">
+                            <option value="Pendente">Pendente</option>
+                            <option value="Em Produção">Em Produção</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flow-actions" style="margin-top: 24px;">
+                <button type="submit" class="btn-primary" style="width: auto; flex: 1;">Salvar Pedido</button>
+                <button type="button" class="btn-secondary" id="btnCancelPedido" style="flex: 1;">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

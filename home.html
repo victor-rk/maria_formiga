@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maria Formiga — Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+    <aside class="sidebar" aria-label="Menu principal">
+        <div class="sidebar-header">
+            <img src="img/cupcake.png" alt="Logotipo Maria Formiga" class="brand-logo">
+            <h2>Maria Formiga</h2>
+        </div>
+
+        <nav class="sidebar-menu">
+            <div class="nav-group">
+                <span class="nav-group-title">Operação</span>
+                <a href="#" class="nav-link active" aria-current="page">
+                    <i class="fa-solid fa-house" aria-hidden="true"></i> Dashboard
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-receipt" aria-hidden="true"></i> Pedidos
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-cash-register" aria-hidden="true"></i> Vendas
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-truck" aria-hidden="true"></i> Entregas
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <span class="nav-group-title">Estoque</span>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i> Matéria-Prima
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-cookie-bite" aria-hidden="true"></i> Produtos Prontos
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <span class="nav-group-title">Gestão</span>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-address-book" aria-hidden="true"></i> Clientes
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-building" aria-hidden="true"></i> Fornecedores
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-file-invoice" aria-hidden="true"></i> Relatórios
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="#" class="nav-link" id="btnConfig" aria-haspopup="dialog">
+                <i class="fa-solid fa-gear" aria-hidden="true"></i> Configurações
+            </a>
+            <a href="index.html" class="nav-link">
+                <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i> Sair
+            </a>
+        </div>
+    </aside>
+
+    <!-- =========================================
+         CONTEÚDO PRINCIPAL
+    ========================================== -->
+    <main class="main-content">
+      <div class="main-inner">
+
+        <p class="page-subtitle" style="font-size: 14px; color: #78716C; margin-bottom: 24px; font-weight: 500;">Acesso rápido às funções do sistema.</p>
+        <div class="bento-grid-new">
+            <!-- Card 1: Novo Pedido -->
+            <div class="bento-card bento-destaque" data-route="novo-pedido">
+                <div class="bento-icon-wrapper">
+                    <div class="icon-box"><i class="fa-solid fa-plus"></i></div>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+                <div class="bento-text">
+                    <h2>Novo Pedido</h2>
+                    <p>Cadastrar encomendas, bolos artesanais e orçamentos personalizados.</p>
+                    <button class="btn-iniciar">Iniciar Encomenda &rarr;</button>
+                </div>
+            </div>
+            
+            <!-- Card 2: Caixa -->
+            <div class="bento-card" data-route="caixa">
+                <div class="bento-icon-wrapper">
+                    <div class="icon-box"><i class="fa-solid fa-credit-card"></i></div>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+                <div class="bento-text">
+                    <h3>Caixa / Vendas</h3>
+                    <p>Atendimento de balcão e pagamentos.</p>
+                </div>
+            </div>
+
+            <!-- Card 3: Pedidos em Andamento -->
+            <div class="bento-card bento-tall" data-route="pedidos">
+                <div class="bento-icon-wrapper">
+                    <div class="icon-box"><i class="fa-solid fa-clipboard-check"></i></div>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+                <div class="bento-text">
+                    <h3>Pedidos em Andamento</h3>
+                    <p>Fila de produção na confeitaria, forno, confeite e retiradas.</p>
+                </div>
+            </div>
+
+            <!-- Card 4: Estoque Geral -->
+            <div class="bento-card" data-route="estoque">
+                <div class="bento-icon-wrapper">
+                    <div class="icon-box"><i class="fa-solid fa-cube"></i></div>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+                <div class="bento-text">
+                    <h3>Estoque Geral</h3>
+                    <p>Insumos finos, chocolates, embalagens e pronta-entrega.</p>
+                </div>
+            </div>
+
+            <!-- Card 5: Entregas -->
+            <div class="bento-card" data-route="entregas">
+                <div class="bento-icon-wrapper">
+                    <div class="icon-box"><i class="fa-solid fa-truck"></i></div>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+                <div class="bento-text">
+                    <h3>Entregas</h3>
+                    <p>Controle de motoristas e despachos.</p>
+                </div>
+            </div>
+
+            <!-- Card 6: Relatórios -->
+            <div class="bento-card" data-route="relatorios">
+                <div class="bento-icon-wrapper">
+                    <div class="icon-box"><i class="fa-solid fa-file-lines"></i></div>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+                <div class="bento-text">
+                    <h3>Relatórios</h3>
+                    <p>Auditoria e exportação de dados.</p>
+                </div>
+            </div>
+
+            <!-- Card 7: Clientes -->
+            <div class="bento-card" data-route="clientes">
+                <div class="bento-icon-wrapper">
+                    <div class="icon-box"><i class="fa-solid fa-user-group"></i></div>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+                <div class="bento-text">
+                    <h3>Clientes</h3>
+                    <p>Histórico de compras e dados cadastrais.</p>
+                </div>
+            </div>
+        </div>
+      </div><!-- /main-inner -->
+    </main>
+</div><!-- /dashboard-layout -->
+
+<!-- =========================================
+     MODAL CONFIGURAÇÕES
+========================================== -->
+<div class="modal-overlay" id="configModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content card-solid">
+        <button class="modal-close" id="closeModal" aria-label="Fechar configurações">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+
+        <div class="modal-header">
+            <h2 id="modalTitle">Configurações</h2>
+            <p>Gerencie usuários e preferências do sistema.</p>
+        </div>
+
+        <div class="tabs" role="tablist">
+            <button class="tab-btn active" role="tab" aria-selected="true" data-target="tab-usuarios">Gerenciar Usuários</button>
+            <button class="tab-btn" role="tab" aria-selected="false" data-target="tab-perfil">Meu Perfil</button>
+        </div>
+
+        <!-- Aba: Gerenciar Usuários -->
+        <div id="tab-usuarios" class="tab-content active" role="tabpanel">
+            <div class="user-list-header">
+                <h4>2 usuários cadastrados</h4>
+                <button type="button" class="btn-secondary" style="font-size: 12px; padding: 7px 12px;">
+                    <i class="fa-solid fa-user-plus" aria-hidden="true"></i> Novo usuário
+                </button>
+            </div>
+            <ul class="user-list" aria-label="Lista de usuários">
+                <li class="user-item">
+                    <div class="user-details">
+                        <div class="user-avatar" aria-hidden="true">M</div>
+                        <div class="user-info">
+                            <strong>Maria Proprietária</strong>
+                            <span>Administrador</span>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <button aria-label="Editar Maria Proprietária"><i class="fa-solid fa-pen" aria-hidden="true"></i></button>
+                        <button class="btn-delete" aria-label="Excluir Maria Proprietária" data-user="Maria Proprietária">
+                            <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </li>
+                <li class="user-item">
+                    <div class="user-details">
+                        <div class="user-avatar" aria-hidden="true" style="background-color: var(--info-bg); color: var(--info);">J</div>
+                        <div class="user-info">
+                            <strong>João Auxiliar</strong>
+                            <span>Operacional</span>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <button aria-label="Editar João Auxiliar"><i class="fa-solid fa-pen" aria-hidden="true"></i></button>
+                        <button class="btn-delete" aria-label="Excluir João Auxiliar" data-user="João Auxiliar">
+                            <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Aba: Meu Perfil -->
+        <div id="tab-perfil" class="tab-content" role="tabpanel">
+            <form id="profileForm" novalidate>
+                <p class="profile-section-title">Dados cadastrais</p>
+
+                <div class="input-group">
+                    <label for="profileName">Nome completo</label>
+                    <div class="input-flex-row">
+                        <div class="input-wrapper">
+                            <i class="fa-regular fa-user input-icon" aria-hidden="true"></i>
+                            <input type="text" id="profileName" value="Maria Proprietária" readonly aria-label="Nome completo">
+                        </div>
+                        <button type="button" class="btn-secondary" aria-label="Editar nome">Editar</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="profileEmail">E-mail corporativo</label>
+                    <div class="input-flex-row">
+                        <div class="input-wrapper">
+                            <i class="fa-regular fa-envelope input-icon" aria-hidden="true"></i>
+                            <input type="email" id="profileEmail" value="admin@mariaformiga.com" readonly aria-label="E-mail corporativo">
+                        </div>
+                        <button type="button" class="btn-secondary" aria-label="Editar e-mail">Editar</button>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-secondary" id="btnTrocarSenha" aria-expanded="false" aria-controls="passwordFlow">
+                    <i class="fa-solid fa-lock" aria-hidden="true"></i> Alterar senha
+                </button>
+
+                <!-- Fluxo de alteração de senha -->
+                <div id="passwordFlow" style="display: none;" aria-live="polite">
+                    <p class="profile-section-title" style="margin-top: 20px;">Alterar senha</p>
+
+                    <div class="input-group">
+                        <label for="pwdAtual">Senha atual</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-key input-icon" aria-hidden="true"></i>
+                            <input type="password" id="pwdAtual" placeholder="Digite sua senha atual" autocomplete="current-password">
+                            <button type="button" class="pwd-toggle" aria-label="Mostrar ou ocultar senha atual">
+                                <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="pwdNova">Nova senha</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-lock input-icon" aria-hidden="true"></i>
+                            <input type="password" id="pwdNova" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+                            <button type="button" class="pwd-toggle" aria-label="Mostrar ou ocultar nova senha">
+                                <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="pwdConfirmar">Confirmar nova senha</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-check input-icon" aria-hidden="true"></i>
+                            <input type="password" id="pwdConfirmar" placeholder="Repita a nova senha" autocomplete="new-password">
+                            <button type="button" class="pwd-toggle" aria-label="Mostrar ou ocultar confirmação de senha">
+                                <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <div id="pwdMismatch" class="field-error" style="display:none;">
+                            <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> As senhas não coincidem.
+                        </div>
+                    </div>
+
+                    <div class="flow-actions">
+                        <button type="button" class="btn-primary" id="btnSalvarSenha">Salvar alterações</button>
+                        <button type="button" class="btn-secondary" id="btnCancelarSenha">Cancelar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Exclusão -->
+<div class="confirm-overlay" id="confirmDeleteModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="confirm-box">
+        <div class="confirm-icon" aria-hidden="true">
+            <i class="fa-solid fa-trash"></i>
+        </div>
+        <h3 id="confirmTitle">Excluir usuário?</h3>
+        <p id="confirmText">Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.</p>
+        <div class="confirm-actions">
+            <button type="button" class="btn-secondary" id="btnCancelDelete">Cancelar</button>
+            <button type="button" class="btn-danger" id="btnConfirmDelete">
+                <i class="fa-solid fa-trash" aria-hidden="true"></i> Excluir usuário
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
