@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maria Formiga — Gestão de Pedidos</title>
+
+    <!-- Fonte Poppins igual ao Home.html -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="dashboard-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" aria-label="Menu principal">
+            <div class="sidebar-header">
+                <img src="img/cupcake.png" alt="Logotipo Maria Formiga" class="brand-logo">
+                <h2>Maria Formiga</h2>
+            </div>
+
+            <nav class="sidebar-menu">
+                <div class="nav-group">
+                    <span class="nav-group-title">Operação</span>
+                    <a href="home.html" class="nav-link">
+                        <i class="fa-solid fa-house" aria-hidden="true"></i> Início
+                    </a>
+                    <a href="pedidos.html" class="nav-link active" aria-current="page">
+                        <i class="fa-solid fa-receipt" aria-hidden="true"></i> Pedidos
+                    </a>
+                    <a href="vendas.html" class="nav-link">
+                        <i class="fa-solid fa-cash-register" aria-hidden="true"></i> Vendas
+                    </a>
+                    <a href="entregas.html" class="nav-link">
+                        <i class="fa-solid fa-truck" aria-hidden="true"></i> Entregas
+                    </a>
+                </div>
+
+                <div class="nav-group">
+                    <span class="nav-group-title">Estoque</span>
+                    <a href="estoque.html" class="nav-link">
+                        <i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i> Matéria-Prima
+                    </a>
+                    <a href="produtos-prontos.html" class="nav-link">
+                        <i class="fa-solid fa-cookie-bite" aria-hidden="true"></i> Produtos Prontos
+                    </a>
+                </div>
+
+                <div class="nav-group">
+                    <span class="nav-group-title">Gestão</span>
+                    <a href="clientes.html" class="nav-link">
+                        <i class="fa-solid fa-address-book" aria-hidden="true"></i> Clientes
+                    </a>
+                    <a href="fornecedores.html" class="nav-link">
+                        <i class="fa-solid fa-building" aria-hidden="true"></i> Fornecedores
+                    </a>
+                    <a href="relatorios.html" class="nav-link">
+                        <i class="fa-solid fa-file-invoice" aria-hidden="true"></i> Relatórios
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" class="nav-link" id="btnConfig" aria-haspopup="dialog">
+                    <i class="fa-solid fa-gear" aria-hidden="true"></i> Configurações
+                </a>
+                <a href="index.html" class="nav-link">
+                    <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i> Sair
+                </a>
+            </div>
+        </aside>
+
+        <!-- CONTEÚDO PRINCIPAL (PEDIDOS) -->
+        <main class="main-content">
+            <div class="main-inner">
+
+                <!-- Header da Página -->
+                <header class="page-header">
+                    <div class="header-titles">
+                        <span class="breadcrumb">Operação</span>
+                        <h1>Gestão de Pedidos</h1>
+                    </div>
+                    <div class="header-date">
+                        <span id="currentDateFull">sábado, 19 de setembro de 2026</span>
+                    </div>
+                </header>
+
+                <!-- Barra de Ferramentas (Toolbar) -->
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Buscar por cliente ou número...">
+                    </div>
+                    <div class="filters">
+                        <button class="filter-btn active">Todos</button>
+                        <button class="filter-btn">Pendente</button>
+                        <button class="filter-btn">Em Produção</button>
+                        <button class="filter-btn">Pronto</button>
+                        <button class="filter-btn">Entregue/Finalizado</button>
+                    </div>
+                    <button class="btn-novo">Novo Pedido</button>
+                </div>
+
+                <!-- Tabela de Pedidos -->
+                <div class="table-card">
+                    <div class="table-header-row">
+                        <div>
+                            <h2>Pedidos ativos</h2>
+                        </div>
+                        <span class="count-badge">4 pedidos</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nº do Pedido</th>
+                                    <th>Cliente</th>
+                                    <th>Itens</th>
+                                    <th>Valor Total</th>
+                                    <th>Data/Hora</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="pedidosTableBody">
+                                <tr>
+                                    <td><strong>#1048</strong></td>
+                                    <td>Ana Paula</td>
+                                    <td>12 Brigadeiros Gourmet</td>
+                                    <td>R$ 96,00</td>
+                                    <td>19/09/2026, 10:30</td>
+                                    <td><span class="status-badge status-producao">Em Produção</span></td>
+                                    <td><button class="btn-acao-tabela"><i class="fa-solid fa-eye"></i> Detalhes</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>#1047</strong></td>
+                                    <td>Carlos Henrique</td>
+                                    <td>1 Bolo Chiffon de Chocolate</td>
+                                    <td>R$ 145,00</td>
+                                    <td>19/09/2026, 09:15</td>
+                                    <td><span class="status-badge status-pendente">Pendente</span></td>
+                                    <td><button class="btn-acao-tabela"><i class="fa-solid fa-eye"></i> Detalhes</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>#1046</strong></td>
+                                    <td>Beatriz Souza</td>
+                                    <td>24 Docinhos para festa</td>
+                                    <td>R$ 192,00</td>
+                                    <td>18/09/2026, 16:40</td>
+                                    <td><span class="status-badge status-pronto">Pronto</span></td>
+                                    <td><button class="btn-acao-tabela"><i class="fa-solid fa-eye"></i> Detalhes</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>#1045</strong></td>
+                                    <td>Lucas Martins</td>
+                                    <td>2 Kits presenteáveis</td>
+                                    <td>R$ 220,00</td>
+                                    <td>18/09/2026, 14:20</td>
+                                    <td><span class="status-badge status-entregue">Entregue</span></td>
+                                    <td><button class="btn-acao-tabela"><i class="fa-solid fa-eye"></i> Detalhes</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL NOVO PEDIDO -->
+    <div class="modal-overlay" id="modalNovoPedido" role="dialog" aria-modal="true" aria-labelledby="modalPedidoTitle">
+        <div class="modal-content card-solid" style="max-width: 800px; width: 95%;">
+            <button class="modal-close" id="closePedidoModal" aria-label="Fechar janela">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="modal-header">
+                <h2 id="modalPedidoTitle">Registrar Novo Pedido</h2>
+            </div>
+
+            <form id="formNovoPedido">
+                <div class="form-section">
+                    <h3 class="form-section-title"><i class="fa-solid fa-user"></i> 1. Cliente e Endereço</h3>
+                    
+                    <div class="form-row d-flex gap-16">
+                        <div class="input-group flex-2 mb-0">
+                            <label>Cliente *</label>
+                            <div class="input-flex-row">
+                                <div class="input-wrapper flex-1">
+                                    <select required class="custom-select">
+                                        <option value="">Selecione o cliente...</option>
+                                        <option value="1">João Silva</option>
+                                        <option value="2">Maria Oliveira</option>
+                                    </select>
+                                </div>
+                                <button type="button" class="btn-secondary btn-novo-cliente">
+                                    <i class="fa-solid fa-user-plus"></i> Novo
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group flex-1 mb-0">
+                            <label>Modalidade *</label>
+                            <div class="toggle-group">
+                                <input type="radio" id="modEntregaTop" name="modalidade_top" value="entrega" checked>
+                                <label for="modEntregaTop"><i class="fa-solid fa-motorcycle"></i> Entrega</label>
+                                
+                                <input type="radio" id="modRetiradaTop" name="modalidade_top" value="retirada">
+                                <label for="modRetiradaTop"><i class="fa-solid fa-store"></i> Retirada</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="enderecoGroup" class="mt-16" style="border-top: 1px dashed var(--border-color); padding-top: 16px;">
+                        <div class="form-row d-flex gap-16 mb-16">
+                            <div class="input-group flex-3 mb-0">
+                                <label>Rua / Avenida *</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="enderecoRua" placeholder="Ex: Rua das Flores" required>
+                                </div>
+                            </div>
+                            <div class="input-group flex-1 mb-0">
+                                <label>Número *</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="enderecoNumero" placeholder="Ex: 123" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row d-flex gap-16 mb-0">
+                            <div class="input-group flex-1 mb-0">
+                                <label>Complemento</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="enderecoComplemento" placeholder="Apto, Bloco, Casa...">
+                                </div>
+                            </div>
+                            <div class="input-group flex-1 mb-0">
+                                <label>Bairro *</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="enderecoBairro" placeholder="Ex: Centro" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title"><i class="fa-solid fa-cake-candles"></i> 2. Produtos</h3>
+                    <div class="form-row d-flex gap-16 align-end mb-16">
+                        <div class="input-group flex-3 mb-0">
+                            <label>Produto</label>
+                            <div class="input-wrapper">
+                                <select class="custom-select">
+                                    <option value="">Selecione o produto...</option>
+                                    <option value="bolo">Bolo de Morango</option>
+                                    <option value="brigadeiro">Cento de Brigadeiro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="input-group flex-1 mb-0">
+                            <label>Qtd.</label>
+                            <div class="input-wrapper">
+                                <input type="number" value="1" min="1" style="text-align: center;">
+                            </div>
+                        </div>
+                        <button type="button" class="btn-dark flex-1">
+                            <i class="fa-solid fa-plus"></i> Incluir
+                        </button>
+                    </div>
+                    
+                    <div class="table-responsive box-border">
+                        <table class="data-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th style="text-align: center;">Qtd</th>
+                                    <th style="text-align: right;">Preço Unit.</th>
+                                    <th style="text-align: right;">Subtotal</th>
+                                    <th style="text-align: center;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="5" class="empty-table-msg">
+                                        Nenhum produto adicionado. Selecione acima.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title"><i class="fa-solid fa-credit-card"></i> 3. Dados Finais</h3>
+                    <div class="form-row d-flex gap-24 responsive-col">
+                        
+                        <div class="flex-1">
+                            <label class="section-label">Forma de Pagamento Principal *</label>
+                            <div class="payment-options">
+                                <label class="payment-card">
+                                    <input type="radio" name="pagamento" value="pix" checked>
+                                    <div class="payment-content">
+                                        <i class="fa-brands fa-pix"></i>
+                                        <span>Pix</span>
+                                    </div>
+                                </label>
+                                <label class="payment-card">
+                                    <input type="radio" name="pagamento" value="cartao">
+                                    <div class="payment-content">
+                                        <i class="fa-regular fa-credit-card"></i>
+                                        <span>Cartão</span>
+                                    </div>
+                                </label>
+                                <label class="payment-card">
+                                    <input type="radio" name="pagamento" value="dinheiro">
+                                    <div class="payment-content">
+                                        <i class="fa-solid fa-money-bill"></i>
+                                        <span>Dinheiro</span>
+                                    </div>
+                                </label>
+                            </div>
+                            
+                            <div class="input-group mt-16 mb-0">
+                                <label>Outros Meios (Opcional)</label>
+                                <div class="input-wrapper">
+                                    <select id="outrosPagamentos" class="custom-select">
+                                        <option value="">Selecione se for outro meio...</option>
+                                        <option value="boleto">Boleto Bancário</option>
+                                        <option value="fiado">Fiado / Pendente</option>
+                                        <option value="transferencia">Transferência TED/DOC</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex-1">
+                            <div class="summary-box">
+                                <div class="summary-row">
+                                    <span>Subtotal dos Itens:</span>
+                                    <span>R$ 0,00</span>
+                                </div>
+                                
+                                <div class="summary-row align-center" style="margin-top: 12px;">
+                                    <span>Forma de Entrega:</span>
+                                    <div class="toggle-group" style="width: 190px;">
+                                        <input type="radio" id="modEntrega" name="modalidade" value="entrega" checked>
+                                        <label for="modEntrega" style="padding: 6px 4px;"><i class="fa-solid fa-motorcycle"></i> Entrega</label>
+                                        
+                                        <input type="radio" id="modRetirada" name="modalidade" value="retirada">
+                                        <label for="modRetirada" style="padding: 6px 4px;"><i class="fa-solid fa-store"></i> Retirada</label>
+                                    </div>
+                                </div>
+
+                                <div class="summary-row align-center" id="taxaEntregaRow" style="margin-top: 12px;">
+                                    <span>Taxa de Entrega:</span>
+                                    <div class="input-wrapper input-taxa" style="width: 140px;">
+                                        <span class="currency-symbol" style="left: 12px; transform: translateY(-50%); font-size: 13px;">R$</span>
+                                        <input type="number" step="0.01" value="0.00" id="taxaEntrega" style="padding: 8px 10px 8px 34px; font-size: 14px;">
+                                    </div>
+                                </div>
+                                
+                                <div class="summary-divider" style="margin: 16px 0;"></div>
+                                
+                                <div class="summary-row total">
+                                    <span>Total a Pagar:</span>
+                                    <span class="total-value">R$ 0,00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-actions" style="margin-top: 24px; justify-content: flex-end;">
+                    <button type="button" class="btn-secondary" id="btnCancelPedidoModal" style="width: auto; min-width: 120px;">Cancelar</button>
+                    <button type="submit" class="btn-primary" style="width: auto; min-width: 180px;">Salvar Pedido</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIGURAÇÕES -->
+    <div class="modal-overlay" id="configModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-content card-solid">
+            <button class="modal-close" id="closeModal" aria-label="Fechar configurações">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+
+            <div class="modal-header">
+                <h2 id="modalTitle">Configurações</h2>
+                <p>Gerencie usuários e preferências do sistema.</p>
+            </div>
+
+            <div class="tabs" role="tablist">
+                <button class="tab-btn active" role="tab" aria-selected="true" data-target="tab-usuarios">Gerenciar Usuários</button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-target="tab-perfil">Meu Perfil</button>
+            </div>
+
+            <!-- Aba: Gerenciar Usuários -->
+            <div id="tab-usuarios" class="tab-content active" role="tabpanel">
+                <div class="user-list-header">
+                    <h4>2 usuários cadastrados</h4>
+                    <button type="button" class="btn-secondary" style="font-size: 12px; padding: 7px 12px;">
+                        <i class="fa-solid fa-user-plus" aria-hidden="true"></i> Novo usuário
+                    </button>
+                </div>
+                <ul class="user-list" aria-label="Lista de usuários">
+                    <li class="user-item">
+                        <div class="user-details">
+                            <div class="user-avatar" aria-hidden="true">M</div>
+                            <div class="user-info">
+                                <strong>Maria Proprietária</strong>
+                                <span>Administrador</span>
+                            </div>
+                        </div>
+                        <div class="user-actions">
+                            <button aria-label="Editar Maria Proprietária"><i class="fa-solid fa-pen" aria-hidden="true"></i></button>
+                            <button class="btn-delete" aria-label="Excluir Maria Proprietária" data-user="Maria Proprietária">
+                                <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </li>
+                    <li class="user-item">
+                        <div class="user-details">
+                            <div class="user-avatar" aria-hidden="true" style="background-color: var(--info-bg); color: var(--info);">J</div>
+                            <div class="user-info">
+                                <strong>Auxiliar</strong>
+                                <span>Operacional</span>
+                            </div>
+                        </div>
+                        <div class="user-actions">
+                            <button aria-label="Editar João Auxiliar"><i class="fa-solid fa-pen" aria-hidden="true"></i></button>
+                            <button class="btn-delete" aria-label="Excluir João Auxiliar" data-user="João Auxiliar">
+                                <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Aba: Meu Perfil -->
+            <div id="tab-perfil" class="tab-content" role="tabpanel">
+                <form id="profileForm" novalidate>
+                    <p class="profile-section-title">Dados cadastrais</p>
+
+                    <div class="input-group">
+                        <label for="profileName">Nome completo</label>
+                        <div class="input-flex-row">
+                            <div class="input-wrapper">
+                                <i class="fa-regular fa-user input-icon" aria-hidden="true"></i>
+                                <input type="text" id="profileName" value="Maria Proprietária" readonly aria-label="Nome completo">
+                            </div>
+                            <button type="button" class="btn-secondary" aria-label="Editar nome">Editar</button>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="profileEmail">E-mail corporativo</label>
+                        <div class="input-flex-row">
+                            <div class="input-wrapper">
+                                <i class="fa-regular fa-envelope input-icon" aria-hidden="true"></i>
+                                <input type="email" id="profileEmail" value="admin@mariaformiga.com" readonly aria-label="E-mail corporativo">
+                            </div>
+                            <button type="button" class="btn-secondary" aria-label="Editar e-mail">Editar</button>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-secondary" id="btnTrocarSenha" aria-expanded="false" aria-controls="passwordFlow">
+                        <i class="fa-solid fa-lock" aria-hidden="true"></i> Alterar senha
+                    </button>
+
+                    <div id="passwordFlow" style="display: none;" aria-live="polite">
+                        <p class="profile-section-title" style="margin-top: 20px;">Alterar senha</p>
+
+                        <div class="input-group">
+                            <label for="pwdAtual">Senha atual</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-key input-icon" aria-hidden="true"></i>
+                                <input type="password" id="pwdAtual" placeholder="Digite sua senha atual" autocomplete="current-password">
+                                <button type="button" class="pwd-toggle" aria-label="Mostrar ou ocultar senha atual">
+                                    <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="pwdNova">Nova senha</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-lock input-icon" aria-hidden="true"></i>
+                                <input type="password" id="pwdNova" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+                                <button type="button" class="pwd-toggle" aria-label="Mostrar ou ocultar nova senha">
+                                    <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="pwdConfirmar">Confirmar nova senha</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-check input-icon" aria-hidden="true"></i>
+                                <input type="password" id="pwdConfirmar" placeholder="Repita a nova senha" autocomplete="new-password">
+                                <button type="button" class="pwd-toggle" aria-label="Mostrar ou ocultar confirmação de senha">
+                                    <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                            <div id="pwdMismatch" class="field-error" style="display:none;">
+                                <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> As senhas não coincidem.
+                            </div>
+                        </div>
+
+                        <div class="flow-actions">
+                            <button type="button" class="btn-primary" id="btnSalvarSenha">Salvar alterações</button>
+                            <button type="button" class="btn-secondary" id="btnCancelarSenha">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRMAÇÃO EXCLUSÃO -->
+    <div class="confirm-overlay" id="confirmDeleteModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <div class="confirm-box">
+            <div class="confirm-icon" aria-hidden="true">
+                <i class="fa-solid fa-trash"></i>
+            </div>
+            <h3 id="confirmTitle">Excluir usuário?</h3>
+            <p id="confirmText">Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.</p>
+            <div class="confirm-actions">
+                <button type="button" class="btn-secondary" id="btnCancelDelete">Cancelar</button>
+                <button type="button" class="btn-danger" id="btnConfirmDelete">
+                    <i class="fa-solid fa-trash" aria-hidden="true"></i> Excluir usuário
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
+

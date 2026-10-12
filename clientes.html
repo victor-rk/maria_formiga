@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maria Formiga — Gestão de Clientes</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="dashboard-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" aria-label="Menu principal">
+            <div class="sidebar-header">
+                <img src="img/cupcake.png" alt="Logotipo Maria Formiga" class="brand-logo">
+                <h2>Maria Formiga</h2>
+            </div>
+
+            <nav class="sidebar-menu">
+                <div class="nav-group">
+                    <span class="nav-group-title">Operação</span>
+                    <a href="home.html" class="nav-link">
+                        <i class="fa-solid fa-house" aria-hidden="true"></i> Início
+                    </a>
+                    <a href="pedidos.html" class="nav-link">
+                        <i class="fa-solid fa-receipt" aria-hidden="true"></i> Pedidos
+                    </a>
+                    <a href="vendas.html" class="nav-link">
+                        <i class="fa-solid fa-cash-register" aria-hidden="true"></i> Vendas
+                    </a>
+                    <a href="entregas.html" class="nav-link">
+                        <i class="fa-solid fa-truck" aria-hidden="true"></i> Entregas
+                    </a>
+                </div>
+
+                <div class="nav-group">
+                    <span class="nav-group-title">Estoque</span>
+                    <a href="estoque.html" class="nav-link">
+                        <i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i> Matéria-Prima
+                    </a>
+                    <a href="produtos-prontos.html" class="nav-link">
+                        <i class="fa-solid fa-cookie-bite" aria-hidden="true"></i> Produtos Prontos
+                    </a>
+                </div>
+
+                <div class="nav-group">
+                    <span class="nav-group-title">Gestão</span>
+                    <a href="clientes.html" class="nav-link active" aria-current="page">
+                        <i class="fa-solid fa-address-book" aria-hidden="true"></i> Clientes
+                    </a>
+                    <a href="fornecedores.html" class="nav-link">
+                        <i class="fa-solid fa-building" aria-hidden="true"></i> Fornecedores
+                    </a>
+                    <a href="relatorios.html" class="nav-link">
+                        <i class="fa-solid fa-file-invoice" aria-hidden="true"></i> Relatórios
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" class="nav-link" id="btnConfig" aria-haspopup="dialog">
+                    <i class="fa-solid fa-gear" aria-hidden="true"></i> Configurações
+                </a>
+                <a href="index.html" class="nav-link">
+                    <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i> Sair
+                </a>
+            </div>
+        </aside>
+
+        <!-- CONTEÚDO PRINCIPAL (CLIENTES) -->
+        <main class="main-content">
+            <div class="main-inner">
+
+                <!-- Header da Página -->
+                <header class="page-header">
+                    <div class="header-titles">
+                        <span class="breadcrumb">Gestão</span>
+                        <h1>Cadastro e Gestão de Clientes</h1>
+                    </div>
+                    <div class="header-date">
+                        <span id="currentDateFull">segunda-feira, 12 de outubro de 2026</span>
+                    </div>
+                </header>
+
+                <!-- Cards Resumo de Clientes -->
+                <div class="kpi-mini-grid">
+                    <div class="kpi-mini-card">
+                        <div class="kpi-mini-icon pink"><i class="fa-solid fa-users"></i></div>
+                        <div>
+                            <span class="kpi-mini-label">Total de Clientes</span>
+                            <strong class="kpi-mini-val">4 cadastrados</strong>
+                        </div>
+                    </div>
+                    <div class="kpi-mini-card">
+                        <div class="kpi-mini-icon green"><i class="fa-solid fa-bag-shopping"></i></div>
+                        <div>
+                            <span class="kpi-mini-label">Clientes Recorrentes</span>
+                            <strong class="kpi-mini-val">3 ativos no mês</strong>
+                        </div>
+                    </div>
+                    <div class="kpi-mini-card">
+                        <div class="kpi-mini-icon orange"><i class="fa-solid fa-star"></i></div>
+                        <div>
+                            <span class="kpi-mini-label">Maior Fidelidade</span>
+                            <strong class="kpi-mini-val">Beatriz Souza (6 pedidos)</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Barra de Ferramentas (Toolbar) -->
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Buscar por nome, CPF ou telefone...">
+                    </div>
+                    <div class="filters">
+                        <button class="filter-btn active">Todos</button>
+                        <button class="filter-btn">Com Encomendas Ativas</button>
+                        <button class="filter-btn">Biritiba-Mirim</button>
+                    </div>
+                    <button class="btn-novo" id="btnNovoClienteModal">
+                        <i class="fa-solid fa-user-plus"></i> Novo Cliente
+                    </button>
+                </div>
+
+                <!-- Tabela de Clientes -->
+                <div class="table-card">
+                    <div class="table-header-row">
+                        <div>
+                            <h2>Clientes Cadastrados</h2>
+                        </div>
+                        <span class="count-badge">4 clientes</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome do Cliente</th>
+                                    <th>CPF</th>
+                                    <th>E-mail</th>
+                                    <th>Telefone / WhatsApp</th>
+                                    <th>Endereço Principal</th>
+                                    <th>Total Pedidos</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="item-with-icon">
+                                            <i class="fa-solid fa-user"></i>
+                                            <strong>Ana Paula</strong>
+                                        </div>
+                                    </td>
+                                    <td>234.567.890-11</td>
+                                    <td>ana.paula@email.com</td>
+                                    <td><i class="fa-brands fa-whatsapp text-muted"></i> (11) 98765-4321</td>
+                                    <td>Rua das Camélias, 142 — Biritiba-Mirim</td>
+                                    <td><span class="badge badge-info">3 pedidos</span></td>
+                                    <td>
+                                        <button class="btn-acao-tabela btn-editar-cliente" data-nome="Ana Paula">
+                                            <i class="fa-solid fa-pen"></i> Editar
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="item-with-icon">
+                                            <i class="fa-solid fa-user"></i>
+                                            <strong>Carlos Henrique</strong>
+                                        </div>
+                                    </td>
+                                    <td>345.678.901-22</td>
+                                    <td>carlos.h@email.com</td>
+                                    <td><i class="fa-brands fa-whatsapp text-muted"></i> (11) 97123-9988</td>
+                                    <td>Av. Ferdinando Jungers, 850 — Centro, Biritiba-Mirim</td>
+                                    <td><span class="badge badge-info">2 pedidos</span></td>
+                                    <td>
+                                        <button class="btn-acao-tabela btn-editar-cliente" data-nome="Carlos Henrique">
+                                            <i class="fa-solid fa-pen"></i> Editar
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="item-with-icon">
+                                            <i class="fa-solid fa-user"></i>
+                                            <strong>Beatriz Souza</strong>
+                                        </div>
+                                    </td>
+                                    <td>456.789.012-33</td>
+                                    <td>beatriz.souza@email.com</td>
+                                    <td><i class="fa-brands fa-whatsapp text-muted"></i> (11) 99881-2233</td>
+                                    <td>Rua São João, 75 - Apto 32 — Biritiba-Mirim</td>
+                                    <td><span class="badge badge-success">6 pedidos</span></td>
+                                    <td>
+                                        <button class="btn-acao-tabela btn-editar-cliente" data-nome="Beatriz Souza">
+                                            <i class="fa-solid fa-pen"></i> Editar
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="item-with-icon">
+                                            <i class="fa-solid fa-user"></i>
+                                            <strong>Lucas Martins</strong>
+                                        </div>
+                                    </td>
+                                    <td>567.890.123-44</td>
+                                    <td>lucas.martins@email.com</td>
+                                    <td><i class="fa-brands fa-whatsapp text-muted"></i> (11) 98112-7744</td>
+                                    <td>Estrada dos Remédios, km 3 — Biritiba-Mirim</td>
+                                    <td><span class="badge badge-info">4 pedidos</span></td>
+                                    <td>
+                                        <button class="btn-acao-tabela btn-editar-cliente" data-nome="Lucas Martins">
+                                            <i class="fa-solid fa-pen"></i> Editar
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL NOVO CLIENTE / ENDEREÇO -->
+    <div class="modal-overlay" id="modalNovoCliente" role="dialog" aria-modal="true" aria-labelledby="modalClienteTitle">
+        <div class="modal-content card-solid" style="max-width: 680px; width: 95%;">
+            <button class="modal-close" id="closeClienteModal" aria-label="Fechar janela">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="modal-header">
+                <h2 id="modalClienteTitle">Cadastrar Novo Cliente</h2>
+            </div>
+
+            <form id="formNovoCliente">
+                <div class="input-flex-row">
+                    <div class="input-group flex-2">
+                        <label for="cliNome">Nome Completo *</label>
+                        <div class="input-wrapper">
+                            <i class="fa-regular fa-user input-icon"></i>
+                            <input type="text" id="cliNome" placeholder="Ex: Mariana Castro" required>
+                        </div>
+                    </div>
+                    <div class="input-group flex-1">
+                        <label for="cliCPF">CPF *</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-id-card input-icon"></i>
+                            <input type="text" id="cliCPF" class="mask-cpf" placeholder="000.000.000-00" maxlength="14" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-flex-row">
+                    <div class="input-group flex-1">
+                        <label for="cliEmail">E-mail *</label>
+                        <div class="input-wrapper">
+                            <i class="fa-regular fa-envelope input-icon"></i>
+                            <input type="email" id="cliEmail" placeholder="cliente@email.com" required>
+                        </div>
+                    </div>
+                    <div class="input-group flex-1">
+                        <label for="cliTelefone">Telefone / WhatsApp *</label>
+                        <div class="input-wrapper">
+                            <i class="fa-brands fa-whatsapp input-icon"></i>
+                            <input type="tel" id="cliTelefone" placeholder="(11) 99999-9999" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ENDEREÇO SEPARADO -->
+                <div class="form-row d-flex gap-16 mb-16">
+                    <div class="input-group flex-3 mb-0">
+                        <label for="cliRua">Rua / Logradouro *</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-road input-icon"></i>
+                            <input type="text" id="cliRua" placeholder="Ex: Rua das Flores" required>
+                        </div>
+                    </div>
+                    <div class="input-group flex-1 mb-0">
+                        <label for="cliNumero">Número *</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-house-chimney input-icon"></i>
+                            <input type="text" id="cliNumero" placeholder="Ex: 123" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row d-flex gap-16">
+                    <div class="input-group flex-1 mb-0">
+                        <label for="cliComplemento">Complemento</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-door-open input-icon"></i>
+                            <input type="text" id="cliComplemento" placeholder="Apto, Bloco, Casa 2...">
+                        </div>
+                    </div>
+                    <div class="input-group flex-1 mb-0">
+                        <label for="cliBairro">Bairro *</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-location-dot input-icon"></i>
+                            <input type="text" id="cliBairro" placeholder="Ex: Centro" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-actions" style="margin-top: 24px;">
+                    <button type="submit" class="btn-primary" style="flex: 2;">
+                        <i class="fa-solid fa-check"></i> Salvar Cliente
+                    </button>
+                    <button type="button" class="btn-secondary" id="btnCancelClienteModal" style="flex: 1;">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIGURAÇÕES (GLOBAL) -->
+    <div class="modal-overlay" id="configModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-content card-solid">
+            <button class="modal-close" id="closeModal" aria-label="Fechar configurações">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+
+            <div class="modal-header">
+                <h2 id="modalTitle">Configurações</h2>
+                <p>Gerencie usuários e preferências do sistema.</p>
+            </div>
+
+            <div class="tabs" role="tablist">
+                <button class="tab-btn active" role="tab" aria-selected="true" data-target="tab-usuarios">Gerenciar Usuários</button>
+                <button class="tab-btn" role="tab" aria-selected="false" data-target="tab-perfil">Meu Perfil</button>
+            </div>
+
+            <div id="tab-usuarios" class="tab-content active" role="tabpanel">
+                <div class="user-list-header">
+                    <h4>2 usuários cadastrados</h4>
+                    <button type="button" class="btn-secondary" style="font-size: 12px; padding: 7px 12px;">
+                        <i class="fa-solid fa-user-plus" aria-hidden="true"></i> Novo usuário
+                    </button>
+                </div>
+                <ul class="user-list" aria-label="Lista de usuários">
+                    <li class="user-item">
+                        <div class="user-details">
+                            <div class="user-avatar" aria-hidden="true">M</div>
+                            <div class="user-info">
+                                <strong>Maria Proprietária</strong>
+                                <span>Administrador</span>
+                            </div>
+                        </div>
+                        <div class="user-actions">
+                            <button aria-label="Editar Maria Proprietária"><i class="fa-solid fa-pen" aria-hidden="true"></i></button>
+                            <button class="btn-delete" aria-label="Excluir Maria Proprietária" data-user="Maria Proprietária">
+                                <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </li>
+                    <li class="user-item">
+                        <div class="user-details">
+                            <div class="user-avatar" aria-hidden="true" style="background-color: var(--info-bg); color: var(--info);">J</div>
+                            <div class="user-info">
+                                <strong>Auxiliar</strong>
+                                <span>Operacional</span>
+                            </div>
+                        </div>
+                        <div class="user-actions">
+                            <button aria-label="Editar Auxiliar"><i class="fa-solid fa-pen" aria-hidden="true"></i></button>
+                            <button class="btn-delete" aria-label="Excluir Auxiliar" data-user="Auxiliar">
+                                <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="tab-perfil" class="tab-content" role="tabpanel">
+                <form id="profileForm" novalidate>
+                    <p class="profile-section-title">Dados cadastrais</p>
+
+                    <div class="input-group">
+                        <label for="profileName">Nome completo</label>
+                        <div class="input-flex-row">
+                            <div class="input-wrapper">
+                                <i class="fa-regular fa-user input-icon" aria-hidden="true"></i>
+                                <input type="text" id="profileName" value="Maria Proprietária" readonly>
+                            </div>
+                            <button type="button" class="btn-secondary">Editar</button>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="profileEmail">E-mail corporativo</label>
+                        <div class="input-flex-row">
+                            <div class="input-wrapper">
+                                <i class="fa-regular fa-envelope input-icon" aria-hidden="true"></i>
+                                <input type="email" id="profileEmail" value="admin@mariaformiga.com" readonly>
+                            </div>
+                            <button type="button" class="btn-secondary">Editar</button>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-secondary" id="btnTrocarSenha" aria-expanded="false" aria-controls="passwordFlow">
+                        <i class="fa-solid fa-lock" aria-hidden="true"></i> Alterar senha
+                    </button>
+
+                    <div id="passwordFlow" style="display: none;" aria-live="polite">
+                        <p class="profile-section-title" style="margin-top: 20px;">Alterar senha</p>
+
+                        <div class="input-group">
+                            <label for="pwdAtual">Senha atual</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-key input-icon" aria-hidden="true"></i>
+                                <input type="password" id="pwdAtual" placeholder="Digite sua senha atual" autocomplete="current-password">
+                                <button type="button" class="pwd-toggle" aria-label="Mostrar ou ocultar senha atual">
+                                    <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="pwdNova">Nova senha</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-lock input-icon" aria-hidden="true"></i>
+                                <input type="password" id="pwdNova" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+                                <button type="button" class="pwd-toggle" aria-label="Mostrar ou ocultar nova senha">
+                                    <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="pwdConfirmar">Confirmar nova senha</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-check input-icon" aria-hidden="true"></i>
+                                <input type="password" id="pwdConfirmar" placeholder="Repita a nova senha" autocomplete="new-password">
+                                <button type="button" class="pwd-toggle" aria-label="Mostrar ou ocultar confirmação de senha">
+                                    <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                            <div id="pwdMismatch" class="field-error" style="display:none;">
+                                <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> As senhas não coincidem.
+                            </div>
+                        </div>
+
+                        <div class="flow-actions">
+                            <button type="button" class="btn-primary" id="btnSalvarSenha">Salvar alterações</button>
+                            <button type="button" class="btn-secondary" id="btnCancelarSenha">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRMAÇÃO EXCLUSÃO -->
+    <div class="confirm-overlay" id="confirmDeleteModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <div class="confirm-box">
+            <div class="confirm-icon" aria-hidden="true">
+                <i class="fa-solid fa-trash"></i>
+            </div>
+            <h3 id="confirmTitle">Excluir usuário?</h3>
+            <p id="confirmText">Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.</p>
+            <div class="confirm-actions">
+                <button type="button" class="btn-secondary" id="btnCancelDelete">Cancelar</button>
+                <button type="button" class="btn-danger" id="btnConfirmDelete">
+                    <i class="fa-solid fa-trash" aria-hidden="true"></i> Excluir usuário
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
