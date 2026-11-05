@@ -53,7 +53,7 @@ A aplicação é multipágina e utiliza HTML, CSS e JavaScript nativos, sem etap
 - `js/global.js` inicializa os módulos globais `window.MF` (estado e regras locais) e `window.UI` (componentes e utilitários de interface), além das páginas e interações.
 - `js/*.js` contém os pontos de entrada das páginas.
 - `pages/*.html` contém a estrutura das telas. A pasta tem esse nome no projeto atual.
-- `img/` contém os recursos de imagem usados pela interface.
+- `assets/img/` contém os recursos de imagem usados pela interface.
 
 ```text
 .
@@ -72,8 +72,9 @@ A aplicação é multipágina e utiliza HTML, CSS e JavaScript nativos, sem etap
 │   ├── redefinir-senha.css
 │   ├── relatorios.css
 │   └── vendas.css
-├── img/
-│   └── cupcake.png
+├── assets/
+│   └── img/
+│       └── cupcake.png
 ├── js/
 │   ├── global.js
 │   ├── clientes.js

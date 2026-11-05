@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loading.setAttribute("aria-live", "polite");
         loading.tabIndex = -1;
         loading.innerHTML =
-          '<div class="login-loading-content"><img src="../img/cupcake.png" width="56" height="56" alt=""><span class="login-loading-spinner" aria-hidden="true"></span><p>Carregando...</p></div>';
+          '<div class="login-loading-content"><img src="../assets/img/cupcake.png" width="56" height="56" alt=""><span class="login-loading-spinner" aria-hidden="true"></span><p>Carregando...</p></div>';
         document.body.appendChild(loading);
         $(".auth-wrapper").inert = true;
         loading.focus();

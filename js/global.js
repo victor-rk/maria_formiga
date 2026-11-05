@@ -10,7 +10,7 @@
  * - js/global.js: dados, utilidades compartilhadas e runtime da aplicação.
  * - js/*.js: pontos de entrada específicos de cada página.
  * - pages/*.html: telas do sistema.
- * - img/cupcake.png: marca visual do projeto.
+ * - assets/img/cupcake.png: marca visual do projeto.
  *
  * Organização funcional:
  * 1. Dados, persistência e regras locais (window.MF).
