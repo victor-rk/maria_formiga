@@ -14,10 +14,11 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="../style.css" />
-    <title>Maria Formiga — Relatórios</title>
+    <link rel="stylesheet" href="../CSS/global.css" />
+    <link rel="stylesheet" href="../CSS/fornecedores.css" />
+    <title>Maria Formiga — Fornecedores</title>
   </head>
-  <body data-page="relatorios">
+  <body data-page="fornecedores">
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <div class="dashboard-layout">
       <aside class="sidebar" id="menu-lateral" aria-label="Menu principal">
@@ -70,15 +71,15 @@
               <i class="fa-solid fa-address-book" aria-hidden="true"></i>
               Clientes
             </a>
-            <a href="fornecedores.html" class="nav-link">
-              <i class="fa-solid fa-building" aria-hidden="true"></i>
-              Fornecedores
-            </a>
             <a
-              href="relatorios.html"
+              href="fornecedores.html"
               class="nav-link active"
               aria-current="page"
             >
+              <i class="fa-solid fa-building" aria-hidden="true"></i>
+              Fornecedores
+            </a>
+            <a href="relatorios.html" class="nav-link">
               <i class="fa-solid fa-file-invoice" aria-hidden="true"></i>
               Relatórios
             </a>
@@ -125,7 +126,7 @@
           <header class="page-header">
             <div>
               <span class="breadcrumb">Maria Formiga</span>
-              <h1>Relatórios</h1>
+              <h1>Fornecedores</h1>
             </div>
             <time class="header-date" id="today"></time>
           </header>
@@ -158,6 +159,7 @@
       aria-live="polite"
       aria-atomic="true"
     ></div>
-    <script src="../app.js" defer></script>
+    <script src="../js/fornecedores.js" defer></script>
+    <script src="../js/global.js" defer></script>
   </body>
 </html>

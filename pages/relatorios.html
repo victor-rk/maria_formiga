@@ -14,10 +14,11 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="../style.css" />
-    <title>Maria Formiga — Gestão de Pedidos</title>
+    <link rel="stylesheet" href="../CSS/global.css" />
+    <link rel="stylesheet" href="../CSS/relatorios.css" />
+    <title>Maria Formiga — Relatórios</title>
   </head>
-  <body data-page="pedidos">
+  <body data-page="relatorios">
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <div class="dashboard-layout">
       <aside class="sidebar" id="menu-lateral" aria-label="Menu principal">
@@ -36,7 +37,7 @@
             <a href="home.html" class="nav-link">
               <i class="fa-solid fa-house" aria-hidden="true"></i> Início
             </a>
-            <a href="pedidos.html" class="nav-link active" aria-current="page">
+            <a href="pedidos.html" class="nav-link">
               <i class="fa-solid fa-receipt" aria-hidden="true"></i> Pedidos
             </a>
             <a href="vendas.html" class="nav-link">
@@ -74,7 +75,11 @@
               <i class="fa-solid fa-building" aria-hidden="true"></i>
               Fornecedores
             </a>
-            <a href="relatorios.html" class="nav-link">
+            <a
+              href="relatorios.html"
+              class="nav-link active"
+              aria-current="page"
+            >
               <i class="fa-solid fa-file-invoice" aria-hidden="true"></i>
               Relatórios
             </a>
@@ -121,7 +126,7 @@
           <header class="page-header">
             <div>
               <span class="breadcrumb">Maria Formiga</span>
-              <h1>Gestão de Pedidos</h1>
+              <h1>Relatórios</h1>
             </div>
             <time class="header-date" id="today"></time>
           </header>
@@ -154,6 +159,7 @@
       aria-live="polite"
       aria-atomic="true"
     ></div>
-    <script src="../app.js" defer></script>
+    <script src="../js/relatorios.js" defer></script>
+    <script src="../js/global.js" defer></script>
   </body>
 </html>

@@ -1,12 +1,18 @@
 /**
- * MARIA FORMIGA — FRONTEND EM UM ÚNICO ARQUIVO
+ * MARIA FORMIGA — RUNTIME COMPARTILHADO
  *
- * Instalação: substitua o app.js da raiz por este arquivo e mantenha no HTML apenas:
- * <script src="../app.js" defer></script>
- * Dados, interface e páginas já estão reunidos neste arquivo; não requer outros scripts.
- * Preserve os arquivos HTML, style.css e img/cupcake.png do projeto entregue.
+ * Este arquivo concentra os dados, as regras comuns e a inicialização das
+ * páginas. Cada HTML carrega também seu ponto de entrada específico.
  *
- * Organização:
+ * Estrutura atual:
+ * - CSS/global.css: estilos compartilhados.
+ * - CSS/*.css: estilos específicos de cada página.
+ * - js/global.js: dados, utilidades compartilhadas e runtime da aplicação.
+ * - js/*.js: pontos de entrada específicos de cada página.
+ * - pages/*.html: telas do sistema.
+ * - img/cupcake.png: marca visual do projeto.
+ *
+ * Organização funcional:
  * 1. Dados, persistência e regras locais (window.MF).
  * 2. Componentes e utilidades de interface (window.UI).
  * 3. Páginas, formulários, ações de botões e eventos.
@@ -298,7 +304,7 @@ window.MF = (
     }
     window.addEventListener(
       "storage",
-      /* Responde ao evento “storage” no contexto de Dados e regras locais. */ (
+       (
         e,
       ) => {
         if (e.key === KEY) {
@@ -323,12 +329,12 @@ window.MF = (
     ) =>
       state.batches
         .filter(
-          /* Seleciona os registros que atendem à condição — Dados e regras locais. */ (
+           (
             b,
           ) => b.product === product && b.expires >= date(),
         )
         .reduce(
-          /* Acumula os valores necessários ao cálculo — Dados e regras locais. */ (
+           (
             s,
             b,
           ) => s + b.qty,
@@ -339,13 +345,13 @@ window.MF = (
         product,
       ) =>
         product.recipe.reduce(
-          /* Acumula os valores necessários ao cálculo — Dados e regras locais. */ (
+           (
             sum,
             line,
           ) =>
             sum +
             (state.materials.find(
-              /* Localiza o registro que corresponde à condição — Dados e regras locais. */ (
+               (
                 m,
               ) => m.id === line.material,
             )?.cost || 0) *
@@ -363,7 +369,7 @@ window.MF = (
       for (const item of items) {
         if (stock(item.product) < item.qty)
           throw Error(
-            `Estoque insuficiente para ${state.products.find(/* Localiza o registro que corresponde à condição — Impede a operação quando os produtos prontos não cobrem a quantidade solicitada. */ (p) => p.id === item.product)?.name || "o produto"}.`,
+            `Estoque insuficiente para ${state.products.find( (p) => p.id === item.product)?.name || "o produto"}.`,
           );
       }
     }
@@ -376,12 +382,12 @@ window.MF = (
         let pending = item.qty;
         const batches = state.batches
           .filter(
-            /* Seleciona os registros que atendem à condição — Baixa produtos dos lotes que vencem primeiro e retorna o custo histórico dos itens consumidos. */ (
+             (
               b,
             ) => b.product === item.product && b.qty > 0 && b.expires >= date(),
           )
           .sort(
-            /* Ordena os registros pelo critério indicado — Baixa produtos dos lotes que vencem primeiro e retorna o custo histórico dos itens consumidos. */ (
+             (
               a,
               b,
             ) => a.expires.localeCompare(b.expires),
@@ -407,7 +413,7 @@ window.MF = (
       const n = value.replace(/\D/g, "");
       if (n.length !== 11 || /^(\d)\1+$/.test(n)) return false;
       return [9, 10].every(
-        /* Confere se todos os elementos atendem à validação — Valida quantidade de dígitos e dígitos verificadores de um CPF. */ (
+         (
           len,
         ) => {
           let sum = 0;
@@ -423,7 +429,7 @@ window.MF = (
       const n = value.replace(/\D/g, "");
       if (n.length !== 14 || /^(\d)\1+$/.test(n)) return false;
       return [12, 13].every(
-        /* Confere se todos os elementos atendem à validação — Valida quantidade de dígitos e dígitos verificadores de um CNPJ numérico. */ (
+         (
           len,
         ) => {
           let w = len - 7,
@@ -438,13 +444,13 @@ window.MF = (
       );
     }
     return {
-      get state /* Executa a rotina interna de Dados e regras locais. */() {
+      get state () {
         return state;
       },
-      get role /* Executa a rotina interna de Dados e regras locais. */() {
+      get role () {
         return role;
       },
-      get persistent /* Executa a rotina interna de Dados e regras locais. */() {
+      get persistent () {
         return persistent;
       },
       uid,
@@ -795,7 +801,7 @@ window.UI = (
       value = "",
       extra = "required",
     ) {
-      return `<div class="input-group"><label for="f-${name}">${esc(label)}</label><select id="f-${name}" name="${name}" class="custom-select" ${extra}>${options.map(/* Transforma cada registro para compor o resultado — Gera uma lista de seleção com rótulo, opções e valor selecionado. */ (o) => `<option value="${esc(o[0])}" ${String(o[0]) === String(value) ? "selected" : ""}>${esc(o[1])}</option>`).join("")}</select></div>`;
+      return `<div class="input-group"><label for="f-${name}">${esc(label)}</label><select id="f-${name}" name="${name}" class="custom-select" ${extra}>${options.map( (o) => `<option value="${esc(o[0])}" ${String(o[0]) === String(value) ? "selected" : ""}>${esc(o[1])}</option>`).join("")}</select></div>`;
     }
     const actions =
       /* Gera os botões de confirmar e cancelar usados no rodapé dos formulários. */ (
@@ -822,15 +828,15 @@ window.UI = (
       prepareMasks(dialog);
       dialog.showModal();
       document.body.classList.add("dialog-open");
-      dialog.oninput = /* Trata dialog.oninput no contexto de open. */ () =>
+      dialog.oninput =  () =>
         (dirty = true);
-      dialog.oncancel = /* Trata dialog.oncancel no contexto de open. */ (
+      dialog.oncancel =  (
         e,
       ) => {
         e.preventDefault();
         close();
       };
-      dialog.onclick = /* Trata dialog.onclick no contexto de open. */ (e) => {
+      dialog.onclick =  (e) => {
         if (e.target === dialog) {
           const r = dialog.getBoundingClientRect();
           if (
@@ -843,7 +849,7 @@ window.UI = (
         }
       };
       setTimeout(
-        /* Executa a atualização após o intervalo agendado — Abre o diálogo, preenche título e conteúdo, acompanha alterações e direciona o foco. */ () => {
+         () => {
           (
             dialog.querySelector("input:not([type=hidden]),select,textarea") ||
             document.getElementById("dialog-close")
@@ -894,7 +900,7 @@ window.UI = (
       root.classList.add("visible");
       clearTimeout(root.timer);
       root.timer = setTimeout(
-        /* Executa a atualização após o intervalo agendado — Apresenta uma notificação temporária de sucesso, aviso ou erro. */ () =>
+         () =>
           root.classList.remove("visible"),
         6500,
       );
@@ -905,7 +911,7 @@ window.UI = (
       const f = document.querySelector("#dialog-body form");
       f.addEventListener(
         "submit",
-        /* Responde ao evento “submit” no contexto de bindForm. */ (e) => {
+         (e) => {
           e.preventDefault();
           const error = f.querySelector(".form-error");
           error.textContent = "";
@@ -931,7 +937,7 @@ window.UI = (
       rows,
       empty = "Nenhum registro encontrado.",
     ) {
-      return `<div class="table-responsive" role="region" aria-label="Resultados" tabindex="0"><table class="data-table"><thead><tr>${headers.map(/* Transforma cada registro para compor o resultado — Monta uma tabela acessível com cabeçalhos e mensagem para ausência de resultados. */ (h) => `<th scope="col">${esc(h)}</th>`).join("")}</tr></thead><tbody>${rows.length ? rows.map(/* Transforma cada registro para compor o resultado — Monta uma tabela acessível com cabeçalhos e mensagem para ausência de resultados. */ (cells) => `<tr>${cells.map(/* Transforma cada registro para compor o resultado — Monta uma tabela acessível com cabeçalhos e mensagem para ausência de resultados. */ (c) => `<td class="${String(c).includes("R$") ? "money-cell" : /\b\d{2}\/\d{2}\/\d{4}/.test(String(c)) ? "date-cell" : ""}">${c}</td>`).join("")}</tr>`).join("") : `<tr><td class="empty-state" colspan="${headers.length}">${esc(empty)}</td></tr>`}</tbody></table></div>`;
+      return `<div class="table-responsive" role="region" aria-label="Resultados" tabindex="0"><table class="data-table"><thead><tr>${headers.map( (h) => `<th scope="col">${esc(h)}</th>`).join("")}</tr></thead><tbody>${rows.length ? rows.map( (cells) => `<tr>${cells.map( (c) => `<td class="${String(c).includes("R$") ? "money-cell" : /\b\d{2}\/\d{2}\/\d{4}/.test(String(c)) ? "date-cell" : ""}">${c}</td>`).join("")}</tr>`).join("") : `<tr><td class="empty-state" colspan="${headers.length}">${esc(empty)}</td></tr>`}</tbody></table></div>`;
     }
     /* Gera e baixa um arquivo CSV com os registros fornecidos. */ function csv(
       headers,
@@ -951,7 +957,7 @@ window.UI = (
         "\uFEFF" +
         [headers, ...rows]
           .map(
-            /* Transforma cada registro para compor o resultado — Gera e baixa um arquivo CSV com os registros fornecidos. */ (
+             (
               r,
             ) => r.map(cell).join(";"),
           )
@@ -964,7 +970,7 @@ window.UI = (
       a.download = name + ".csv";
       a.click();
       setTimeout(
-        /* Executa a atualização após o intervalo agendado — Gera e baixa um arquivo CSV com os registros fornecidos. */ () =>
+         () =>
           URL.revokeObjectURL(url),
         1000,
       );
@@ -1003,21 +1009,21 @@ window.UI = (
   /* Inicializa as páginas, os formulários e os eventos da aplicação. */ () => {
     const D = MF,
       U = UI,
-      $ = /* Executa a rotina interna de Páginas e interações. */ (s) =>
+      $ =  (s) =>
         document.querySelector(s),
       E = U.esc,
       M = U.money,
       B = U.btn,
       F = U.field,
       S = U.select;
-    const page = document.body.dataset.page;
+    const page = window.MF_PAGE || document.body.dataset.page;
     const get =
       /* Localiza um registro pelo identificador no conjunto de dados solicitado. */ (
         type,
         id,
       ) =>
         D.state[type].find(
-          /* Localiza o registro que corresponde à condição — Páginas e interações. */ (
+           (
             x,
           ) => x.id === id,
         );
@@ -1122,7 +1128,7 @@ window.UI = (
       return [
         ["", label],
         ...D.state[type].map(
-          /* Transforma cada registro para compor o resultado — Converte registros cadastrados em opções para campos de seleção. */ (
+           (
             x,
           ) => [x.id, x.name],
         ),
@@ -1154,7 +1160,7 @@ window.UI = (
         v,
       ) =>
         paymentOptions().find(
-          /* Localiza o registro que corresponde à condição — Páginas e interações. */ (
+           (
             p,
           ) => p[0] === v,
         )?.[1] || "Não definido";
@@ -1163,7 +1169,7 @@ window.UI = (
         o,
       ) =>
         o.items.reduce(
-          /* Acumula os valores necessários ao cálculo — Páginas e interações. */ (
+           (
             sum,
             i,
           ) => sum + i.qty * i.price,
@@ -1178,7 +1184,7 @@ window.UI = (
       ) =>
         items
           .map(
-            /* Transforma cada registro para compor o resultado — Páginas e interações. */ (
+             (
               i,
             ) =>
               `${i.qty} × ${i.name || get("products", i.product)?.name || "Produto"}`,
@@ -1188,7 +1194,7 @@ window.UI = (
       actions,
       filters = ["Todos"],
     ) {
-      return `<div class="toolbar"><div class="search-box"><label class="sr-only" for="list-search">Buscar registros</label><input type="search" id="list-search" placeholder="Buscar nesta página..." value="${E(query)}" autocomplete="off"></div><div class="filters" role="group" aria-label="Filtrar resultados">${filters.map(/* Transforma cada registro para compor o resultado — Gera a barra de busca, filtros, limpeza e ações do módulo atual. */ (f) => `<button type="button" class="filter-btn ${filter === f ? "active" : ""}" data-filter="${E(f)}" aria-pressed="${filter === f}">${E(f)}</button>`).join("")}</div><div class="toolbar-actions">${query || filter !== "Todos" ? /* Botão “Limpar filtros”: Limpa a busca e retorna ao filtro Todos. */ B("Limpar filtros", "clear-filters", "", "btn-secondary") : ""}${actions}</div></div>`;
+      return `<div class="toolbar"><div class="search-box"><label class="sr-only" for="list-search">Buscar registros</label><input type="search" id="list-search" placeholder="Buscar nesta página..." value="${E(query)}" autocomplete="off"></div><div class="filters" role="group" aria-label="Filtrar resultados">${filters.map( (f) => `<button type="button" class="filter-btn ${filter === f ? "active" : ""}" data-filter="${E(f)}" aria-pressed="${filter === f}">${E(f)}</button>`).join("")}</div><div class="toolbar-actions">${query || filter !== "Todos" ?  B("Limpar filtros", "clear-filters", "", "btn-secondary") : ""}${actions}</div></div>`;
     }
     /* Monta o cartão de listagem com título, total de resultados e tabela. */ function list(
       title,
@@ -1215,7 +1221,7 @@ window.UI = (
     /* Gera os cartões de indicadores a partir de rótulos e valores. */ function kpis(
       items,
     ) {
-      return `<div class="kpi-mini-grid">${items.map(/* Transforma cada registro para compor o resultado — Gera os cartões de indicadores a partir de rótulos e valores. */ ([label, value]) => `<div class="kpi-mini-card"><div><span class="kpi-mini-label">${E(label)}</span><strong class="kpi-mini-val">${E(value)}</strong></div></div>`).join("")}</div>`;
+      return `<div class="kpi-mini-grid">${items.map( ([label, value]) => `<div class="kpi-mini-card"><div><span class="kpi-mini-label">${E(label)}</span><strong class="kpi-mini-val">${E(value)}</strong></div></div>`).join("")}</div>`;
     }
     /* Atualiza o conteúdo do módulo e aplica as permissões demonstrativas. */ function render() {
       const root = $("#app");
@@ -1227,65 +1233,10 @@ window.UI = (
         root.setAttribute("aria-busy", "false");
         return;
       }
-      if (page === "home") renderHome(root);
+      if (page === "home") window.MF_PAGES.home(root);
       else if (page === "relatorios") renderReports(root);
       else renderList(root);
       root.setAttribute("aria-busy", "false");
-    }
-    // Monta os atalhos principais sem descrições redundantes, respeitando o perfil atual.
-    function renderHome(root) {
-      const cards = [
-        {
-          title: "Novo Pedido",
-          href: "pedidos.html?openModal=true",
-          icon: "fa-plus",
-          permission: "manage",
-          featured: true,
-        },
-        {
-          title: "Caixa / Vendas",
-          href: "vendas.html",
-          icon: "fa-cash-register",
-          permission: "manage",
-        },
-        {
-          title: "Pedidos em Andamento",
-          href: "pedidos.html",
-          icon: "fa-clipboard-check",
-          permission: "readOrders",
-        },
-        {
-          title: "Estoque Geral",
-          href: "estoque.html",
-          icon: "fa-cube",
-          permission: "readStock",
-        },
-        {
-          title: "Entregas",
-          href: "entregas.html",
-          icon: "fa-truck",
-          permission: "deliver",
-        },
-        {
-          title: "Relatórios",
-          href: "relatorios.html",
-          icon: "fa-file-lines",
-          permission: "manage",
-        },
-        {
-          title: "Clientes",
-          href: "clientes.html",
-          icon: "fa-user-group",
-          permission: "manage",
-        },
-      ];
-      root.innerHTML = `<div class="bento-grid-new">${cards
-        .filter((card) => D.permission(card.permission))
-        .map(
-          (card) =>
-            `<a href="${card.href}" class="bento-card${card.featured ? " bento-destaque" : ""}"><div class="bento-icon-wrapper"><div class="icon-box"><i class="fa-solid ${card.icon}" aria-hidden="true"></i></div><i class="fa-solid fa-chevron-right arrow-icon" aria-hidden="true"></i></div><div class="bento-text"><h2>${card.title}</h2></div></a>`,
-        )
-        .join("")}</div>`;
     }
     /* Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ function renderList(
       root,
@@ -1298,7 +1249,7 @@ window.UI = (
         filters = ["Todos"];
       if (page === "clientes") {
         actions =
-          /* Botão “Novo cliente”: Abre cadastro ou edição de cliente. */ B(
+           B(
             "Novo cliente",
             "client",
             "",
@@ -1309,24 +1260,24 @@ window.UI = (
         rows = D.state.clients
           .filter(matches)
           .map(
-            /* Transforma cada registro para compor o resultado — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+             (
               c,
             ) => [
               E(c.name),
               E(c.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")),
               `${E(U.formatPhone(c.phone))}<br><span class="muted">${E(c.email)}</span>`,
               String(c.addresses.length),
-              /* Botão “Editar”: Abre cadastro ou edição de cliente. */ B(
+               B(
                 "Editar",
                 "client",
                 c.id,
               ) +
-                /* Botão “Endereços”: Lista endereços do cliente. */ B(
+                 B(
                   "Endereços",
                   "addresses",
                   c.id,
                 ) +
-                /* Botão “Histórico”: Consulta os pedidos do cliente. */ B(
+                 B(
                   "Histórico",
                   "client-history",
                   c.id,
@@ -1335,7 +1286,7 @@ window.UI = (
           );
       } else if (page === "fornecedores") {
         actions =
-          /* Botão “Novo fornecedor”: Abre cadastro ou edição de fornecedor. */ B(
+           B(
             "Novo fornecedor",
             "supplier",
             "",
@@ -1353,7 +1304,7 @@ window.UI = (
         rows = D.state.suppliers
           .filter(matches)
           .map(
-            /* Transforma cada registro para compor o resultado — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+             (
               s,
             ) => [
               E(s.name),
@@ -1361,7 +1312,7 @@ window.UI = (
               E(s.category),
               `${E(U.formatPhone(s.phone))}<br>${E(s.email)}`,
               `${s.lead} dia(s) úteis`,
-              /* Botão “Editar”: Abre cadastro ou edição de fornecedor. */ B(
+               B(
                 "Editar",
                 "supplier",
                 s.id,
@@ -1370,13 +1321,13 @@ window.UI = (
           );
       } else if (page === "estoque") {
         actions = admin
-          ? /* Botão “Movimentar”: Abre movimentação do insumo selecionado. */ B(
+          ?  B(
               "Movimentar",
               "movement",
               "",
               "btn-secondary",
             ) +
-            /* Botão “Nova matéria-prima”: Abre cadastro ou edição de matéria-prima. */ B(
+             B(
               "Nova matéria-prima",
               "material",
               "",
@@ -1395,7 +1346,7 @@ window.UI = (
         filters = ["Todos", "Estoque baixo", "Nível seguro"];
         rows = D.state.materials
           .filter(
-            /* Seleciona os registros que atendem à condição — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+             (
               m,
             ) =>
               matches(m) &&
@@ -1405,7 +1356,7 @@ window.UI = (
                   : m.stock > m.min)),
           )
           .map(
-            /* Transforma cada registro para compor o resultado — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+             (
               m,
             ) => [
               E(m.name),
@@ -1417,18 +1368,18 @@ window.UI = (
                 m.stock <= m.min ? "critico" : "pronto",
               ),
               (admin
-                ? /* Botão “Movimentar”: Abre movimentação do insumo selecionado. */ B(
+                ?  B(
                     "Movimentar",
                     "movement",
                     m.id,
                   ) +
-                  /* Botão “Editar”: Abre cadastro ou edição de matéria-prima. */ B(
+                   B(
                     "Editar",
                     "material",
                     m.id,
                   )
                 : "") +
-                /* Botão “Histórico”: Consulta movimentações da matéria-prima. */ B(
+                 B(
                   "Histórico",
                   "material-history",
                   m.id,
@@ -1437,7 +1388,7 @@ window.UI = (
           );
       } else if (page === "produtos") {
         actions =
-          /* Botão “Novo produto”: Abre cadastro ou edição da ficha técnica. */ B(
+           B(
             "Novo produto",
             "product",
             "",
@@ -1455,7 +1406,7 @@ window.UI = (
         rows = D.state.products
           .filter(matches)
           .map(
-            /* Transforma cada registro para compor o resultado — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+             (
               p,
             ) => [
               E(p.name),
@@ -1463,7 +1414,7 @@ window.UI = (
               M(p.price),
               U.num(D.margin(p.price, D.cost(p))) + "%",
               U.num(p.margin) + "%",
-              /* Botão “Ficha técnica / Editar”: Abre cadastro ou edição da ficha técnica. */ B(
+               B(
                 "Ficha técnica / Editar",
                 "product",
                 p.id,
@@ -1473,7 +1424,7 @@ window.UI = (
       } else if (page === "produtos-prontos") {
         actions =
           (D.permission("produce")
-            ? /* Botão “Registrar produção”: Abre o registro de produção concluída. */ B(
+            ?  B(
                 "Registrar produção",
                 "production",
                 "",
@@ -1481,7 +1432,7 @@ window.UI = (
               )
             : "") +
           (admin
-            ? /* Botão “Baixa por perda”: Abre a baixa por perda de um lote. */ B(
+            ?  B(
                 "Baixa por perda",
                 "loss",
                 "",
@@ -1500,7 +1451,7 @@ window.UI = (
         filters = ["Todos", "Disponíveis", "Vencidos", "Estoque baixo"];
         rows = D.state.batches
           .filter(
-            /* Seleciona os registros que atendem à condição — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+             (
               b,
             ) => {
               const p = get("products", b.product);
@@ -1517,7 +1468,7 @@ window.UI = (
             },
           )
           .map(
-            /* Transforma cada registro para compor o resultado — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+             (
               b,
             ) => {
               const expired = b.expires < D.date();
@@ -1539,14 +1490,14 @@ window.UI = (
                       : "pronto",
                 ),
                 admin
-                  ? /* Botão “Registrar perda”: Abre a baixa por perda de um lote. */ B(
+                  ?  B(
                       "Registrar perda",
                       "loss",
                       b.id,
                     ) +
                     (expired
                       ? ""
-                      : /* Botão “Vender”: Leva o produto selecionado à página de vendas. */ B(
+                      :  B(
                           "Vender",
                           "quick-sale",
                           b.product,
@@ -1557,7 +1508,7 @@ window.UI = (
           );
       } else if (page === "pedidos") {
         actions = admin
-          ? /* Botão “Novo pedido”: Abre cadastro ou edição de pedido. */ B(
+          ?  B(
               "Novo pedido",
               "order",
               "",
@@ -1584,7 +1535,7 @@ window.UI = (
         ];
         rows = D.state.orders
           .filter(
-            /* Seleciona os registros que atendem à condição — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+             (
               o,
             ) =>
               matches({
@@ -1595,13 +1546,13 @@ window.UI = (
               (filter === "Todos" || o.status === filter),
           )
           .sort(
-            /* Ordena os registros pelo critério indicado — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+             (
               a,
               b,
             ) => b.created.localeCompare(a.created),
           )
           .map(
-            /* Transforma cada registro para compor o resultado — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+             (
               o,
             ) => [
               E(o.code),
@@ -1617,7 +1568,7 @@ window.UI = (
                     ? "pronto"
                     : "pendente",
               ),
-              /* Botão “Detalhes”: Mostra os detalhes e o histórico do pedido. */ B(
+               B(
                 "Detalhes",
                 "order-detail",
                 o.id,
@@ -1626,7 +1577,7 @@ window.UI = (
           );
       } else if (page === "vendas") {
         actions =
-          /* Botão “Nova venda de balcão”: Inicia uma venda de balcão. */ B(
+           B(
             "Nova venda de balcão",
             "sale",
             "",
@@ -1644,7 +1595,7 @@ window.UI = (
         ];
         filters = ["Todos", "Pagas", "Pendentes"];
         const sales = D.state.sales.filter(
-          /* Seleciona os registros que atendem à condição — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+           (
             s,
           ) =>
             matches({
@@ -1657,7 +1608,7 @@ window.UI = (
           .slice()
           .reverse()
           .map(
-            /* Transforma cada registro para compor o resultado — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+             (
               s,
             ) => [
               E(s.code),
@@ -1666,7 +1617,7 @@ window.UI = (
               E(payName(s.payment)),
               U.date(s.created),
               M(s.total),
-              /* Botão “Comprovante”: Exibe o comprovante demonstrativo. */ B(
+               B(
                 "Comprovante",
                 "receipt",
                 s.id,
@@ -1677,7 +1628,7 @@ window.UI = (
           rows.push(
             ...D.state.orders
               .filter(
-                /* Seleciona os registros que atendem à condição — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+                 (
                   o,
                 ) =>
                   o.status !== "Cancelado" &&
@@ -1685,7 +1636,7 @@ window.UI = (
                   matches({ ...o, name: clientName(o.client) }),
               )
               .map(
-                /* Transforma cada registro para compor o resultado — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+                 (
                   o,
                 ) => [
                   E(o.code),
@@ -1694,7 +1645,7 @@ window.UI = (
                   U.badge("Pendente"),
                   U.date(o.created),
                   M(total(o)),
-                  /* Botão “Receber”: Abre o recebimento integral do pedido. */ B(
+                   B(
                     "Receber",
                     "receive",
                     o.id,
@@ -1716,7 +1667,7 @@ window.UI = (
         filters = ["Todos", "Aguardando envio", "Em rota", "Entregue"];
         rows = D.state.orders
           .filter(
-            /* Seleciona os registros que atendem à condição — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+             (
               o,
             ) =>
               o.mode === "entrega" &&
@@ -1730,13 +1681,13 @@ window.UI = (
                 (o.delivery || "Aguardando envio") === filter),
           )
           .sort(
-            /* Ordena os registros pelo critério indicado — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+             (
               a,
               b,
             ) => a.due.localeCompare(b.due),
           )
           .map(
-            /* Transforma cada registro para compor o resultado — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+             (
               o,
             ) => [
               E(o.code),
@@ -1749,18 +1700,18 @@ window.UI = (
                 o.delivery === "Entregue" ? "pronto" : "pendente",
               ),
               o.delivery === "Entregue"
-                ? /* Botão “Detalhes”: Mostra os detalhes e o histórico do pedido. */ B(
+                ?  B(
                     "Detalhes",
                     "order-detail",
                     o.id,
                   )
                 : o.delivery === "Em rota"
-                  ? /* Botão “Confirmar entrega”: Confirma a entrega ao cliente. */ B(
+                  ?  B(
                       "Confirmar entrega",
                       "delivered",
                       o.id,
                     )
-                  : /* Botão “Despachar”: Abre o despacho do pedido pronto. */ B(
+                  :  B(
                       "Despachar",
                       "dispatch",
                       o.id,
@@ -1776,12 +1727,12 @@ window.UI = (
                 M(
                   D.state.sales
                     .filter(
-                      /* Seleciona os registros que atendem à condição — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+                       (
                         s,
                       ) => D.localDate(s.created) === D.date(),
                     )
                     .reduce(
-                      /* Acumula os valores necessários ao cálculo — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+                       (
                         a,
                         s,
                       ) => a + s.total,
@@ -1794,7 +1745,7 @@ window.UI = (
                 "Pedidos a receber",
                 String(
                   D.state.orders.filter(
-                    /* Seleciona os registros que atendem à condição — Monta as listagens de cada página com busca, filtros, dados e ações específicas. */ (
+                     (
                       o,
                     ) => !o.sale && o.status !== "Cancelado",
                   ).length,
@@ -1821,7 +1772,7 @@ window.UI = (
       U.open(
         c ? "Editar cliente" : "Cadastrar cliente",
         U.form(
-          `<div class="form-grid">${/* Campo “Nome completo *” (name): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("name", "Nome completo *", c?.name || "", "text", required)}${/* Campo “CPF *” (cpf): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("cpf", "CPF *", c?.cpf || "", "text", 'required inputmode="numeric" maxlength="14"')}${/* Campo “E-mail *” (email): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("email", "E-mail *", c?.email || "", "email", 'required maxlength="120" autocomplete="email"')}${/* Campo “Telefone / WhatsApp *” (phone): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("phone", "Telefone / WhatsApp *", c?.phone || "", "tel", 'required minlength="10" maxlength="30" autocomplete="tel"')}</div><p class="help">Os endereços são gerenciados separadamente, permitindo mais de um local por cliente.</p>`,
+          `<div class="form-grid">${ F("name", "Nome completo *", c?.name || "", "text", required)}${ F("cpf", "CPF *", c?.cpf || "", "text", 'required inputmode="numeric" maxlength="14"')}${ F("email", "E-mail *", c?.email || "", "email", 'required maxlength="120" autocomplete="email"')}${ F("phone", "Telefone / WhatsApp *", c?.phone || "", "tel", 'required minlength="10" maxlength="30" autocomplete="tel"')}</div><p class="help">Os endereços são gerenciados separadamente, permitindo mais de um local por cliente.</p>`,
         ),
         undefined,
         flow.onCancel,
@@ -1834,7 +1785,7 @@ window.UI = (
           if (!D.validCPF(cpf)) throw Error("Informe um CPF válido.");
           if (
             D.state.clients.some(
-              /* Verifica se algum registro atende à condição — Abre cadastro ou edição de cliente e valida CPF, duplicidade e telefone. */ (
+               (
                 x,
               ) => x.id !== id && x.cpf === cpf,
             )
@@ -1845,7 +1796,7 @@ window.UI = (
             throw Error("Informe o telefone com DDD.");
           const clientId = c?.id || D.uid();
           const updateClient =
-            /* Atualiza os dados dentro da gravação local — Abre cadastro ou edição de cliente e valida CPF, duplicidade e telefone. */ (
+             (
               s,
             ) => {
               const data = {
@@ -1883,11 +1834,11 @@ window.UI = (
         `<p class="help">Cadastre e selecione o endereço no pedido. Alterações futuras não modificam entregas já registradas.</p>${U.table(
           ["Endereço", "Ações"],
           c.addresses.map(
-            /* Transforma cada registro para compor o resultado — Lista os endereços associados ao cliente e oferece cadastro e edição. */ (
+             (
               a,
             ) => [
               E(address(a)),
-              /* Botão “Editar”: Abre cadastro ou edição de endereço. */ B(
+               B(
                 "Editar",
                 "address-edit",
                 id + "|" + a.id,
@@ -1895,7 +1846,7 @@ window.UI = (
             ],
           ),
           "Nenhum endereço cadastrado.",
-        )}${/* Botão “Novo endereço”: Abre cadastro ou edição de endereço. */ B("Novo endereço", "address-edit", id + "|", "btn-primary")}`,
+        )}${ B("Novo endereço", "address-edit", id + "|", "btn-primary")}`,
       );
     }
     /* Cadastra ou atualiza o endereço selecionado sem alterar cópias já registradas em pedidos. */ function addressForm(
@@ -1905,14 +1856,14 @@ window.UI = (
       const [cid, aid] = key.split("|"),
         c = get("clients", cid),
         a = c.addresses.find(
-          /* Localiza o registro que corresponde à condição — Cadastra ou atualiza o endereço selecionado sem alterar cópias já registradas em pedidos. */ (
+           (
             x,
           ) => x.id === aid,
         );
       U.open(
         a ? "Editar endereço" : "Novo endereço",
         U.form(
-          `<div class="form-grid">${/* Campo “Rua / avenida *” (street): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("street", "Rua / avenida *", a?.street || "", "text", required)}${/* Campo “Número ou S/N *” (number): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("number", "Número ou S/N *", a?.number || "", "text", 'required maxlength="20"')}${/* Campo “Bairro *” (district): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("district", "Bairro *", a?.district || "", "text", required)}${/* Campo “Cidade *” (city): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("city", "Cidade *", a?.city || "Biritiba-Mirim", "text", required)}${/* Campo “CEP *” (zip): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("zip", "CEP *", a?.zip || "", "text", 'required pattern="[0-9]{5}-?[0-9]{3}" inputmode="numeric" maxlength="9"')}${/* Campo “Complemento” (extra): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("extra", "Complemento", a?.extra || "", "text", 'maxlength="120"')}</div>`,
+          `<div class="form-grid">${ F("street", "Rua / avenida *", a?.street || "", "text", required)}${ F("number", "Número ou S/N *", a?.number || "", "text", 'required maxlength="20"')}${ F("district", "Bairro *", a?.district || "", "text", required)}${ F("city", "Cidade *", a?.city || "Biritiba-Mirim", "text", required)}${ F("zip", "CEP *", a?.zip || "", "text", 'required pattern="[0-9]{5}-?[0-9]{3}" inputmode="numeric" maxlength="9"')}${ F("extra", "Complemento", a?.extra || "", "text", 'maxlength="120"')}</div>`,
         ),
       );
       U.bindForm(
@@ -1920,10 +1871,10 @@ window.UI = (
           fd,
         ) =>
           save(
-            /* Atualiza os dados dentro da gravação local — Cadastra ou atualiza o endereço selecionado sem alterar cópias já registradas em pedidos. */ () => {
+             () => {
               const data = Object.fromEntries(
                 ["street", "number", "district", "city", "zip", "extra"].map(
-                  /* Transforma cada registro para compor o resultado — Cadastra ou atualiza o endereço selecionado sem alterar cópias já registradas em pedidos. */ (
+                   (
                     k,
                   ) => [k, val(fd, k)],
                 ),
@@ -1943,7 +1894,7 @@ window.UI = (
       U.open(
         s ? "Editar fornecedor" : "Novo fornecedor",
         U.form(
-          `<div class="form-grid">${/* Campo “Razão social / nome fantasia *” (name): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("name", "Razão social / nome fantasia *", s?.name || "", "text", required)}${/* Campo “CNPJ *” (cnpj): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("cnpj", "CNPJ *", s?.cnpj || "", "text", 'required maxlength="18" inputmode="numeric"')}${/* Campo “Categoria de insumo *” (category): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("category", "Categoria de insumo *", s?.category || "", "text", required)}${/* Campo “Prazo em dias úteis *” (lead): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("lead", "Prazo em dias úteis *", s?.lead ?? 2, "number", 'required min="0" max="365" step="1"')}${/* Campo “Telefone *” (phone): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("phone", "Telefone *", s?.phone || "", "tel", 'required minlength="10" maxlength="30"')}${/* Campo “E-mail para pedidos *” (email): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("email", "E-mail para pedidos *", s?.email || "", "email", 'required maxlength="120"')}</div>`,
+          `<div class="form-grid">${ F("name", "Razão social / nome fantasia *", s?.name || "", "text", required)}${ F("cnpj", "CNPJ *", s?.cnpj || "", "text", 'required maxlength="18" inputmode="numeric"')}${ F("category", "Categoria de insumo *", s?.category || "", "text", required)}${ F("lead", "Prazo em dias úteis *", s?.lead ?? 2, "number", 'required min="0" max="365" step="1"')}${ F("phone", "Telefone *", s?.phone || "", "tel", 'required minlength="10" maxlength="30"')}${ F("email", "E-mail para pedidos *", s?.email || "", "email", 'required maxlength="120"')}</div>`,
         ),
       );
       U.bindForm(
@@ -1954,7 +1905,7 @@ window.UI = (
           if (!D.validCNPJ(cnpj)) throw Error("Informe um CNPJ válido.");
           if (
             D.state.suppliers.some(
-              /* Verifica se algum registro atende à condição — Cadastra ou edita fornecedor, validando CNPJ e duplicidade. */ (
+               (
                 x,
               ) => x.id !== id && x.cnpj === cnpj,
             )
@@ -1969,7 +1920,7 @@ window.UI = (
             email: val(fd, "email"),
           };
           save(
-            /* Atualiza os dados dentro da gravação local — Cadastra ou edita fornecedor, validando CNPJ e duplicidade. */ (
+             (
               st,
             ) =>
               s
@@ -1988,8 +1939,8 @@ window.UI = (
       U.open(
         m ? "Editar matéria-prima" : "Nova matéria-prima",
         U.form(
-          `<div class="form-grid">${/* Campo “Nome da matéria-prima *” (name): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("name", "Nome da matéria-prima *", m?.name || "", "text", required)}${
-            /* Seleção “Unidade base *” (unit): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ S(
+          `<div class="form-grid">${ F("name", "Nome da matéria-prima *", m?.name || "", "text", required)}${
+             S(
               "unit",
               "Unidade base *",
               [
@@ -2002,7 +1953,7 @@ window.UI = (
               m?.unit || "kg",
               m ? "disabled" : "required",
             )
-          }${!m ? /* Campo “Saldo inicial *” (stock): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("stock", "Saldo inicial *", 0, "number", 'required min="0" step="0.001"') : ""}${/* Campo “Estoque mínimo *” (min): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("min", "Estoque mínimo *", m?.min || 0, "number", 'required min="0" step="0.001"')}${/* Campo “Custo em R$ por unidade base *” (cost): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("cost", "Custo em R$ por unidade base *", m ? m.cost / 100 : 0, "number", 'required min="0.01" step="0.01"')}</div><p class="help">Use a mesma unidade na receita e nas movimentações. O saldo é alterado por movimentação, preservando o histórico. O custo atual não altera vendas anteriores.</p>`,
+          }${!m ?  F("stock", "Saldo inicial *", 0, "number", 'required min="0" step="0.001"') : ""}${ F("min", "Estoque mínimo *", m?.min || 0, "number", 'required min="0" step="0.001"')}${ F("cost", "Custo em R$ por unidade base *", m ? m.cost / 100 : 0, "number", 'required min="0.01" step="0.01"')}</div><p class="help">Use a mesma unidade na receita e nas movimentações. O saldo é alterado por movimentação, preservando o histórico. O custo atual não altera vendas anteriores.</p>`,
         ),
       );
       U.bindForm(
@@ -2012,7 +1963,7 @@ window.UI = (
           const name = val(fd, "name");
           if (
             D.state.materials.some(
-              /* Verifica se algum registro atende à condição — Cadastra ou edita matéria-prima, sua unidade, saldo inicial, mínimo e custo. */ (
+               (
                 x,
               ) =>
                 x.id !== id &&
@@ -2026,7 +1977,7 @@ window.UI = (
             cost: cents(fd, "cost"),
           };
           save(
-            /* Atualiza os dados dentro da gravação local — Cadastra ou edita matéria-prima, sua unidade, saldo inicial, mínimo e custo. */ (
+             (
               s,
             ) => {
               if (m) Object.assign(m, data);
@@ -2060,8 +2011,8 @@ window.UI = (
       U.open(
         "Movimentar matéria-prima",
         U.form(
-          `${/* Seleção “Matéria-prima *” (material): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ S("material", "Matéria-prima *", options("materials"), id)}<p id="movement-stock" class="notice"></p><div class="form-grid">${
-            /* Seleção “Operação *” (type): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ S(
+          `${ S("material", "Matéria-prima *", options("materials"), id)}<p id="movement-stock" class="notice"></p><div class="form-grid">${
+             S(
               "type",
               "Operação *",
               [
@@ -2069,7 +2020,7 @@ window.UI = (
                 ["saida", "Saída / uso ou perda"],
               ],
             )
-          }${/* Campo “Quantidade na unidade base *” (qty): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("qty", "Quantidade na unidade base *", "", "number", 'required min="0.001" step="0.001"')}${/* Campo “Novo custo por unidade (R$) — opcional” (cost): preenchimento opcional; valor inicial e restrições são definidos nos argumentos seguintes. */ F("cost", "Novo custo por unidade (R$) — opcional", "", "number", 'min="0.01" step="0.01"')}${/* Seleção “Fornecedor — opcional” (supplier): preenchimento opcional; valor inicial e restrições são definidos nos argumentos seguintes. */ S("supplier", "Fornecedor — opcional", options("suppliers", "Não vincular"), "", "")}</div>${/* Campo “Motivo / referência *” (reason): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("reason", "Motivo / referência *", "", "text", 'required maxlength="200"')}`,
+          }${ F("qty", "Quantidade na unidade base *", "", "number", 'required min="0.001" step="0.001"')}${ F("cost", "Novo custo por unidade (R$) — opcional", "", "number", 'min="0.01" step="0.01"')}${ S("supplier", "Fornecedor — opcional", options("suppliers", "Não vincular"), "", "")}</div>${ F("reason", "Motivo / referência *", "", "text", 'required maxlength="200"')}`,
         ),
       );
       const update =
@@ -2093,7 +2044,7 @@ window.UI = (
           if (type === "saida" && qty > m.stock)
             throw Error("A saída supera o saldo disponível.");
           save(
-            /* Atualiza os dados dentro da gravação local — Registra entrada ou saída de matéria-prima e impede retirada superior ao saldo. */ (
+             (
               s,
             ) => {
               m.stock =
@@ -2121,22 +2072,22 @@ window.UI = (
     /* Gera uma linha de insumo, quantidade e remoção para cada componente da receita. */ function recipeMarkup() {
       return recipe
         .map(
-          /* Transforma cada registro para compor o resultado — Gera uma linha de insumo, quantidade e remoção para cada componente da receita. */ (
+           (
             r,
             i,
           ) =>
             `<div class="recipe-line">${
-              /* Seleção “Matéria-prima *” (nome dinâmico): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ S(
+               S(
                 "recipeMaterial" + i,
                 "Matéria-prima *",
                 D.state.materials.map(
-                  /* Transforma cada registro para compor o resultado — Gera uma linha de insumo, quantidade e remoção para cada componente da receita. */ (
+                   (
                     m,
                   ) => [m.id, `${m.name} (${m.unit})`],
                 ),
                 r.material,
               )
-            }${/* Campo “Quantidade *” (nome dinâmico): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("recipeQty" + i, "Quantidade *", r.qty, "number", 'required min="0.001" step="0.001"')}${/* Botão “Remover”: Remove a linha selecionada da receita. */ B("Remover", "recipe-remove", String(i))}</div>`,
+            }${ F("recipeQty" + i, "Quantidade *", r.qty, "number", 'required min="0.001" step="0.001"')}${ B("Remover", "recipe-remove", String(i))}</div>`,
         )
         .join("");
     }
@@ -2153,7 +2104,7 @@ window.UI = (
       U.open(
         p ? "Editar ficha técnica" : "Novo produto e receita",
         U.form(
-          `<div class="form-grid">${/* Campo “Nome do produto *” (name): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("name", "Nome do produto *", p?.name || "", "text", required)}${/* Campo “Rendimento da receita (unidades) *” (yield): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("yield", "Rendimento da receita (unidades) *", p?.yield || 1, "number", 'required min="1" step="1"')}${/* Campo “Preço de venda por unidade (R$) *” (price): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("price", "Preço de venda por unidade (R$) *", p ? p.price / 100 : 0, "number", 'required min="0.01" step="0.01"')}${/* Campo “Margem mínima sobre venda (%) *” (margin): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("margin", "Margem mínima sobre venda (%) *", p?.margin ?? 40, "number", 'required min="0" max="99.9" step="0.1"')}${/* Campo “Validade sugerida em dias *” (days): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("days", "Validade sugerida em dias *", p?.days || 4, "number", 'required min="1" max="365" step="1"')}</div><h3 class="section-heading">Composição da receita</h3><div id="recipe-lines">${recipeMarkup()}</div>${/* Botão “Adicionar insumo”: Acrescenta uma linha de matéria-prima à ficha técnica. */ B("Adicionar insumo", "recipe-add", "", "btn-secondary")}<div id="product-summary" class="notice" aria-live="polite"></div>`,
+          `<div class="form-grid">${ F("name", "Nome do produto *", p?.name || "", "text", required)}${ F("yield", "Rendimento da receita (unidades) *", p?.yield || 1, "number", 'required min="1" step="1"')}${ F("price", "Preço de venda por unidade (R$) *", p ? p.price / 100 : 0, "number", 'required min="0.01" step="0.01"')}${ F("margin", "Margem mínima sobre venda (%) *", p?.margin ?? 40, "number", 'required min="0" max="99.9" step="0.1"')}${ F("days", "Validade sugerida em dias *", p?.days || 4, "number", 'required min="1" max="365" step="1"')}</div><h3 class="section-heading">Composição da receita</h3><div id="recipe-lines">${recipeMarkup()}</div>${ B("Adicionar insumo", "recipe-add", "", "btn-secondary")}<div id="product-summary" class="notice" aria-live="polite"></div>`,
         ),
       );
       $("#dialog-body").addEventListener("input", productSummary);
@@ -2169,7 +2120,7 @@ window.UI = (
           if (
             new Set(
               recipe.map(
-                /* Transforma cada registro para compor o resultado — Cadastra ou edita a ficha técnica e impede preço abaixo da margem mínima configurada. */ (
+                 (
                   r,
                 ) => r.material,
               ),
@@ -2191,7 +2142,7 @@ window.UI = (
               "Preço abaixo da margem mínima. Ajuste o preço ou a margem.",
             );
           save(
-            /* Atualiza os dados dentro da gravação local — Cadastra ou edita a ficha técnica e impede preço abaixo da margem mínima configurada. */ (
+             (
               s,
             ) =>
               p
@@ -2204,7 +2155,7 @@ window.UI = (
     }
     /* Atualiza a receita em memória com os valores preenchidos nas linhas do formulário. */ function syncRecipe() {
       recipe.forEach(
-        /* Aplica a operação a cada elemento — Atualiza a receita em memória com os valores preenchidos nas linhas do formulário. */ (
+         (
           r,
           i,
         ) => {
@@ -2229,7 +2180,7 @@ window.UI = (
       U.open(
         "Registrar produção concluída",
         U.form(
-          `${/* Seleção “Produto *” (product): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ S("product", "Produto *", options("products"))}<div class="form-grid">${/* Campo “Quantidade produzida *” (qty): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("qty", "Quantidade produzida *", 1, "number", 'required min="1" step="1"')}${/* Campo “Data de validade *” (expires): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("expires", "Data de validade *", D.date(4), "date", `required min="${D.date()}"`)}</div><div id="production-preview" class="notice" aria-live="polite">Selecione o produto para conferir os insumos.</div>`,
+          `${ S("product", "Produto *", options("products"))}<div class="form-grid">${ F("qty", "Quantidade produzida *", 1, "number", 'required min="1" step="1"')}${ F("expires", "Data de validade *", D.date(4), "date", `required min="${D.date()}"`)}</div><div id="production-preview" class="notice" aria-live="polite">Selecione o produto para conferir os insumos.</div>`,
           "Confirmar produção",
         ),
       );
@@ -2239,7 +2190,7 @@ window.UI = (
           const qty = Number($("#f-qty").value) || 0;
           $("#production-preview").textContent = p.recipe
             .map(
-              /* Transforma cada registro para compor o resultado — Exibe os insumos necessários e seus saldos para a quantidade de produção informada. */ (
+               (
                 r,
               ) => {
                 const m = get("materials", r.material);
@@ -2250,7 +2201,7 @@ window.UI = (
         }
       }
       $("#f-product").onchange =
-        /* Trata $("#f-product").onchange no contexto de productionForm. */ () => {
+         () => {
           const p = get("products", $("#f-product").value);
           if (p) $("#f-expires").value = D.date(p.days);
           preview();
@@ -2271,7 +2222,7 @@ window.UI = (
               throw Error("Matéria-prima insuficiente: " + m.name);
           }
           save(
-            /* Atualiza os dados dentro da gravação local — Confirma produção, verifica insumos, deduz a receita proporcionalmente e cria um lote pronto. */ (
+             (
               s,
             ) => {
               const unitCost = Math.round(D.cost(p));
@@ -2310,7 +2261,7 @@ window.UI = (
     ) {
       D.needPermission("manage");
       const batches = D.state.batches.filter(
-        /* Seleciona os registros que atendem à condição — Registra a baixa de um lote por validade, avaria ou qualidade, sem gerar receita. */ (
+         (
           b,
         ) => b.qty > 0,
       );
@@ -2320,11 +2271,11 @@ window.UI = (
         "Baixa por perda",
         U.form(
           `${
-            /* Seleção “Produto / lote *” (batch): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ S(
+             S(
               "batch",
               "Produto / lote *",
               batches.map(
-                /* Transforma cada registro para compor o resultado — Registra a baixa de um lote por validade, avaria ou qualidade, sem gerar receita. */ (
+                 (
                   b,
                 ) => [
                   b.id,
@@ -2333,8 +2284,8 @@ window.UI = (
               ),
               id || batches[0].id,
             )
-          }${/* Campo “Quantidade a descartar *” (qty): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("qty", "Quantidade a descartar *", 1, "number", 'required min="1" step="1"')}${
-            /* Seleção “Motivo *” (reason): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ S(
+          }${ F("qty", "Quantidade a descartar *", 1, "number", 'required min="1" step="1"')}${
+             S(
               "reason",
               "Motivo *",
               [
@@ -2343,7 +2294,7 @@ window.UI = (
                 ["Qualidade", "Controle de qualidade"],
               ],
             )
-          }${/* Campo “Observação” (note): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("note", "Observação", "", "text", 'maxlength="200"')}<p class="notice">Esta operação reduz o saldo do lote e não gera receita financeira.</p>`,
+          }${ F("note", "Observação", "", "text", 'maxlength="200"')}<p class="notice">Esta operação reduz o saldo do lote e não gera receita financeira.</p>`,
           "Confirmar baixa",
         ),
       );
@@ -2355,7 +2306,7 @@ window.UI = (
             qty = integer(fd, "qty");
           if (qty > b.qty) throw Error("Quantidade maior que o saldo do lote.");
           save(
-            /* Atualiza os dados dentro da gravação local — Registra a baixa de um lote por validade, avaria ou qualidade, sem gerar receita. */ (
+             (
               s,
             ) => {
               b.qty -= qty;
@@ -2380,7 +2331,7 @@ window.UI = (
       return U.table(
         ["Produto", "Qtd.", "Preço un.", "Subtotal", "Ações"],
         cart.map(
-          /* Transforma cada registro para compor o resultado — Monta a tabela de itens com quantidade, preço, subtotal e opção de remoção. */ (
+           (
             i,
             n,
           ) => [
@@ -2388,7 +2339,7 @@ window.UI = (
             String(i.qty),
             M(i.price),
             M(i.qty * i.price),
-            /* Botão “Remover”: Remove o item selecionado do carrinho. */ B(
+             B(
               "Remover",
               "cart-remove",
               String(n),
@@ -2404,7 +2355,7 @@ window.UI = (
       if ($("#cart-total"))
         $("#cart-total").textContent = M(
           cart.reduce(
-            /* Acumula os valores necessários ao cálculo — Atualiza a tabela e o total do carrinho, incluindo taxa de entrega quando aplicável. */ (
+             (
               s,
               i,
             ) => s + i.price * i.qty,
@@ -2413,7 +2364,7 @@ window.UI = (
         );
     }
     /* Gera os controles para selecionar e incluir produtos no pedido ou venda. */ function cartFields() {
-      return `<h3 class="section-heading">Produtos</h3><div class="cart-line">${/* Seleção “Produto” (itemProduct): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ S("itemProduct", "Produto", options("products"), "", "")}${/* Campo “Quantidade” (itemQty): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("itemQty", "Quantidade", 1, "number", 'min="1" step="1"')}${/* Botão “Incluir”: Inclui o produto e a quantidade no carrinho; agrupa produtos repetidos. */ B("Incluir", "cart-add", "", "btn-secondary")}</div><div id="cart-items">${cartMarkup()}</div>`;
+      return `<h3 class="section-heading">Produtos</h3><div class="cart-line">${ S("itemProduct", "Produto", options("products"), "", "")}${ F("itemQty", "Quantidade", 1, "number", 'min="1" step="1"')}${ B("Incluir", "cart-add", "", "btn-secondary")}</div><div id="cart-items">${cartMarkup()}</div>`;
     }
     /* Cadastra ou edita pedido, recupera rascunho e valida cliente, itens, pagamento e endereço. */ function orderForm(
       id,
@@ -2439,8 +2390,8 @@ window.UI = (
       U.open(
         o ? "Editar pedido " + o.code : "Registrar novo pedido",
         U.form(
-          `${draft ? '<p class="notice">Rascunho das últimas 24 horas recuperado.</p>' : ""}<div class="form-grid">${/* Seleção “Cliente cadastrado *” (client): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ S("client", "Cliente cadastrado *", options("clients"), v.client)}${
-            /* Seleção “Modalidade *” (mode): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ S(
+          `${draft ? '<p class="notice">Rascunho das últimas 24 horas recuperado.</p>' : ""}<div class="form-grid">${ S("client", "Cliente cadastrado *", options("clients"), v.client)}${
+             S(
               "mode",
               "Modalidade *",
               [
@@ -2449,18 +2400,18 @@ window.UI = (
               ],
               v.mode || "retirada",
             )
-          }${/* Seleção “Endereço de entrega” (address): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ S("address", "Endereço de entrega", [], v.addressId || "", "")}${/* Campo “Data e hora combinadas *” (due): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("due", "Data e hora combinadas *", (v.due || D.date(1) + "T15:00").slice(0, 16), "datetime-local", "required")}${/* Campo “Telefone para contato *” (phone): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("phone", "Telefone para contato *", v.phone || "", "tel", 'required minlength="10" maxlength="30"')}${
-            /* Seleção “Forma de pagamento *” (payment): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ S(
+          }${ S("address", "Endereço de entrega", [], v.addressId || "", "")}${ F("due", "Data e hora combinadas *", (v.due || D.date(1) + "T15:00").slice(0, 16), "datetime-local", "required")}${ F("phone", "Telefone para contato *", v.phone || "", "tel", 'required minlength="10" maxlength="30"')}${
+             S(
               "payment",
               "Forma de pagamento *",
               paymentOptions().filter(
-                /* Seleciona os registros que atendem à condição — Cadastra ou edita pedido, recupera rascunho e valida cliente, itens, pagamento e endereço. */ (
+                 (
                   p,
                 ) => p[0] !== "pendente",
               ),
               v.payment,
             )
-          }${/* Campo “Taxa de entrega (R$)” (fee): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("fee", "Taxa de entrega (R$)", (v.fee || 0) / 100, "number", 'min="0" step="0.01"')}</div>${!o ? /* Botão “Cadastrar cliente e retomar pedido”: Mantém o pedido em rascunho, cadastra cliente e retoma o formulário. */ B("Cadastrar cliente e retomar pedido", "order-new-client", "", "btn-secondary") : ""}${cartFields()}${/* Campo “Observações da encomenda” (note): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("note", "Observações da encomenda", v.note || "", "text", 'maxlength="500"')}<div class="summary-box"><div class="summary-row total"><span>Total do pedido</span><strong id="cart-total"></strong></div></div>`,
+          }${ F("fee", "Taxa de entrega (R$)", (v.fee || 0) / 100, "number", 'min="0" step="0.01"')}</div>${!o ?  B("Cadastrar cliente e retomar pedido", "order-new-client", "", "btn-secondary") : ""}${cartFields()}${ F("note", "Observações da encomenda", v.note || "", "text", 'maxlength="500"')}<div class="summary-box"><div class="summary-row total"><span>Total do pedido</span><strong id="cart-total"></strong></div></div>`,
           "Salvar pedido",
         ),
       );
@@ -2472,7 +2423,7 @@ window.UI = (
             '<option value="">Selecione...</option>' +
             (c?.addresses || [])
               .map(
-                /* Transforma cada registro para compor o resultado — Cadastra ou edita pedido, recupera rascunho e valida cliente, itens, pagamento e endereço. */ (
+                 (
                   a,
                 ) => `<option value="${E(a.id)}">${E(address(a))}</option>`,
               )
@@ -2504,11 +2455,11 @@ window.UI = (
       if (!o) {
         $("#dialog-body form").addEventListener(
           "input",
-          /* Responde ao evento “input” no contexto de orderForm. */ () => {
+           () => {
             clearTimeout(draftTimer);
             const form = $("#dialog-body form");
             draftTimer = setTimeout(
-              /* Executa a atualização após o intervalo agendado — Cadastra ou edita pedido, recupera rascunho e valida cliente, itens, pagamento e endereço. */ () => {
+               () => {
                 if (!form?.isConnected) return;
                 const f = new FormData(form),
                   fields = Object.fromEntries(
@@ -2521,7 +2472,7 @@ window.UI = (
                       "payment",
                       "note",
                     ].map(
-                      /* Transforma cada registro para compor o resultado — Cadastra ou edita pedido, recupera rascunho e valida cliente, itens, pagamento e endereço. */ (
+                       (
                         k,
                       ) => [k, val(f, k)],
                     ),
@@ -2554,7 +2505,7 @@ window.UI = (
           const c = get("clients", val(fd, "client")),
             mode = val(fd, "mode"),
             a = c?.addresses.find(
-              /* Localiza o registro que corresponde à condição — Cadastra ou edita pedido, recupera rascunho e valida cliente, itens, pagamento e endereço. */ (
+               (
                 a,
               ) => a.id === val(fd, "address"),
             );
@@ -2580,7 +2531,7 @@ window.UI = (
           };
           clearTimeout(draftTimer);
           save(
-            /* Atualiza os dados dentro da gravação local — Cadastra ou edita pedido, recupera rascunho e valida cliente, itens, pagamento e endereço. */ (
+             (
               s,
             ) => {
               if (o) {
@@ -2622,7 +2573,7 @@ window.UI = (
             ...(admin ? ["Preço unitário", "Subtotal"] : []),
           ],
           o.items.map(
-            /* Transforma cada registro para compor o resultado — Mostra dados, itens, ações permitidas e histórico de um pedido. */ (
+             (
               i,
             ) => [
               E(get("products", i.product)?.name),
@@ -2630,7 +2581,7 @@ window.UI = (
               ...(admin ? [M(i.price), M(i.qty * i.price)] : []),
             ],
           ),
-        )}<div class="row-actions">${admin && o.status === "Pendente" && !o.sale ? /* Botão “Editar”: Abre cadastro ou edição de pedido. */ B("Editar", "order", id) : ""}${admin && ["Pendente", "Em produção", "Pronto"].includes(o.status) ? /* Botão “Avançar status”: Solicita avanço de etapa do pedido. */ B("Avançar status", "order-next", id) : ""}${admin && o.status !== "Cancelado" && !o.sale ? /* Botão “Receber pagamento”: Abre o recebimento integral do pedido. */ B("Receber pagamento", "receive", id) : ""}${admin && o.status !== "Cancelado" && !o.sale ? /* Botão “Cancelar pedido”: Abre a confirmação de cancelamento com motivo. */ B("Cancelar pedido", "order-cancel", id) : ""}</div><h3 class="section-heading">Histórico</h3><ol class="timeline">${o.history.map(/* Transforma cada registro para compor o resultado — Mostra dados, itens, ações permitidas e histórico de um pedido. */ (h) => `<li>${E(h.text)}<small>${U.date(h.at)}</small></li>`).join("")}</ol>`,
+        )}<div class="row-actions">${admin && o.status === "Pendente" && !o.sale ?  B("Editar", "order", id) : ""}${admin && ["Pendente", "Em produção", "Pronto"].includes(o.status) ?  B("Avançar status", "order-next", id) : ""}${admin && o.status !== "Cancelado" && !o.sale ?  B("Receber pagamento", "receive", id) : ""}${admin && o.status !== "Cancelado" && !o.sale ?  B("Cancelar pedido", "order-cancel", id) : ""}</div><h3 class="section-heading">Histórico</h3><ol class="timeline">${o.history.map( (h) => `<li>${E(h.text)}<small>${U.date(h.at)}</small></li>`).join("")}</ol>`,
       );
     }
     /* Avança o pedido para a próxima etapa, verificando as condições de finalização. */ function nextOrder(
@@ -2650,7 +2601,7 @@ window.UI = (
         throw Error("Registre o recebimento antes de finalizar a retirada.");
       if (!confirm(`Alterar o pedido ${o.code} para ${next}?`)) return;
       save(
-        /* Atualiza os dados dentro da gravação local — Avança o pedido para a próxima etapa, verificando as condições de finalização. */ () => {
+         () => {
           o.status = next;
           o.history.push({
             at: D.now(),
@@ -2672,7 +2623,7 @@ window.UI = (
       U.open(
         "Cancelar pedido " + o.code,
         U.form(
-          `${/* Campo “Motivo do cancelamento *” (reason): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("reason", "Motivo do cancelamento *", "", "text", 'required maxlength="300"')}<p class="notice">O pedido continuará disponível no histórico. Como não houve recebimento, nenhum estoque de produto pronto foi baixado.</p>`,
+          `${ F("reason", "Motivo do cancelamento *", "", "text", 'required maxlength="300"')}<p class="notice">O pedido continuará disponível no histórico. Como não houve recebimento, nenhum estoque de produto pronto foi baixado.</p>`,
           "Confirmar cancelamento",
         ),
       );
@@ -2681,7 +2632,7 @@ window.UI = (
           fd,
         ) =>
           save(
-            /* Atualiza os dados dentro da gravação local — Exige motivo, cancela o pedido ainda não pago e mantém o histórico. */ () => {
+             () => {
               o.status = "Cancelado";
               o.history.push({
                 at: D.now(),
@@ -2705,17 +2656,17 @@ window.UI = (
       U.open(
         "Registrar venda de balcão",
         U.form(
-          `<div class="sale-client-row">${/* Seleção “Cliente — opcional” (client): permite vincular o cliente à venda. */ S("client", "Cliente — opcional", options("clients", "Cliente Balcão"), draft?.fields.client || "", "")}${/* Cadastra um cliente e retoma esta venda sem perder os dados preenchidos. */ B("Adicionar cliente", "sale-new-client", "", "btn-secondary")}</div>${cartFields()}${
-            /* Seleção “Forma de pagamento *” (payment): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ S(
+          `<div class="sale-client-row">${ S("client", "Cliente — opcional", options("clients", "Cliente Balcão"), draft?.fields.client || "", "")}${/* Cadastra um cliente e retoma esta venda sem perder os dados preenchidos. */ B("Adicionar cliente", "sale-new-client", "", "btn-secondary")}</div>${cartFields()}${
+             S(
               "payment",
               "Forma de pagamento *",
               paymentOptions().filter(
-                /* Seleciona os registros que atendem à condição — Registra uma venda de balcão, confere estoque e valor recebido e calcula o troco. */ (
+                 (
                   p,
                 ) => p[0] !== "pendente",
               ),
             )
-          }${/* Campo “Valor recebido em dinheiro (R$)” (received): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("received", "Valor recebido em dinheiro (R$)", "", "number", 'min="0" step="0.01"')}<div class="summary-box"><div class="summary-row total"><span>Total a receber</span><strong id="cart-total"></strong></div></div>`,
+          }${ F("received", "Valor recebido em dinheiro (R$)", "", "number", 'min="0" step="0.01"')}<div class="summary-box"><div class="summary-row total"><span>Total a receber</span><strong id="cart-total"></strong></div></div>`,
           "Confirmar recebimento e venda",
         ),
       );
@@ -2743,7 +2694,7 @@ window.UI = (
           if (!cart.length) throw Error("Inclua ao menos um produto.");
           D.available(cart);
           const amount = cart.reduce(
-              /* Acumula os valores necessários ao cálculo — Registra uma venda de balcão, confere estoque e valor recebido e calcula o troco. */ (
+               (
                 s,
                 i,
               ) => s + i.qty * i.price,
@@ -2758,7 +2709,7 @@ window.UI = (
             change = received - amount;
           }
           save(
-            /* Atualiza os dados dentro da gravação local — Registra uma venda de balcão, confere estoque e valor recebido e calcula o troco. */ (
+             (
               s,
             ) => {
               const cost = D.consume(cart);
@@ -2812,11 +2763,11 @@ window.UI = (
         "Receber pedido " + o.code,
         U.form(
           `<p class="notice">Total a receber: <strong>${M(total(o))}</strong></p>${
-            /* Seleção “Forma de pagamento *” (payment): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ S(
+             S(
               "payment",
               "Forma de pagamento *",
               paymentOptions().filter(
-                /* Seleciona os registros que atendem à condição — Registra o recebimento integral de um pedido e baixa seus produtos prontos. */ (
+                 (
                   p,
                 ) => p[0] !== "pendente",
               ),
@@ -2832,7 +2783,7 @@ window.UI = (
         ) => {
           D.available(o.items);
           save(
-            /* Atualiza os dados dentro da gravação local — Registra o recebimento integral de um pedido e baixa seus produtos prontos. */ (
+             (
               s,
             ) => {
               const cost = D.consume(o.items),
@@ -2872,7 +2823,7 @@ window.UI = (
         `<dl class="detail-list"><dt>Data</dt><dd>${U.date(s.created)}</dd><dt>Cliente</dt><dd>${E(s.client ? clientName(s.client) : "Cliente Balcão")}</dd><dt>Forma</dt><dd>${E(payName(s.payment))}</dd><dt>Total</dt><dd>${M(s.total)}</dd><dt>Troco</dt><dd>${M(s.change || 0)}</dd></dl>${U.table(
           ["Produto", "Quantidade", "Valor"],
           s.items.map(
-            /* Transforma cada registro para compor o resultado — Exibe o registro demonstrativo de recebimento e permite exportá-lo como CSV. */ (
+             (
               i,
             ) => [
               E(i.name || get("products", i.product)?.name),
@@ -2880,7 +2831,7 @@ window.UI = (
               M(i.qty * i.price),
             ],
           ),
-        )}${/* Botão “Baixar registro CSV”: Baixa o registro de recebimento em CSV. */ B("Baixar registro CSV", "receipt-download", id, "btn-secondary")}`,
+        )}${ B("Baixar registro CSV", "receipt-download", id, "btn-secondary")}`,
       );
     }
     /* Valida pedido pronto e endereço antes de registrar responsável e despacho. */ function dispatchForm(
@@ -2895,7 +2846,7 @@ window.UI = (
       U.open(
         "Despachar pedido " + o.code,
         U.form(
-          `<p class="notice">${E(address(o.address))}<br>Contato: ${E(U.formatPhone(o.phone))}</p>${/* Campo “Responsável pela entrega *” (driver): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("driver", "Responsável pela entrega *", o.driver || "", "text", required)}${/* Campo “Instruções de entrega” (routeNote): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("routeNote", "Instruções de entrega", o.routeNote || "", "text", 'maxlength="300"')}`,
+          `<p class="notice">${E(address(o.address))}<br>Contato: ${E(U.formatPhone(o.phone))}</p>${ F("driver", "Responsável pela entrega *", o.driver || "", "text", required)}${ F("routeNote", "Instruções de entrega", o.routeNote || "", "text", 'maxlength="300"')}`,
           "Confirmar despacho",
         ),
       );
@@ -2904,7 +2855,7 @@ window.UI = (
           fd,
         ) =>
           save(
-            /* Atualiza os dados dentro da gravação local — Valida pedido pronto e endereço antes de registrar responsável e despacho. */ () => {
+             () => {
               o.driver = val(fd, "driver");
               o.routeNote = val(fd, "routeNote");
               o.delivery = "Em rota";
@@ -2930,7 +2881,7 @@ window.UI = (
         );
       if (!confirm("Confirmar que o pedido foi entregue ao cliente?")) return;
       save(
-        /* Atualiza os dados dentro da gravação local — Confirma a entrega em rota e finaliza o pedido com histórico. */ () => {
+         () => {
           o.delivery = "Entregue";
           o.status = "Finalizado";
           o.deliveredAt = D.now();
@@ -2948,12 +2899,12 @@ window.UI = (
         title = "Histórico de pedidos";
         rows = D.state.orders
           .filter(
-            /* Seleciona os registros que atendem à condição — Apresenta o histórico de pedidos do cliente ou movimentações da matéria-prima. */ (
+             (
               o,
             ) => o.client === id,
           )
           .map(
-            /* Transforma cada registro para compor o resultado — Apresenta o histórico de pedidos do cliente ou movimentações da matéria-prima. */ (
+             (
               o,
             ) => [E(o.code), U.date(o.created), E(o.status), M(total(o))],
           );
@@ -2969,14 +2920,14 @@ window.UI = (
         title = "Movimentações da matéria-prima";
         rows = D.state.movements
           .filter(
-            /* Seleciona os registros que atendem à condição — Apresenta o histórico de pedidos do cliente ou movimentações da matéria-prima. */ (
+             (
               m,
             ) => m.material === id,
           )
           .slice()
           .reverse()
           .map(
-            /* Transforma cada registro para compor o resultado — Apresenta o histórico de pedidos do cliente ou movimentações da matéria-prima. */ (
+             (
               m,
             ) => [U.date(m.at), E(m.type), U.num(m.qty), E(m.reason)],
           );
@@ -3009,12 +2960,12 @@ window.UI = (
         ];
         rows = D.state.sales
           .filter(
-            /* Seleciona os registros que atendem à condição — Filtra relatórios por período e tipo, calcula indicadores e prepara linhas para exportação. */ (
+             (
               s,
             ) => within(s.created),
           )
           .map(
-            /* Transforma cada registro para compor o resultado — Filtra relatórios por período e tipo, calcula indicadores e prepara linhas para exportação. */ (
+             (
               s,
             ) => [
               s.code,
@@ -3049,14 +3000,14 @@ window.UI = (
         ];
         rows = D.state.orders
           .filter(
-            /* Seleciona os registros que atendem à condição — Filtra relatórios por período e tipo, calcula indicadores e prepara linhas para exportação. */ (
+             (
               o,
             ) =>
               within(o.created) &&
               (reportType !== "entregas" || o.mode === "entrega"),
           )
           .map(
-            /* Transforma cada registro para compor o resultado — Filtra relatórios por período e tipo, calcula indicadores e prepara linhas para exportação. */ (
+             (
               o,
             ) => {
               const sale = get("sales", o.sale),
@@ -3064,7 +3015,7 @@ window.UI = (
                   sale?.cost ??
                   Math.round(
                     o.items.reduce(
-                      /* Acumula os valores necessários ao cálculo — Filtra relatórios por período e tipo, calcula indicadores e prepara linhas para exportação. */ (
+                       (
                         s,
                         i,
                       ) => s + D.cost(get("products", i.product)) * i.qty,
@@ -3102,12 +3053,12 @@ window.UI = (
         ];
         rows = D.state.movements
           .filter(
-            /* Seleciona os registros que atendem à condição — Filtra relatórios por período e tipo, calcula indicadores e prepara linhas para exportação. */ (
+             (
               m,
             ) => within(m.at),
           )
           .map(
-            /* Transforma cada registro para compor o resultado — Filtra relatórios por período e tipo, calcula indicadores e prepara linhas para exportação. */ (
+             (
               m,
             ) => [
               U.date(m.at),
@@ -3123,19 +3074,19 @@ window.UI = (
       }
       currentRows = rows;
       const sales = D.state.sales.filter(
-          /* Seleciona os registros que atendem à condição — Filtra relatórios por período e tipo, calcula indicadores e prepara linhas para exportação. */ (
+           (
             s,
           ) => within(s.created),
         ),
         revenue = sales.reduce(
-          /* Acumula os valores necessários ao cálculo — Filtra relatórios por período e tipo, calcula indicadores e prepara linhas para exportação. */ (
+           (
             s,
             x,
           ) => s + x.total,
           0,
         ),
         cost = sales.reduce(
-          /* Acumula os valores necessários ao cálculo — Filtra relatórios por período e tipo, calcula indicadores e prepara linhas para exportação. */ (
+           (
             s,
             x,
           ) => s + x.cost,
@@ -3148,7 +3099,7 @@ window.UI = (
           ["Resultado após insumos", M(revenue - cost)],
         ]) +
         `<p class="notice">Os resultados consideram apenas os insumos das fichas técnicas; não representam lucro líquido. Custos de vendas são preservados na confirmação. Pedidos sem recebimento apresentam estimativa pelo custo atual.</p><div class="toolbar"><form id="report-form" class="report-period">${
-          /* Seleção “Relatório” (reportType): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ S(
+           S(
             "reportType",
             "Relatório",
             [
@@ -3159,19 +3110,19 @@ window.UI = (
             ],
             reportType,
           )
-        }${/* Campo “De *” (start): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("start", "De *", reportStart, "date", "required")}${/* Campo “Até *” (end): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("end", "Até *", reportEnd, "date", "required")}<button class="btn-secondary" type="submit">Aplicar período</button></form><div class="toolbar-actions">${/* Botão “Imprimir / PDF”: Abre a impressão nativa da página. */ B("Imprimir / PDF", "print", "", "btn-secondary")}${/* Botão “Exportar CSV”: Baixa os resultados filtrados em CSV. */ B("Exportar CSV", "export", "", "btn-novo")}</div></div><p class="help print-title">Período: ${U.date(reportStart)} a ${U.date(reportEnd)} · Tipo: ${E(reportType)}</p>` +
+        }${ F("start", "De *", reportStart, "date", "required")}${ F("end", "Até *", reportEnd, "date", "required")}<button class="btn-secondary" type="submit">Aplicar período</button></form><div class="toolbar-actions">${ B("Imprimir / PDF", "print", "", "btn-secondary")}${ B("Exportar CSV", "export", "", "btn-novo")}</div></div><p class="help print-title">Período: ${U.date(reportStart)} a ${U.date(reportEnd)} · Tipo: ${E(reportType)}</p>` +
         list(
           "Demonstrativo · " + U.date(reportStart) + " a " + U.date(reportEnd),
           reportHeaders,
           rows.map(
-            /* Transforma cada registro para compor o resultado — Filtra relatórios por período e tipo, calcula indicadores e prepara linhas para exportação. */ (
+             (
               r,
             ) => r.map(E),
           ),
           "Não há movimentações no período selecionado.",
         );
       $("#report-form").onsubmit =
-        /* Trata $("#report-form").onsubmit no contexto de renderReports. */ (
+         (
           e,
         ) => {
           e.preventDefault();
@@ -3338,9 +3289,9 @@ window.UI = (
       U.open(
         u ? "Editar usuário" : "Novo usuário",
         U.form(
-          `<div class="form-grid">${/* Campo “Nome completo *” (name): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("name", "Nome completo *", u?.name || "", "text", required)}${/* Campo “E-mail *” (email): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("email", "E-mail *", u?.email || "", "email", 'required maxlength="120"')}${/* Campo “Data de nascimento *” (birth): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("birth", "Data de nascimento *", u?.birth || "", "date", `required max="${D.date()}"`)}${/* Campo “Telefone *” (phone): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("phone", "Telefone *", u?.phone || "", "tel", 'required minlength="10" maxlength="30"')}${
+          `<div class="form-grid">${ F("name", "Nome completo *", u?.name || "", "text", required)}${ F("email", "E-mail *", u?.email || "", "email", 'required maxlength="120"')}${ F("birth", "Data de nascimento *", u?.birth || "", "date", `required max="${D.date()}"`)}${ F("phone", "Telefone *", u?.phone || "", "tel", 'required minlength="10" maxlength="30"')}${
             !self
-              ? /* Seleção “Perfil *” (role): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ S(
+              ?  S(
                   "role",
                   "Perfil *",
                   [
@@ -3361,7 +3312,7 @@ window.UI = (
           const email = val(fd, "email");
           if (
             D.state.users.some(
-              /* Verifica se algum registro atende à condição — Cadastra ou edita dados de usuário e seu perfil demonstrativo sem criar credenciais. */ (
+               (
                 x,
               ) => x.id !== id && x.email.toLowerCase() === email.toLowerCase(),
             )
@@ -3375,7 +3326,7 @@ window.UI = (
             role: self || u?.id === "u1" ? u.role : val(fd, "role"),
           };
           save(
-            /* Atualiza os dados dentro da gravação local — Cadastra ou edita dados de usuário e seu perfil demonstrativo sem criar credenciais. */ (
+             (
               s,
             ) =>
               u
@@ -3390,7 +3341,7 @@ window.UI = (
       U.open(
         "Alterar senha",
         U.form(
-          `${/* Campo “Senha atual *” (current): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("current", "Senha atual *", "", "password", 'required autocomplete="current-password"')}${/* Campo “Nova senha *” (new): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("new", "Nova senha *", "", "password", 'required minlength="8" maxlength="128" autocomplete="new-password"')}${/* Campo “Confirmar nova senha *” (confirm): coleta o valor indicado pelo rótulo; valor inicial e restrições são definidos nos argumentos seguintes. */ F("confirm", "Confirmar nova senha *", "", "password", 'required autocomplete="new-password"')}<p class="help">Use ao menos 8 caracteres, maiúscula, minúscula, número e símbolo.</p>`,
+          `${ F("current", "Senha atual *", "", "password", 'required autocomplete="current-password"')}${ F("new", "Nova senha *", "", "password", 'required minlength="8" maxlength="128" autocomplete="new-password"')}${ F("confirm", "Confirmar nova senha *", "", "password", 'required autocomplete="new-password"')}<p class="help">Use ao menos 8 caracteres, maiúscula, minúscula, número e símbolo.</p>`,
           "Validar senha",
         ),
       );
@@ -3426,7 +3377,7 @@ window.UI = (
     const handlers = {
       /* Cadastra um cliente a partir de Vendas e retoma o preenchimento da venda. */ "sale-new-client":
         saleNewClient,
-      /* Ação order-new-client: Mantém o pedido em rascunho, cadastra cliente e retoma o formulário. */ "order-new-client":
+       "order-new-client":
         /* Mantém o pedido em rascunho, cadastra cliente e retoma o formulário. */ () => {
           const fd = new FormData($("#dialog-body form"));
           const fields = Object.fromEntries(
@@ -3439,7 +3390,7 @@ window.UI = (
               "payment",
               "note",
             ].map(
-              /* Transforma cada registro para compor o resultado — Páginas e interações. */ (
+               (
                 k,
               ) => [k, val(fd, k)],
             ),
@@ -3462,7 +3413,7 @@ window.UI = (
           const f = $("#dialog-body form");
           f.addEventListener(
             "submit",
-            /* Responde ao evento “submit” no contexto de Páginas e interações. */ () => {
+             () => {
               if (!$("#app-dialog").open) {
                 orderForm();
                 $("#f-client").value = D.state.clients.at(-1).id;
@@ -3471,72 +3422,72 @@ window.UI = (
             },
           );
         },
-      /* Ação clear-filters: Limpa a busca e retorna ao filtro Todos. */ "clear-filters":
+       "clear-filters":
         /* Limpa a busca e retorna ao filtro Todos. */ () => {
           query = "";
           filter = "Todos";
           render();
           $("#list-search")?.focus();
         },
-      /* Ação settings: Abre as configurações e o perfil. */ settings:
+       settings:
         /* Alterna as telas de perfil, usuários e histórico local conforme a permissão. */ () =>
           settings(),
-      /* Ação settings-profile: Exibe os dados do perfil atual. */ "settings-profile":
+       "settings-profile":
         /* Exibe os dados do perfil atual. */ () => settings("profile", true),
-      /* Ação settings-users: Lista as contas demonstrativas para administração. */ "settings-users":
+       "settings-users":
         /* Lista as contas demonstrativas para administração. */ () =>
           settings("users", true),
-      /* Ação settings-audit: Mostra o histórico de alterações locais. */ "settings-audit":
+       "settings-audit":
         /* Mostra o histórico de alterações locais. */ () =>
           settings("audit", true),
-      /* Ação client: Abre cadastro ou edição de cliente. */ client: clientForm,
-      /* Ação addresses: Lista endereços do cliente. */ addresses,
-      /* Ação address-edit: Abre cadastro ou edição de endereço. */ "address-edit":
+       client: clientForm,
+       addresses,
+       "address-edit":
         addressForm,
-      /* Ação supplier: Abre cadastro ou edição de fornecedor. */ supplier:
+       supplier:
         supplierForm,
-      /* Ação material: Abre cadastro ou edição de matéria-prima. */ material:
+       material:
         materialForm,
-      /* Ação movement: Abre movimentação do insumo selecionado. */ movement:
+       movement:
         movementForm,
-      /* Ação product: Abre cadastro ou edição da ficha técnica. */ product:
+       product:
         productForm,
-      /* Ação production: Abre o registro de produção concluída. */ production:
+       production:
         productionForm,
-      /* Ação loss: Abre a baixa por perda de um lote. */ loss: lossForm,
-      /* Ação order: Abre cadastro ou edição de pedido. */ order: orderForm,
-      /* Ação sale: Inicia uma venda de balcão. */ sale: /* Inicia uma venda de balcão. */ () =>
+       loss: lossForm,
+       order: orderForm,
+       sale: /* Inicia uma venda de balcão. */ () =>
         saleForm(),
-      /* Ação quick-sale: Leva o produto selecionado à página de vendas. */ "quick-sale":
+       "quick-sale":
         /* Leva o produto selecionado à página de vendas. */ (id) => {
           location.href = "vendas.html?product=" + encodeURIComponent(id);
         },
-      /* Ação order-detail: Mostra os detalhes e o histórico do pedido. */ "order-detail":
+       "order-detail":
         orderDetail,
-      /* Ação order-next: Solicita avanço de etapa do pedido. */ "order-next":
+       "order-next":
         nextOrder,
-      /* Ação order-cancel: Abre a confirmação de cancelamento com motivo. */ "order-cancel":
+       "order-cancel":
         cancelOrder,
-      /* Ação receive: Abre o recebimento integral do pedido. */ receive:
+       receive:
         receiveForm,
-      /* Ação receipt: Exibe o comprovante demonstrativo. */ receipt,
-      /* Ação dispatch: Abre o despacho do pedido pronto. */ dispatch:
+       receipt,
+       dispatch:
         dispatchForm,
-      /* Ação delivered: Confirma a entrega ao cliente. */ delivered,
-      /* Ação client-history: Consulta os pedidos do cliente. */ "client-history":
+       delivered,
+       "client-history":
         /* Consulta os pedidos do cliente. */ (id) => history("client", id),
-      /* Ação material-history: Consulta movimentações da matéria-prima. */ "material-history":
+       "material-history":
         /* Consulta movimentações da matéria-prima. */ (id) =>
           history("material", id),
-      /* Ação user: Abre cadastro ou edição de usuário. */ user: /* Abre cadastro ou edição de usuário. */ (
+       user: /* Abre cadastro ou edição de usuário. */ (
         id,
       ) => userForm(id),
-      /* Ação my-profile: Permite editar os dados do próprio perfil. */ "my-profile":
+       "my-profile":
         /* Permite editar os dados do próprio perfil. */ (id) =>
           userForm(id, true),
-      /* Ação password-preview: Abre a validação demonstrativa de alteração de senha. */ "password-preview":
+       "password-preview":
         passwordPreview,
-      /* Ação user-delete: Exclui um usuário operacional após confirmação, mantendo o histórico. */ "user-delete":
+       "user-delete":
         /* Exclui um usuário operacional após confirmação, mantendo o histórico. */ (
           id,
         ) => {
@@ -3552,11 +3503,11 @@ window.UI = (
             )
           )
             save(
-              /* Atualiza os dados dentro da gravação local — Páginas e interações. */ (
+               (
                 s,
               ) => {
                 s.users = s.users.filter(
-                  /* Seleciona os registros que atendem à condição — Páginas e interações. */ (
+                   (
                     x,
                   ) => x.id !== id,
                 );
@@ -3564,7 +3515,7 @@ window.UI = (
               "Usuário excluído.",
             );
         },
-      /* Ação user-toggle: Alterna a situação ativa ou inativa do usuário operacional. */ "user-toggle":
+       "user-toggle":
         /* Alterna a situação ativa ou inativa do usuário operacional. */ (
           id,
         ) => {
@@ -3574,24 +3525,24 @@ window.UI = (
             throw Error("Não é possível desativar este administrador.");
           if (confirm(`${u.active ? "Desativar" : "Ativar"} ${u.name}?`))
             save(
-              /* Atualiza os dados dentro da gravação local — Páginas e interações. */ () =>
+               () =>
                 (u.active = !u.active),
               "Situação do usuário atualizada.",
             );
         },
-      /* Ação close: Solicita o fechamento do diálogo. */ close:
+       close:
         /* Fecha o diálogo, pede confirmação quando existem alterações e devolve o foco ao controle de origem. */ () =>
           U.close(),
-      /* Ação print: Abre a impressão nativa da página. */ print:
+       print:
         /* Abre a impressão nativa da página. */ () => window.print(),
-      /* Ação export: Baixa os resultados filtrados em CSV. */ export:
+       export:
         /* Baixa os resultados filtrados em CSV. */ () =>
           U.csv(
             reportHeaders,
             currentRows,
             "maria-formiga-" + reportType + "-" + reportStart,
           ),
-      /* Ação receipt-download: Baixa o registro de recebimento em CSV. */ "receipt-download":
+       "receipt-download":
         /* Baixa o registro de recebimento em CSV. */ (id) => {
           const s = get("sales", id);
           U.csv(
@@ -3605,7 +3556,7 @@ window.UI = (
               "Pagamento",
             ],
             s.items.map(
-              /* Transforma cada registro para compor o resultado — Páginas e interações. */ (
+               (
                 i,
               ) => [
                 s.code,
@@ -3620,21 +3571,21 @@ window.UI = (
             "comprovante-demonstrativo-" + s.code.replace("#", ""),
           );
         },
-      /* Ação recipe-add: Acrescenta uma linha de matéria-prima à ficha técnica. */ "recipe-add":
+       "recipe-add":
         /* Acrescenta uma linha de matéria-prima à ficha técnica. */ () => {
           syncRecipe();
           recipe.push({ material: D.state.materials[0].id, qty: 1 });
           $("#recipe-lines").innerHTML = recipeMarkup();
           productSummary();
         },
-      /* Ação recipe-remove: Remove a linha selecionada da receita. */ "recipe-remove":
+       "recipe-remove":
         /* Remove a linha selecionada da receita. */ (id) => {
           syncRecipe();
           recipe.splice(Number(id), 1);
           $("#recipe-lines").innerHTML = recipeMarkup();
           productSummary();
         },
-      /* Ação cart-add: Inclui o produto e a quantidade no carrinho; agrupa produtos repetidos. */ "cart-add":
+       "cart-add":
         /* Inclui o produto e a quantidade no carrinho; agrupa produtos repetidos. */ () => {
           const p = get("products", $("#f-itemProduct").value),
             qty = Number($("#f-itemQty").value);
@@ -3642,7 +3593,7 @@ window.UI = (
           if (!Number.isInteger(qty) || qty < 1)
             throw Error("Informe uma quantidade inteira maior que zero.");
           const item = cart.find(
-            /* Localiza o registro que corresponde à condição — Páginas e interações. */ (
+             (
               i,
             ) => i.product === p.id,
           );
@@ -3652,7 +3603,7 @@ window.UI = (
           $("#f-itemProduct").value = "";
           $("#f-itemQty").value = 1;
         },
-      /* Ação cart-remove: Remove o item selecionado do carrinho. */ "cart-remove":
+       "cart-remove":
         /* Remove o item selecionado do carrinho. */ (id) => {
           cart.splice(Number(id), 1);
           updateCart();
@@ -3660,7 +3611,7 @@ window.UI = (
     };
     document.addEventListener(
       "click",
-      /* Responde ao evento “click” no contexto de Páginas e interações. */ (
+       (
         e,
       ) => {
         const target = e.target.closest("[data-action]");
@@ -3693,7 +3644,7 @@ window.UI = (
     );
     document.addEventListener(
       "input",
-      /* Responde ao evento “input” no contexto de Páginas e interações. */ (
+       (
         e,
       ) => {
         if (e.target.id === "list-search") {
@@ -3706,210 +3657,10 @@ window.UI = (
         }
       },
     );
-    if (page === "index") {
-      // O campo de identificação e a senha permanecem vazios na abertura do login.
-      const loginForm = $("#loginForm");
-      const usernameInput = $("#email");
-      const passwordInput = $("#password");
-      const togglePassword = $(".pwd-toggle");
-      // O botão do olho revela ou oculta somente a senha em digitação.
-      togglePassword.addEventListener("click", () => {
-        const show = passwordInput.type === "password";
-        passwordInput.type = show ? "text" : "password";
-        togglePassword.setAttribute(
-          "aria-label",
-          show ? "Ocultar senha" : "Mostrar senha",
-        );
-        const icon = togglePassword.querySelector("i");
-        icon.classList.toggle("fa-eye", !show);
-        icon.classList.toggle("fa-eye-slash", show);
-      });
-      // O perfil é obtido pela identificação da conta; não há seletor no formulário.
-      loginForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        if (loginForm.dataset.loading === "true") return;
-        if (!loginForm.reportValidity()) return;
-        // Exige somente conteúdo nos dois campos; não compara usuário ou senha.
-        const username = usernameInput.value.trim().toLowerCase();
-        const password = passwordInput.value.trim();
-        if (!username || !password) {
-          U.toast("Preencha o usuário e a senha.", true);
-          (username ? passwordInput : usernameInput).focus();
-          return;
-        }
-        // Preserva a opção de visualizar o perfil operacional pelo nome auxiliar.
-        const role = ["auxiliar", "auxiliar@example.com"].includes(username)
-          ? "aux"
-          : "admin";
-        // A opção Manter-me conectado preserva somente a preferência do perfil.
-        D.setRole(role, loginForm.elements.remember.checked);
-        passwordInput.value = "";
-        // Exibe uma transição visual breve; não executa autenticação nem outra chamada externa.
-        loginForm.dataset.loading = "true";
-        loginForm.setAttribute("aria-busy", "true");
-        $("#btnLogin").disabled = true;
-        const loading = document.createElement("div");
-        loading.className = "login-loading";
-        loading.setAttribute("role", "status");
-        loading.setAttribute("aria-live", "polite");
-        loading.tabIndex = -1;
-        loading.innerHTML =
-          '<div class="login-loading-content"><img src="../img/cupcake.png" width="56" height="56" alt=""><span class="login-loading-spinner" aria-hidden="true"></span><p>Carregando...</p></div>';
-        document.body.appendChild(loading);
-        $(".auth-wrapper").inert = true;
-        loading.focus();
-        setTimeout(() => {
-          location.href = "home.html";
-        }, 550);
-      });
-      // O retorno pelo botão Voltar não deixa o formulário bloqueado pelo carregamento.
-      window.addEventListener("pageshow", (event) => {
-        if (!event.persisted) return;
-        document.querySelector(".login-loading")?.remove();
-        $(".auth-wrapper").inert = false;
-        delete loginForm.dataset.loading;
-        loginForm.removeAttribute("aria-busy");
-        $("#btnLogin").disabled = false;
-      });
-      return;
-    }
-    if (page === "recuperacao") {
-      const recoveryForm = $("#recoveryForm");
-      const verificationForm = $("#verificationForm");
-      const emailInput = $("#recoveryEmail");
-      const codeDigits = [...verificationForm.querySelectorAll(".code-digit")];
-      const title = $("#recoveryTitle");
-      const description = $("#recoveryDescription");
-      // Transfere números digitados ou colados para as posições seguintes, sem conferir seu valor.
-      function fillVerificationCode(start, text) {
-        const digits = String(text)
-          .replace(/\D/g, "")
-          .slice(0, codeDigits.length - start);
-        if (!digits) return;
-        [...digits].forEach((digit, offset) => {
-          codeDigits[start + offset].value = digit;
-        });
-        const next = Math.min(start + digits.length, codeDigits.length - 1);
-        codeDigits[next].focus();
-        codeDigits[next].select();
-      }
-      // A primeira etapa solicita apenas um e-mail com formato válido; não envia mensagens.
-      recoveryForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        if (!recoveryForm.reportValidity()) return;
-        recoveryForm.hidden = true;
-        verificationForm.hidden = false;
-        verificationForm.reset();
-        title.textContent = "Verificar código";
-        description.textContent =
-          "Informe os seis dígitos do código de recuperação para " +
-          emailInput.value.trim() +
-          ".";
-        codeDigits[0].focus();
-      });
-      // Cada campo recebe somente números e permite colar o código completo.
-      codeDigits.forEach((input, index) => {
-        input.addEventListener("input", (event) => {
-          const content =
-            event.data && event.data.length > 1 ? event.data : input.value;
-          const numeric = String(content).replace(/\D/g, "");
-          input.value = numeric.slice(0, 1);
-          if (numeric) fillVerificationCode(index, numeric);
-        });
-        input.addEventListener("paste", (event) => {
-          event.preventDefault();
-          fillVerificationCode(index, event.clipboardData.getData("text"));
-        });
-        // As setas e o Backspace facilitam a correção do código pelo teclado.
-        input.addEventListener("keydown", (event) => {
-          if (event.key === "Backspace" && !input.value && index > 0) {
-            event.preventDefault();
-            codeDigits[index - 1].value = "";
-            codeDigits[index - 1].focus();
-          } else if (event.key === "ArrowLeft" && index > 0) {
-            event.preventDefault();
-            codeDigits[index - 1].focus();
-            codeDigits[index - 1].select();
-          } else if (
-            event.key === "ArrowRight" &&
-            index < codeDigits.length - 1
-          ) {
-            event.preventDefault();
-            codeDigits[index + 1].focus();
-            codeDigits[index + 1].select();
-          }
-        });
-        input.addEventListener("focus", () => input.select());
-      });
-      // Basta preencher as seis posições com números, inclusive 000000; não há verificação de código.
-      verificationForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        if (!verificationForm.reportValidity()) return;
-        location.href = "redefinir-senha.html";
-      });
-      // Retorna à primeira etapa preservando o endereço de e-mail já digitado.
-      $("#btnChangeEmail").addEventListener("click", () => {
-        verificationForm.hidden = true;
-        recoveryForm.hidden = false;
-        title.textContent = "Recuperação de Senha";
-        description.textContent =
-          "Informe o e-mail cadastrado para recuperar seu acesso.";
-        verificationForm.reset();
-        emailInput.focus();
-      });
-      return;
-    }
-    if (page === "redefinir-senha") {
-      // Cada olho altera apenas o campo indicado, preservando o conteúdo e a validação.
-      const passwordToggles = Array.from(
-        document.querySelectorAll("[data-password-toggle]"),
-      );
-      function setPasswordVisibility(button, visible) {
-        const input = document.getElementById(button.dataset.passwordToggle);
-        const label =
-          input.id === "newPassword"
-            ? "nova senha"
-            : "confirmação da nova senha";
-        input.type = visible ? "text" : "password";
-        button.setAttribute("aria-pressed", String(visible));
-        button.setAttribute(
-          "aria-label",
-          `${visible ? "Ocultar" : "Mostrar"} ${label}`,
-        );
-        const icon = button.querySelector("i");
-        icon.classList.toggle("fa-eye", !visible);
-        icon.classList.toggle("fa-eye-slash", visible);
-      }
-      passwordToggles.forEach((button) => {
-        button.addEventListener("click", () => {
-          const input = document.getElementById(button.dataset.passwordToggle);
-          setPasswordVisibility(button, input.type === "password");
-        });
-      });
-      // Após limpar o formulário, volta a ocultar os dois campos e restaura os ícones.
-      $("#resetForm").addEventListener("reset", () => {
-        passwordToggles.forEach((button) =>
-          setPasswordVisibility(button, false),
-        );
-      });
-      $("#resetForm").onsubmit =
-        /* Trata $("#resetForm").onsubmit no contexto de Páginas e interações. */ (
-          e,
-        ) => {
-          e.preventDefault();
-          try {
-            validatePassword(
-              $("#newPassword").value,
-              $("#confirmPassword").value,
-            );
-            e.target.reset();
-            U.toast("Formato da senha validado.");
-          } catch (err) {
-            fail(err);
-          }
-        };
-      return;
-    }
+
+    window.MF_PAGE_UTILS = { fail, validatePassword };
+    if (["index", "recuperacao", "redefinir-senha"].includes(page)) return;
+
     $("#today").textContent = new Date().toLocaleDateString("pt-BR", {
       weekday: "long",
       day: "numeric",
@@ -3920,7 +3671,7 @@ window.UI = (
     const sidebar = $(".sidebar");
     sidebar.id = "menu-lateral";
     sidebar.querySelectorAll("a[href]").forEach(
-      /* Aplica a operação a cada elemento — Páginas e interações. */ (a) => {
+       (a) => {
         const key = a.getAttribute("href").replace(".html", "");
         if (perms[key] && !D.permission(perms[key])) a.hidden = true;
       },
@@ -3992,7 +3743,7 @@ window.UI = (
     });
     window.addEventListener(
       "mf-conflict",
-      /* Responde ao evento “mf-conflict” no contexto de Páginas e interações. */ () =>
+       () =>
         U.toast(
           "Dados alterados em outra aba. Recarregue a página antes de salvar.",
           true,
@@ -4000,7 +3751,7 @@ window.UI = (
     );
     window.addEventListener(
       "beforeunload",
-      /* Responde ao evento “beforeunload” no contexto de Páginas e interações. */ (
+       (
         e,
       ) => {
         if (U.hasUnsavedChanges()) {

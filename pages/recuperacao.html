@@ -14,7 +14,8 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="../CSS/global.css" />
+    <link rel="stylesheet" href="../CSS/recuperacao.css" />
     <title>Maria Formiga — Recuperação de Senha</title>
   </head>
   <body data-page="recuperacao">
@@ -55,7 +56,6 @@
               role="group"
               aria-label="Código de seis dígitos"
             >
-              <!-- Dígito 1: aceita um número e avança para a próxima posição. -->
               <input
                 class="code-digit"
                 id="codeDigit1"
@@ -68,7 +68,6 @@
                 required
                 aria-label="Dígito 1 de 6"
               />
-              <!-- Dígito 2: aceita um número e avança para a próxima posição. -->
               <input
                 class="code-digit"
                 id="codeDigit2"
@@ -81,7 +80,6 @@
                 required
                 aria-label="Dígito 2 de 6"
               />
-              <!-- Dígito 3: aceita um número e avança para a próxima posição. -->
               <input
                 class="code-digit"
                 id="codeDigit3"
@@ -94,7 +92,6 @@
                 required
                 aria-label="Dígito 3 de 6"
               />
-              <!-- Dígito 4: aceita um número e avança para a próxima posição. -->
               <input
                 class="code-digit"
                 id="codeDigit4"
@@ -107,7 +104,6 @@
                 required
                 aria-label="Dígito 4 de 6"
               />
-              <!-- Dígito 5: aceita um número e avança para a próxima posição. -->
               <input
                 class="code-digit"
                 id="codeDigit5"
@@ -120,7 +116,6 @@
                 required
                 aria-label="Dígito 5 de 6"
               />
-              <!-- Dígito 6: aceita um número e avança para a próxima posição. -->
               <input
                 class="code-digit"
                 id="codeDigit6"
@@ -155,6 +150,7 @@
       role="status"
       aria-live="polite"
     ></div>
-    <script src="../app.js" defer></script>
+    <script src="../js/recuperacao.js" defer></script>
+    <script src="../js/global.js" defer></script>
   </body>
 </html>

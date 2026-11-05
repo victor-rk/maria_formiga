@@ -14,7 +14,8 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="../CSS/global.css" />
+    <link rel="stylesheet" href="../CSS/redefinir-senha.css" />
     <title>Maria Formiga — Redefinir senha</title>
   </head>
   <body data-page="redefinir-senha">
@@ -33,7 +34,7 @@
           <div class="input-group">
             <label for="newPassword">Nova senha *</label>
             <div class="input-wrapper reset-password-field">
-              <!-- Recebe a nova senha; o olho alterna somente a visibilidade deste campo. -->
+
               <input
                 id="newPassword"
                 name="password"
@@ -62,7 +63,7 @@
           <div class="input-group">
             <label for="confirmPassword">Confirmar nova senha *</label>
             <div class="input-wrapper reset-password-field">
-              <!-- Confirma a nova senha; seu olho funciona independentemente do primeiro campo. -->
+
               <input
                 id="confirmPassword"
                 name="confirm"
@@ -93,6 +94,7 @@
       role="status"
       aria-live="polite"
     ></div>
-    <script src="../app.js" defer></script>
+    <script src="../js/redefinir-senha.js" defer></script>
+    <script src="../js/global.js" defer></script>
   </body>
 </html>
