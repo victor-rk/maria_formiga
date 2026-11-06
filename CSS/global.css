@@ -402,6 +402,9 @@ select:focus-visible,
 textarea:focus-visible,
 [tabindex]:focus-visible   { outline: 3px solid var(--text-main); outline-offset: 3px; }
 input:not([type="radio"]):not([type="checkbox"]),
+textarea,
+select   { transition: border-color var(--motion-normal) ease, background-color var(--motion-normal) ease; }
+input:not([type="radio"]):not([type="checkbox"]),
 textarea   { width: 100%; padding: 11px 13px; border: 1px solid var(--border-color); border-radius: 8px; background: #fafaf9; color: var(--text-main); }
 input:not([type="radio"]):not([type="checkbox"]):focus,
 textarea:focus,
