@@ -49,7 +49,7 @@ Os itens abaixo descrevem o comportamento encontrado no código deste repositór
 
 A aplicação é multipágina e utiliza HTML, CSS e JavaScript nativos, sem etapa de compilação. Dados e componentes comuns ficam separados dos fluxos de tela organizados por domínio.
 
-- `CSS/global.css` reúne os estilos compartilhados; as demais folhas definem estilos por página.
+- `CSS/global.css` reúne tokens e componentes compartilhados pela área administrativa; `CSS/auth.css` contém os estilos comuns às telas de autenticação. As folhas de página guardam somente regras exclusivas; telas sem estilos próprios não importam uma folha vazia.
 - `js/global.js` inicializa os serviços compartilhados `window.MF` (estado e regras locais) e `window.UI` (componentes e utilitários de interface).
 - `js/runtime.js` coordena inicialização, permissões, navegação e eventos comuns.
 - `js/listagens.js` implementa busca, filtros e renderização das tabelas administrativas.
@@ -68,19 +68,13 @@ A aplicação é multipágina e utiliza HTML, CSS e JavaScript nativos, sem etap
 .
 ├── CSS/
 │   ├── global.css
-│   ├── clientes.css
-│   ├── entregas.css
-│   ├── estoque.css
-│   ├── fornecedores.css
+│   ├── auth.css
 │   ├── home.css
 │   ├── index.css
-│   ├── pedidos.css
-│   ├── produtos-prontos.css
 │   ├── produtos.css
 │   ├── recuperacao.css
 │   ├── redefinir-senha.css
-│   ├── relatorios.css
-│   └── vendas.css
+│   └── relatorios.css
 ├── assets/
 │   └── img/
 │       └── cupcake.png

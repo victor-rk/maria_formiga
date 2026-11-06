@@ -39,11 +39,11 @@ body[data-page="index"] .input-wrapper .input-icon + select,
 body[data-page="index"] .input-wrapper .input-icon ~ input,
 body[data-page="index"] .input-wrapper .input-icon ~ select   { padding-left: 42px !important; }
 body[data-page="index"] .input-wrapper input:focus,
-body[data-page="index"] .custom-select:focus   { background-color: var(--bg-card); border-color: var(--primary); box-shadow: none; outline: none; }
+body[data-page="index"] .custom-select:focus   { background-color: var(--bg-card); border-color: var(--primary); box-shadow: 0 0 0 3px rgba(217, 107, 132, 0.12); }
 body[data-page="index"] .input-wrapper input:disabled,
 body[data-page="index"] .input-wrapper input[readonly]   { background-color: var(--bg-main); cursor: default; color: var(--text-muted); }
 body[data-page="index"] .input-wrapper input.input-error    { border-color: var(--danger); }
-body[data-page="index"] .input-wrapper input.input-error:focus    { border-color: var(--danger); box-shadow: none; }
+body[data-page="index"] .input-wrapper input.input-error:focus    { box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12); }
 body[data-page="index"] .field-error    { font-size: 12px; color: var(--danger); margin-top: 5px; display: flex; align-items: center; gap: 5px; }
 body[data-page="index"] .field-success    { font-size: 12px; color: var(--success); margin-top: 5px; display: flex; align-items: center; gap: 5px; }
 body[data-page="index"] .pwd-toggle    { position: absolute; right: 14px; color: var(--text-light); font-size: 14px; cursor: pointer; transition: var(--transition); padding: 4px; background: none; border: none; }
@@ -78,3 +78,23 @@ body[data-page="index"] .auth-success-msg.show    { display: block; }
   body[data-page="index"] .auth-card    { padding: 20px; }
   body[data-page="index"] .login-options    { gap: 12px; flex-wrap: wrap; }}
 body[data-page="index"] .checkbox-group input[type="checkbox"]    { font-size: revert; }
+
+.login-loading { position: fixed; inset: 0; z-index: 5000; display: grid; place-items: center; background: var(--bg-main); outline: none; }
+
+.login-loading-content { display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; }
+
+.login-loading-content img { object-fit: contain; }
+
+.login-loading-content p { font-size: 14px; color: var(--text-muted); }
+
+.login-loading-spinner { width: 32px; height: 32px; border: 3px solid var(--primary-light); border-top-color: var(--primary); border-radius: 50%; animation: login-spin 0.65s linear infinite; }
+
+
+
+@keyframes login-spin    {
+  to    { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+.login-loading-spinner { animation: none; }
+}

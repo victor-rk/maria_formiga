@@ -1,1 +1,11 @@
+.report-period { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
 
+.report-period .input-group { margin: 0; flex: 1 1 140px; }
+
+.report-period button { width: auto; }
+
+.print-title { display: none; }
+
+@media print {
+.print-title { display: block; }
+}
