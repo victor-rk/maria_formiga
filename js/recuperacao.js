@@ -1,4 +1,3 @@
-window.MF_PAGE = "recuperacao";
 document.addEventListener("DOMContentLoaded", () => {
 (() => {
   "use strict";

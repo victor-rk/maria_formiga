@@ -1,4 +1,3 @@
-window.MF_PAGE = "redefinir-senha";
 document.addEventListener("DOMContentLoaded", () => {
 (() => {
   "use strict";

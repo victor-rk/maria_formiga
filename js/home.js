@@ -1,4 +1,3 @@
-window.MF_PAGE = "home";
 window.MF_PAGES = window.MF_PAGES || {};
 window.MF_PAGES.home = (root) => {
   const cards = [

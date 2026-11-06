@@ -47,11 +47,20 @@ Os itens abaixo descrevem o comportamento encontrado no código deste repositór
 
 ## Arquitetura e organização
 
-A aplicação é multipágina e utiliza HTML, CSS e JavaScript nativos, sem etapa de compilação. O runtime compartilhado concentra os dados locais, utilitários de interface, renderização dos módulos e eventos; os scripts específicos indicam o módulo correspondente a cada página.
+A aplicação é multipágina e utiliza HTML, CSS e JavaScript nativos, sem etapa de compilação. Dados e componentes comuns ficam separados dos fluxos de tela organizados por domínio.
 
 - `CSS/global.css` reúne os estilos compartilhados; as demais folhas definem estilos por página.
-- `js/global.js` inicializa os módulos globais `window.MF` (estado e regras locais) e `window.UI` (componentes e utilitários de interface), além das páginas e interações.
-- `js/*.js` contém os pontos de entrada das páginas.
+- `js/global.js` inicializa os serviços compartilhados `window.MF` (estado e regras locais) e `window.UI` (componentes e utilitários de interface).
+- `js/runtime.js` coordena inicialização, permissões, navegação e eventos comuns.
+- `js/listagens.js` implementa busca, filtros e renderização das tabelas administrativas.
+- `js/pedidos-vendas.js` implementa pedidos, vendas, recebimento e carrinho.
+- `js/configuracoes.js` implementa perfil, usuários e histórico de alterações.
+- `js/clientes.js` implementa cadastro e endereços de clientes; também é carregado em Pedidos e Vendas para os fluxos de criação de cliente.
+- `js/fornecedores.js` implementa o cadastro e a edição de fornecedores.
+- `js/estoque.js` implementa o cadastro e a movimentação de matérias-primas.
+- `js/produtos.js` implementa fichas técnicas, produção e registro de perdas; é compartilhado pelas páginas de Produtos e Produtos Prontos.
+- `js/entregas.js` implementa o despacho e a confirmação de entrega.
+- `js/relatorios.js` implementa renderização, filtros e exportação CSV; `runtime.js` fornece os serviços compartilhados.
 - `pages/*.html` contém a estrutura das telas. A pasta tem esse nome no projeto atual.
 - `assets/img/` contém os recursos de imagem usados pela interface.
 
@@ -77,19 +86,20 @@ A aplicação é multipágina e utiliza HTML, CSS e JavaScript nativos, sem etap
 │       └── cupcake.png
 ├── js/
 │   ├── global.js
+│   ├── runtime.js
+│   ├── listagens.js
+│   ├── pedidos-vendas.js
+│   ├── configuracoes.js
 │   ├── clientes.js
 │   ├── entregas.js
 │   ├── estoque.js
 │   ├── fornecedores.js
 │   ├── home.js
 │   ├── index.js
-│   ├── pedidos.js
-│   ├── produtos-prontos.js
 │   ├── produtos.js
 │   ├── recuperacao.js
 │   ├── redefinir-senha.js
-│   ├── relatorios.js
-│   └── vendas.js
+│   └── relatorios.js
 ├── pages/
 │   ├── index.html
 │   ├── home.html

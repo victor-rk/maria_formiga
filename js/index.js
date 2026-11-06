@@ -1,4 +1,3 @@
-window.MF_PAGE = "index";
 document.addEventListener("DOMContentLoaded", () => {
 (() => {
   "use strict";
