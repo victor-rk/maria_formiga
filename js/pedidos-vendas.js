@@ -4,6 +4,9 @@ window.MF_PAGE_MODULES.pedidosVendas = {
   /* Creates order and sales operations using shared application services. */
   create({ D, U, $, get, val, cents, required, options, address, paymentOptions, payName, total, clientName, F, S, B, E, M, save, clientPage }) {
     let cart = [], draftTimer;
+    function checkoutForm(main, summary, submit) {
+      return `<form class="checkout-form"><p class="form-error" role="alert" tabindex="-1"></p><div class="checkout-main">${main}</div><aside class="checkout-summary" aria-live="polite">${summary}${U.actions(submit)}</aside></form>`;
+    }
     /* Monta a tabela de itens do carrinho com valores e ações de remoção. */
     function cartMarkup() {
       return U.table(
@@ -29,20 +32,24 @@ window.MF_PAGE_MODULES.pedidosVendas = {
     }
     /* Atualiza a tabela e o total do carrinho, incluindo taxa de entrega quando aplicável. */ function updateCart() {
       if ($("#cart-items")) $("#cart-items").innerHTML = cartMarkup();
-      const fee = Math.round(Number($("#f-fee")?.value || 0) * 100);
-      if ($("#cart-total"))
-        $("#cart-total").textContent = M(
-          cart.reduce(
-             (
-              s,
-              i,
-            ) => s + i.price * i.qty,
-            0,
-          ) + fee,
-        );
+      const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+      const fee = U.moneyCents($("#f-fee")?.value);
+      const summaryItems = cart.length
+        ? cart.map((item) => `<div class="checkout-item"><span>${E(get("products", item.product)?.name || item.name || "Produto")} × ${item.qty}</span><strong>${M(item.price * item.qty)}</strong></div>`).join("")
+        : '<p class="checkout-empty">Nenhum produto adicionado.</p>';
+      ["#order-summary-items", "#sale-summary-items"].forEach((selector) => {
+        if ($(selector)) $(selector).innerHTML = summaryItems;
+      });
+      if ($("#cart-total")) $("#cart-total").textContent = M(subtotal + fee);
+      if ($("#sale-total")) $("#sale-total").textContent = M(subtotal);
+      if ($("#order-summary-fee")) $("#order-summary-fee").textContent = M(fee);
+      if ($("#sale-change")) {
+        const received = U.moneyCents($("#f-received")?.value);
+        $("#sale-change").textContent = M(Math.max(0, received - subtotal));
+      }
     }
     /* Gera os controles para selecionar e incluir produtos no pedido ou venda. */ function cartFields() {
-      return `<h3 class="section-heading">Produtos</h3><div class="cart-line">${ S("itemProduct", "Produto", options("products"), "", "")}${ F("itemQty", "Quantidade", 1, "number", 'min="1" step="1"')}${ B("Incluir", "cart-add", "", "btn-secondary")}</div><div id="cart-items">${cartMarkup()}</div>`;
+      return `<h3 class="section-heading">Produtos</h3><div class="cart-line">${ S("itemProduct", "Produto", options("products"), "", "")}${ F("itemQty", "Quantidade", 1, "number", 'min="1" step="1"')}${ B("Incluir", "cart-add", "", "btn-add-item")}</div><div id="cart-items">${cartMarkup()}</div>`;
     }
     /* Cadastra ou edita pedido, recupera rascunho e valida cliente, itens, pagamento e endereço. */ function orderForm(
       id,
@@ -67,18 +74,8 @@ window.MF_PAGE_MODULES.pedidosVendas = {
       const v = o || draft?.fields || {};
       U.open(
         o ? "Editar pedido " + o.code : "Registrar novo pedido",
-        U.form(
-          `${draft ? '<p class="notice">Rascunho das últimas 24 horas recuperado.</p>' : ""}<div class="form-grid">${ S("client", "Cliente cadastrado *", options("clients"), v.client)}${
-             S(
-              "mode",
-              "Modalidade *",
-              [
-                ["retirada", "Retirada"],
-                ["entrega", "Entrega"],
-              ],
-              v.mode || "retirada",
-            )
-          }${ S("address", "Endereço de entrega", [], v.addressId || "", "")}${ F("due", "Data e hora combinadas *", (v.due || D.date(1) + "T15:00").slice(0, 16), "datetime-local", "required")}${ F("phone", "Telefone para contato *", v.phone || "", "tel", 'required minlength="10" maxlength="30"')}${
+        checkoutForm(
+          `<div class="form-grid">${ S("client", "Cliente cadastrado *", options("clients"), v.client)}${ F("due", "Data e hora combinadas *", (v.due || D.date(1) + "T15:00").slice(0, 16), "datetime-local", "required")}</div><div class="order-mode-options" role="radiogroup" aria-label="Modalidade do pedido"><label class="order-mode-option"><input type="radio" name="mode" value="retirada" ${!v.mode || v.mode === "retirada" ? "checked" : ""}><span>Retirada</span></label><label class="order-mode-option"><input type="radio" name="mode" value="entrega" ${v.mode === "entrega" ? "checked" : ""}><span>Entrega</span></label></div><div id="order-delivery-fields" class="order-mode-fields ${v.mode === "entrega" ? "" : "is-hidden"}" aria-hidden="${v.mode !== "entrega"}"><div class="form-grid">${ S("address", "Endereço de entrega *", [], v.addressId || "", "")}${ F("fee", "Taxa de entrega", (v.fee || 0) / 100, "money", "")}</div></div><div class="form-grid">${ F("phone", "Telefone para contato *", v.phone || "", "tel", 'required minlength="10" maxlength="30"')}${
              S(
               "payment",
               "Forma de pagamento *",
@@ -89,7 +86,8 @@ window.MF_PAGE_MODULES.pedidosVendas = {
               ),
               v.payment,
             )
-          }${ F("fee", "Taxa de entrega (R$)", (v.fee || 0) / 100, "number", 'min="0" step="0.01"')}</div>${!o ?  B("Cadastrar cliente e retomar pedido", "order-new-client", "", "btn-secondary") : ""}${cartFields()}${ F("note", "Observações da encomenda", v.note || "", "text", 'maxlength="500"')}<div class="summary-box"><div class="summary-row total"><span>Total do pedido</span><strong id="cart-total"></strong></div></div>`,
+          }</div>${!o ?  B("Cadastrar cliente e retomar pedido", "order-new-client", "", "btn-secondary") : ""}${cartFields()}${ F("note", "Observações da encomenda", v.note || "", "text", 'maxlength="500"')}`,
+          `<h3>Resumo do pedido</h3><div id="order-summary-items" class="checkout-items"></div><div id="order-summary-fee-row" class="checkout-total-row ${v.mode === "entrega" ? "" : "is-hidden"}"><span>Taxa de entrega</span><strong id="order-summary-fee">${M(v.fee || 0)}</strong></div><div class="checkout-total-row grand-total"><span>Total do pedido</span><strong id="cart-total">${M(cart.reduce((sum, item) => sum + item.price * item.qty, 0) + (v.fee || 0))}</strong></div>`,
           "Salvar pedido",
         ),
       );
@@ -117,17 +115,25 @@ window.MF_PAGE_MODULES.pedidosVendas = {
         U.applyInputMask($("#f-phone"));
       }
       $("#f-address").value = v.addressId || "";
+      const selectedMode = () =>
+        $("#dialog-body input[name=mode]:checked")?.value || "retirada";
       const updateMode =
         /* Alterna exigências de endereço e taxa conforme entrega ou retirada. */ () => {
-          const delivery = $("#f-mode").value === "entrega";
+          const delivery = selectedMode() === "entrega";
+          const fields = $("#order-delivery-fields");
+          fields.classList.toggle("is-hidden", !delivery);
+          fields.setAttribute("aria-hidden", String(!delivery));
+          $("#order-summary-fee-row").classList.toggle("is-hidden", !delivery);
           $("#f-address").required = delivery;
           $("#f-address").disabled = !delivery;
           $("#f-fee").disabled = !delivery;
-          if (!delivery) $("#f-fee").value = 0;
+          if (!delivery) $("#f-fee").value = U.formatMoneyInput("0");
           updateCart();
         };
       $("#f-client").onchange = updateAddress;
-      $("#f-mode").onchange = updateMode;
+      document.querySelectorAll("#dialog-body input[name=mode]").forEach((input) =>
+        input.addEventListener("change", updateMode),
+      );
       $("#f-fee").oninput = updateCart;
       updateMode();
       if (!o) {
@@ -156,7 +162,7 @@ window.MF_PAGE_MODULES.pedidosVendas = {
                     ),
                   );
                 fields.addressId = fields.address;
-                fields.fee = Math.round(Number(f.get("fee") || 0) * 100);
+                fields.fee = U.moneyCents(f.get("fee"));
                 try {
                   D.commit(
                     /* Aplica as alterações ao estado dentro da operação local — Cadastra ou edita pedido, recupera rascunho e valida cliente, itens, pagamento e endereço. */ (
@@ -273,20 +279,30 @@ window.MF_PAGE_MODULES.pedidosVendas = {
           Pronto: "Finalizado",
         }[o.status];
       if (!next) throw Error("Não é possível avançar este status.");
-      if (next === "Finalizado" && o.mode === "entrega")
-        throw Error("Conclua a entrega pelo módulo Entregas.");
+      if (next === "Finalizado" && o.mode === "entrega") {
+        location.href =
+          "entregas.html?order=" +
+          encodeURIComponent(o.id) +
+          "&action=dispatch";
+        return;
+      }
       if (next === "Finalizado" && !o.sale)
         throw Error("Registre o recebimento antes de finalizar a retirada.");
-      if (!confirm(`Alterar o pedido ${o.code} para ${next}?`)) return;
-      save(
-         () => {
+      U.open(
+        "Avançar pedido " + o.code,
+        U.form(
+          `<p class="notice">O pedido passará de <strong>${E(o.status)}</strong> para <strong>${E(next)}</strong>.</p>`,
+          "Confirmar avanço",
+        ),
+      );
+      U.bindForm(() =>
+        save(() => {
           o.status = next;
           o.history.push({
             at: D.now(),
             text: "Status alterado para " + next + ".",
           });
-        },
-        "Status atualizado.",
+        }, "Status atualizado."),
       );
     }
     /* Exige motivo, cancela o pedido ainda não pago e mantém o histórico. */ function cancelOrder(
@@ -333,7 +349,7 @@ window.MF_PAGE_MODULES.pedidosVendas = {
       }
       U.open(
         "Registrar venda de balcão",
-        U.form(
+        checkoutForm(
           `<div class="sale-client-row">${ S("client", "Cliente — opcional", options("clients", "Cliente Balcão"), draft?.fields.client || "", "")}${/* Cadastra um cliente e retoma esta venda sem perder os dados preenchidos. */ B("Adicionar cliente", "sale-new-client", "", "btn-secondary")}</div>${cartFields()}${
              S(
               "payment",
@@ -344,8 +360,9 @@ window.MF_PAGE_MODULES.pedidosVendas = {
                 ) => p[0] !== "pendente",
               ),
             )
-          }${ F("received", "Valor recebido em dinheiro (R$)", "", "number", 'min="0" step="0.01"')}<div class="summary-box"><div class="summary-row total"><span>Total a receber</span><strong id="cart-total"></strong></div></div>`,
-          "Confirmar recebimento e venda",
+          }<div id="received-field" class="conditional-money is-hidden">${ F("received", "Valor recebido em dinheiro", "", "money", "")}</div>`,
+          `<h3>Resumo da venda</h3><div id="sale-summary-items" class="checkout-items"></div><div class="checkout-total-row grand-total"><span>Total</span><strong id="sale-total"></strong></div><div id="sale-change-row" class="checkout-total-row is-hidden"><span>Troco</span><strong id="sale-change">R$ 0,00</strong></div>`,
+          "Confirmar",
         ),
       );
       // Restaura também os valores ainda não incluídos no carrinho e o dinheiro recebido.
@@ -360,10 +377,14 @@ window.MF_PAGE_MODULES.pedidosVendas = {
       const update =
         /* Exige valor recebido apenas quando a forma de pagamento é dinheiro. */ () => {
           const cash = $("#f-payment").value === "dinheiro";
+          $("#received-field").classList.toggle("is-hidden", !cash);
           $("#f-received").required = cash;
           $("#f-received").disabled = !cash;
+          $("#sale-change-row").classList.toggle("is-hidden", !cash);
+          updateCart();
         };
       $("#f-payment").onchange = update;
+      $("#f-received").addEventListener("input", updateCart);
       update();
       U.bindForm(
         /* Valida os campos enviados e executa a operação do formulário — Registra uma venda de balcão, confere estoque e valor recebido e calcula o troco. */ (
@@ -521,7 +542,7 @@ window.MF_PAGE_MODULES.pedidosVendas = {
         ),
       );
       fields.addressId = fields.address;
-      fields.fee = Math.round(Number(fd.get("fee") || 0) * 100);
+      fields.fee = U.moneyCents(fd.get("fee"));
       D.commit(
         (state) => (state.drafts.order = {
           at: Date.now(),
@@ -531,14 +552,13 @@ window.MF_PAGE_MODULES.pedidosVendas = {
         "Pedido mantido como rascunho.",
       );
       clearTimeout(draftTimer);
-      clientPage.clientForm();
-      const form = $("#dialog-body form");
-      form.addEventListener("submit", () => {
-        if (!$("#app-dialog").open) {
+      clientPage.clientForm(undefined, {
+        onCancel: () => orderForm(),
+        onSaved(clientId) {
           orderForm();
-          $("#f-client").value = D.state.clients.at(-1).id;
+          $("#f-client").value = clientId;
           $("#f-client").dispatchEvent(new Event("change"));
-        }
+        },
       });
     }
 
@@ -577,8 +597,8 @@ window.MF_PAGE_MODULES.pedidosVendas = {
           "Data",
           "Produto",
           "Quantidade",
-          "Preço unitário (R$)",
-          "Total recebido (R$)",
+          "Preço unitário",
+          "Total recebido",
           "Pagamento",
         ],
         sale.items.map((item) => [

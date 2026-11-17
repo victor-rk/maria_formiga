@@ -133,7 +133,14 @@ window.MF_PAGE_MODULES.listagens = {
               c,
             ) => [
               E(c.name),
-              E(c.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")),
+              E(
+                c.cpf
+                  ? c.cpf.replace(
+                      /(\d{3})(\d{3})(\d{3})(\d{2})/,
+                      "$1.$2.$3-$4",
+                    )
+                  : "—",
+              ),
               `${E(U.formatPhone(c.phone))}<br><span class="muted">${E(c.email)}</span>`,
               String(c.addresses.length),
                B(
@@ -162,25 +169,23 @@ window.MF_PAGE_MODULES.listagens = {
             "btn-novo",
           );
         title = "Fornecedores de insumos";
-        headers = [
-          "Fornecedor",
-          "CNPJ",
-          "Categoria",
-          "Contato",
-          "Prazo",
-          "Ações",
-        ];
+        headers = ["Fornecedor", "Categoria", "Contato", "Ações"];
         rows = D.state.suppliers
-          .filter(matches)
+          .filter((supplier) =>
+            matches({
+              name: supplier.name,
+              category: supplier.category,
+              phone: supplier.phone,
+              email: supplier.email,
+            }),
+          )
           .map(
              (
               s,
             ) => [
               E(s.name),
-              E(U.formatCNPJ(s.cnpj)),
               E(s.category),
               `${E(U.formatPhone(s.phone))}<br>${E(s.email)}`,
-              `${s.lead} dia(s) úteis`,
                B(
                 "Editar",
                 "supplier",
@@ -437,11 +442,10 @@ window.MF_PAGE_MODULES.listagens = {
                     ? "pronto"
                     : "pendente",
               ),
-               B(
-                "Detalhes",
-                "order-detail",
-                o.id,
-              ),
+              (admin &&
+              ["Pendente", "Em produção", "Pronto"].includes(o.status)
+                ? B("Avançar status", "order-next", o.id)
+                : "") + B("Detalhes", "order-detail", o.id),
             ],
           );
       } else if (page === "vendas") {
@@ -580,11 +584,13 @@ window.MF_PAGE_MODULES.listagens = {
                       "delivered",
                       o.id,
                     )
-                  :  B(
+                  : o.status === "Pronto"
+                    ? B(
                       "Despachar",
                       "dispatch",
                       o.id,
-                    ),
+                    )
+                    : '<span class="muted">Aguardando ficar pronto</span>',
             ],
           );
       }

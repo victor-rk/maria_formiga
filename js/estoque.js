@@ -26,7 +26,7 @@ window.MF_PAGE_MODULES.estoque = {
               m?.unit || "kg",
               m ? "disabled" : "required",
             )
-          }${!m ?  F("stock", "Saldo inicial *", 0, "number", 'required min="0" step="0.001"') : ""}${ F("min", "Estoque mínimo *", m?.min || 0, "number", 'required min="0" step="0.001"')}${ F("cost", "Custo em R$ por unidade base *", m ? m.cost / 100 : 0, "number", 'required min="0.01" step="0.01"')}</div><p class="help">Use a mesma unidade na receita e nas movimentações. O saldo é alterado por movimentação, preservando o histórico. O custo atual não altera vendas anteriores.</p>`,
+          }</div><div class="form-grid material-detail-grid${m ? " is-editing" : ""}">${!m ?  F("stock", "Saldo inicial *", 0, "number", 'required min="0" step="0.001"') : ""}${ F("min", "Estoque mínimo *", m?.min || 0, "number", 'required min="0" step="0.001"')}${ F("cost", "Custo por unidade base *", m ? m.cost / 100 : 0, "money", "required")}</div>`,
         ),
       );
       U.bindForm(
@@ -49,6 +49,8 @@ window.MF_PAGE_MODULES.estoque = {
             min: number(fd, "min"),
             cost: cents(fd, "cost"),
           };
+          if (data.cost < 1)
+            throw Error("Informe um custo maior que zero.");
           save(
              (
               s,
@@ -84,7 +86,7 @@ window.MF_PAGE_MODULES.estoque = {
       U.open(
         "Movimentar matéria-prima",
         U.form(
-          `${ S("material", "Matéria-prima *", options("materials"), id)}<p id="movement-stock" class="notice"></p><div class="form-grid">${
+          `<div class="movement-material-row">${ S("material", "Matéria-prima *", options("materials"), id)}<div id="movement-stock" class="input-group movement-stock-field" aria-live="polite"><label for="movement-stock-value">Saldo atual</label><input id="movement-stock-value" type="text" value="-" readonly></div></div><div class="form-grid">${
              S(
               "type",
               "Operação *",
@@ -93,15 +95,18 @@ window.MF_PAGE_MODULES.estoque = {
                 ["saida", "Saída / uso ou perda"],
               ],
             )
-          }${ F("qty", "Quantidade na unidade base *", "", "number", 'required min="0.001" step="0.001"')}${ F("cost", "Novo custo por unidade (R$) — opcional", "", "number", 'min="0.01" step="0.01"')}${ S("supplier", "Fornecedor — opcional", options("suppliers", "Não vincular"), "", "")}</div>${ F("reason", "Motivo / referência *", "", "text", 'required maxlength="200"')}`,
+          }<div class="quantity-unit movement-quantity-unit">${ F("qty", "Quantidade *", "", "number", 'required min="0.001" step="0.001"')}<span id="movement-unit"></span></div>${ F("cost", "Novo custo por unidade — opcional", "", "money", "")}${ F("reason", "Motivo", "", "text", 'maxlength="200"')}</div>`,
         ),
       );
       const update =
         /* Exibe o saldo e a unidade da matéria-prima selecionada. */ () => {
           const m = get("materials", $("#f-material").value);
-          $("#movement-stock").textContent = m
-            ? `Saldo: ${U.num(m.stock)} ${m.unit}. Informe a quantidade em ${m.unit}.`
-            : "Selecione uma matéria-prima.";
+          $("#movement-stock-value").value = m
+            ? `${U.num(m.stock)} ${m.unit}`
+            : "-";
+          $("#movement-unit").textContent = m?.unit || "";
+          if (m) $("#f-qty").setAttribute("aria-describedby", "movement-unit");
+          else $("#f-qty").removeAttribute("aria-describedby");
         };
       $("#f-material").onchange = update;
       update();
@@ -111,7 +116,8 @@ window.MF_PAGE_MODULES.estoque = {
         ) => {
           const m = get("materials", val(fd, "material")),
             qty = number(fd, "qty", 0.001),
-            type = val(fd, "type");
+            type = val(fd, "type"),
+            newCost = val(fd, "cost") ? cents(fd, "cost") : null;
           if (m.unit === "un" && !Number.isInteger(qty))
             throw Error("Para unidades, informe uma quantidade inteira.");
           if (type === "saida" && qty > m.stock)
@@ -124,15 +130,17 @@ window.MF_PAGE_MODULES.estoque = {
                 Math.round(
                   (m.stock + (type === "entrada" ? qty : -qty)) * 1000,
                 ) / 1000;
-              if (type === "entrada" && val(fd, "cost"))
-                m.cost = cents(fd, "cost");
+              if (type === "entrada" && newCost !== null) {
+                if (newCost < 1)
+                  throw Error("Informe um custo maior que zero.");
+                m.cost = newCost;
+              }
               s.movements.push({
                 id: D.uid(),
                 material: m.id,
                 type,
                 qty,
                 reason: val(fd, "reason"),
-                supplier: val(fd, "supplier"),
                 at: D.now(),
               });
             },

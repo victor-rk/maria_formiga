@@ -79,6 +79,7 @@ body[data-page="index"] .auth-success-msg.show    { display: block; }
   body[data-page="index"] .login-options    { gap: 12px; flex-wrap: wrap; }}
 body[data-page="index"] .checkbox-group input[type="checkbox"]    { font-size: revert; }
 
+
 .login-loading { position: fixed; inset: 0; z-index: 5000; display: grid; place-items: center; background: var(--bg-main); outline: none; }
 
 .login-loading-content { display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; }

@@ -48,9 +48,9 @@ window.MF_PAGE_MODULES.relatorios = {
           "Cliente",
           "Produtos / quantidades",
           "Pagamento",
-          "Receita (R$)",
-          "Insumos (R$)",
-          "Resultado após insumos (R$)",
+          "Receita",
+          "Insumos",
+          "Resultado após insumos",
           "Margem (%)",
         ];
         rows = D.state.sales
@@ -80,9 +80,9 @@ window.MF_PAGE_MODULES.relatorios = {
           "Pagamento",
           "Status",
           "Recebido",
-          "Total (R$)",
-          "Custo de insumos (R$)",
-          "Resultado (R$)",
+          "Total",
+          "Custo de insumos",
+          "Resultado",
           "Margem (%)",
           ...(reportType === "entregas"
             ? ["Endereço", "Responsável", "Status entrega"]

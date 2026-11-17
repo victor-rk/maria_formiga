@@ -245,19 +245,19 @@ window.MF_PAGE_MODULES.configuracoes = {
       const user = get("users", id);
       if (user.role === "admin")
         throw Error("Não é possível excluir este administrador.");
-      if (
-        confirm(
-          "Excluir o usuário " +
-            user.name +
-            "? O histórico das operações será preservado.",
-        )
-      )
+      U.confirmCard(
+        "Excluir o usuário " +
+          user.name +
+          "? O histórico das operações será preservado.",
+        () =>
         save(
           (state) => {
             state.users = state.users.filter((item) => item.id !== id);
           },
           "Usuário excluído.",
-        );
+        ),
+        { confirmText: "Excluir usuário", danger: true },
+      );
     }
 
     /* Ativa ou desativa um usuário operacional após confirmação. */
@@ -266,11 +266,15 @@ window.MF_PAGE_MODULES.configuracoes = {
       const user = get("users", id);
       if (user.role === "admin")
         throw Error("Não é possível desativar este administrador.");
-      if (confirm(`${user.active ? "Desativar" : "Ativar"} ${user.name}?`))
+      U.confirmCard(
+        `${user.active ? "Desativar" : "Ativar"} ${user.name}?`,
+        () =>
         save(
           () => (user.active = !user.active),
           "Situação do usuário atualizada.",
-        );
+        ),
+        { confirmText: user.active ? "Desativar usuário" : "Ativar usuário" },
+      );
     }
 
     return {

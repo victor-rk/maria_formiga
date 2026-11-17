@@ -55,7 +55,7 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
       /* Converte um valor monetário informado no formulário para centavos inteiros. */ (
         fd,
         key,
-      ) => Math.round(number(fd, key) * 100);
+      ) => U.moneyCents(fd.get(key));
     const required = 'required maxlength="120"';
     const perms = {
       home: "readStock",
@@ -223,7 +223,7 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
       receiveForm, receipt, quickSale, receiptDownload,
     } = operationsPage || {};
     const deliveryPage = window.MF_PAGE_MODULES.entregas?.create({
-      D, U, get, F, required, val, save, address,
+      D, U, get, F, S, required, val, save, address, E, total, paymentOptions, payName,
     });
     const settingsPage = window.MF_PAGE_MODULES.configuracoes?.create({
       D, U, get, val, F, S, B, required, E, save,
@@ -463,6 +463,18 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
     if (page === "pedidos" && params.get("openModal") === "true") {
       try {
         orderForm();
+      } catch (e) {
+        fail(e);
+      }
+      window.history.replaceState(null, "", location.pathname);
+    }
+    if (
+      page === "entregas" &&
+      params.get("action") === "dispatch" &&
+      params.has("order")
+    ) {
+      try {
+        deliveryPage.dispatchForm(params.get("order"));
       } catch (e) {
         fail(e);
       }

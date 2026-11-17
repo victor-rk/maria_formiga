@@ -21,14 +21,14 @@ Os itens abaixo descrevem o comportamento encontrado no código deste repositór
 
 | Módulo | Recursos implementados |
 |---|---|
-| **Clientes** | Cadastro e edição de clientes e endereços; validação de CPF e dados de contato. |
-| **Fornecedores** | Cadastro e manutenção de dados de fornecedores e validação de CNPJ. |
+| **Clientes** | Cadastro e edição de clientes e endereços; CPF opcional e sem validação do documento. Novos clientes podem seguir diretamente para o cadastro de endereço. |
+| **Fornecedores** | Cadastro e manutenção dos dados de contato e categoria dos fornecedores. |
 | **Matéria-prima** | Cadastro de insumos com unidade, saldo, custo e nível mínimo; registro de entradas e saídas; indicação de estoque baixo. |
 | **Produtos e receitas** | Fichas técnicas com insumos, quantidades e rendimento; cálculo de custo por unidade e validação do preço em relação à margem mínima configurada. |
 | **Produção e produtos prontos** | Registro da produção com consumo proporcional dos insumos e criação de lotes de produtos acabados; controle por lote e validade. |
 | **Pedidos** | Registro de encomendas associadas a clientes, modalidade, data combinada, itens, pagamento e observações; edição de pedidos pendentes não pagos; rascunho local recuperável por até 24 horas. |
 | **Vendas** | Registro de venda de balcão e recebimento integral de pedidos; verificação de disponibilidade de produtos prontos; cálculo de troco para pagamentos em dinheiro e geração de comprovante/exportação. |
-| **Entregas** | Despacho de pedidos prontos para entrega com endereço e responsável; acompanhamento dos estados “Em rota” e “Entregue”. A confirmação de entrega também finaliza o pedido. |
+| **Entregas** | Despacho de pedidos prontos para entrega com endereço e responsável; acompanhamento dos estados “Em rota” e “Entregue”. A confirmação da entrega permite registrar o recebimento pendente no mesmo fluxo e finaliza o pedido. |
 | **Relatórios** | Filtros por período para vendas, pedidos, entregas e movimentações de estoque; exportação dos resultados em CSV e impressão pela função do navegador. |
 | **Início e configurações** | Painel com atalhos e indicadores; configurações locais de perfil, usuários demonstrativos e histórico de alterações. |
 | **Login e recuperação de senha** | Telas de login, recuperação e redefinição com validações e estados visuais demonstrativos. Não há autenticação de credenciais nem envio real de e-mail. |

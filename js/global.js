@@ -77,11 +77,9 @@ window.MF = (
           {
             id: "s1",
             name: "Distribuidora Exemplo",
-            cnpj: "11222333000181",
             category: "Insumos",
             phone: "1140000000",
             email: "vendas@example.com",
-            lead: 2,
           },
         ],
         materials: [
@@ -361,42 +359,6 @@ window.MF = (
     ) {
       if (!permission(action)) throw Error("Seu perfil não permite esta ação.");
     }
-    /* Valida quantidade de dígitos e dígitos verificadores de um CPF. */ function validCPF(
-      value,
-    ) {
-      const n = value.replace(/\D/g, "");
-      if (n.length !== 11 || /^(\d)\1+$/.test(n)) return false;
-      return [9, 10].every(
-         (
-          len,
-        ) => {
-          let sum = 0;
-          for (let i = 0; i < len; i++) sum += Number(n[i]) * (len + 1 - i);
-          const digit = (sum * 10) % 11;
-          return (digit === 10 ? 0 : digit) === Number(n[len]);
-        },
-      );
-    }
-    /* Valida quantidade de dígitos e dígitos verificadores de um CNPJ numérico. */ function validCNPJ(
-      value,
-    ) {
-      const n = value.replace(/\D/g, "");
-      if (n.length !== 14 || /^(\d)\1+$/.test(n)) return false;
-      return [12, 13].every(
-         (
-          len,
-        ) => {
-          let w = len - 7,
-            sum = 0;
-          for (let i = 0; i < len; i++) {
-            sum += Number(n[i]) * w;
-            w = w === 2 ? 9 : w - 1;
-          }
-          const rest = sum % 11;
-          return (rest < 2 ? 0 : 11 - rest) === Number(n[len]);
-        },
-      );
-    }
     return {
       get state () {
         return state;
@@ -420,8 +382,6 @@ window.MF = (
       margin,
       available,
       consume,
-      validCPF,
-      validCNPJ,
     };
   }
 )();
@@ -450,6 +410,26 @@ window.UI = (
           style: "currency",
           currency: "BRL",
         }).format((Number(n) || 0) / 100);
+    const moneyCents = (value) => {
+      const raw = String(value ?? "").trim();
+      if (!raw) return 0;
+      const normalized = raw.includes(",")
+        ? raw.replace(/\./g, "").replace(",", ".")
+        : raw;
+      const amount = Number(normalized);
+      if (!Number.isFinite(amount) || amount < 0)
+        throw Error("Informe um valor monetário válido.");
+      return Math.round(amount * 100);
+    };
+    const formatMoneyInput = (value) => {
+      const digits = String(value ?? "").replace(/\D/g, "").slice(0, 14);
+      if (!digits) return "";
+      const cents = Number(digits);
+      return new Intl.NumberFormat("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(cents / 100);
+    };
     const num =
       /* Formata quantidades com até três casas decimais no padrão brasileiro. */ (
         n,
@@ -525,32 +505,11 @@ window.UI = (
       ].includes(action);
       return `<button type="button" class="${cls}${destructive ? " action-danger" : ""}" data-action="${esc(action)}" data-id="${esc(id)}">${icon ? `<i class="fa-solid ${icon}" aria-hidden="true"></i>` : ""}<span>${esc(text)}</span></button>`;
     }
-    // Retorna apenas os números, limitando o tamanho dos documentos e telefones.
+    // Retorna apenas os números, limitando o tamanho de telefones.
     function numericDigits(value, limit = 11) {
       return String(value ?? "")
         .replace(/\D/g, "")
         .slice(0, limit);
-    }
-    // Aplica progressivamente a máscara 000.000.000-00, sem exigir pontuação manual.
-    function formatCPF(value) {
-      const digits = numericDigits(value);
-      return (
-        digits.slice(0, 3) +
-        (digits.length > 3 ? "." + digits.slice(3, 6) : "") +
-        (digits.length > 6 ? "." + digits.slice(6, 9) : "") +
-        (digits.length > 9 ? "-" + digits.slice(9, 11) : "")
-      );
-    }
-    // Pontua progressivamente os 14 números do CNPJ, inclusive ao colar ou editar.
-    function formatCNPJ(value) {
-      const digits = numericDigits(value, 14);
-      return (
-        digits.slice(0, 2) +
-        (digits.length > 2 ? "." + digits.slice(2, 5) : "") +
-        (digits.length > 5 ? "." + digits.slice(5, 8) : "") +
-        (digits.length > 8 ? "/" + digits.slice(8, 12) : "") +
-        (digits.length > 12 ? "-" + digits.slice(12, 14) : "")
-      );
     }
     // Ajusta automaticamente telefone fixo (10 dígitos) e celular (11 dígitos), com DDD.
     function formatPhone(value) {
@@ -567,11 +526,7 @@ window.UI = (
         (local.length > split ? "-" + local.slice(split) : "")
       );
     }
-    const maskFormatters = {
-      cpf: formatCPF,
-      cnpj: formatCNPJ,
-      phone: formatPhone,
-    };
+    const maskFormatters = { phone: formatPhone };
     // Encontra a posição visual do cursor pelo número de dígitos antes dele.
     function digitCaret(value, digitCount) {
       if (digitCount <= 0) return 0;
@@ -589,22 +544,11 @@ window.UI = (
       const raw = input.value;
       const selection = input.selectionStart ?? raw.length;
       const count = raw.slice(0, selection).replace(/\D/g, "").length;
-      const digits = numericDigits(raw, mask === "cnpj" ? 14 : 11);
+      const digits = numericDigits(raw);
       input.value = maskFormatters[mask](digits);
-      // A máscara confere o tamanho; os dígitos verificadores continuam no cadastro.
-      const complete =
-        mask === "cpf"
-          ? digits.length === 11
-          : mask === "cnpj"
-            ? digits.length === 14
-            : [10, 11].includes(digits.length);
       input.setCustomValidity(
-        digits.length && !complete
-          ? mask === "cpf"
-            ? "Informe os 11 números do CPF."
-            : mask === "cnpj"
-              ? "Informe os 14 números do CNPJ."
-              : "Informe o telefone com DDD e 10 ou 11 números."
+        digits.length && ![10, 11].includes(digits.length)
+          ? "Informe o telefone com DDD e 10 ou 11 números."
           : "",
       );
       if (preserveCaret && document.activeElement === input) {
@@ -628,6 +572,19 @@ window.UI = (
       if (event.target.matches("input[data-mask]"))
         applyInputMask(event.target, true);
     });
+    document.addEventListener("input", (event) => {
+      const input = event.target;
+      if (!input.matches("input[data-money]")) return;
+      input.value = formatMoneyInput(input.value);
+      input.setSelectionRange(input.value.length, input.value.length);
+    }, true);
+    const moveMoneyCaretToEnd = (event) => {
+      const input = event.target;
+      if (input.matches?.("input[data-money]"))
+        input.setSelectionRange(input.value.length, input.value.length);
+    };
+    document.addEventListener("focus", moveMoneyCaretToEnd, true);
+    document.addEventListener("click", moveMoneyCaretToEnd, true);
     // Copia o trecho selecionado da senha real, mesmo enquanto o campo mostra bolinhas.
     document.addEventListener("copy", (event) => {
       const input = event.target;
@@ -712,10 +669,7 @@ window.UI = (
       if (!adjacent || /\d/.test(adjacent)) return;
       const count = input.value.slice(0, position).replace(/\D/g, "").length;
       const remove = backward ? count - 1 : count;
-      const digits = numericDigits(
-        input.value,
-        input.dataset.mask === "cnpj" ? 14 : 11,
-      );
+      const digits = numericDigits(input.value);
       if (remove < 0 || remove >= digits.length) return;
       event.preventDefault();
       input.value = digits.slice(0, remove) + digits.slice(remove + 1);
@@ -732,19 +686,22 @@ window.UI = (
       type = "text",
       extra = "",
     ) {
-      // Documentos e telefones recebem o mesmo comportamento em todos os módulos.
-      const mask = ["cpf", "cnpj"].includes(name.toLowerCase())
-        ? name.toLowerCase()
-        : type === "tel"
-          ? "phone"
-          : "";
+      // Telefones recebem máscara em todos os módulos.
+      const mask = type === "tel" ? "phone" : "";
       if (mask) {
         value = maskFormatters[mask](value);
         extra = extra.replace(
           /\b(?:maxlength|minlength|inputmode|pattern)\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,
           "",
         );
-        extra += ` data-mask="${mask}" inputmode="numeric" maxlength="${mask === "cpf" ? 14 : mask === "cnpj" ? 18 : 15}"`;
+        extra += ` data-mask="${mask}" inputmode="numeric" maxlength="15"`;
+      }
+      if (type === "money") {
+        const formatted =
+          value === ""
+            ? ""
+            : formatMoneyInput(String(Math.round(Number(value || 0) * 100)));
+        return `<div class="input-group"><label for="f-${name}">${esc(label)}</label><div class="money-input"><span aria-hidden="true">R$</span><input id="f-${name}" name="${name}" type="text" inputmode="numeric" autocomplete="off" data-money value="${esc(formatted)}" ${extra}></div></div>`;
       }
       return `<div class="input-group"><label for="f-${name}">${esc(label)}</label><input id="f-${name}" name="${name}" type="${type}" value="${esc(value)}" ${extra}></div>`;
     }
@@ -765,6 +722,7 @@ window.UI = (
     let opener;
     let returnOnClose = null;
     let dirty = false;
+    let confirmationState = null;
     /* Abre o diálogo, preenche título e conteúdo, acompanha alterações e direciona o foco. */ function open(
       title,
       html,
@@ -818,12 +776,25 @@ window.UI = (
     ) {
       const d = document.getElementById("app-dialog");
       if (!d?.open) return;
-      if (
-        !force &&
-        dirty &&
-        !confirm("Descartar as alterações deste formulário?")
-      )
+      if (!force && confirmationState) {
+        const state = confirmationState;
+        restoreConfirmation(state);
+        if (!state.wasOpen) close(true);
+        else state.focus?.focus();
         return;
+      }
+      if (!force && dirty) {
+        confirmCard(
+          "As alterações deste formulário ainda não foram salvas. Deseja descartá-las?",
+          () => close(true),
+          { confirmText: "Descartar alterações", danger: true },
+        );
+        return;
+      }
+      confirmationState = null;
+      d.classList.remove("confirmation-dialog");
+      d.removeAttribute("role");
+      d.removeAttribute("aria-describedby");
       // Formulários auxiliares podem devolver o usuário ao fluxo que estava preenchendo.
       if (returnOnClose) {
         const resume = returnOnClose;
@@ -835,6 +806,58 @@ window.UI = (
       dirty = false;
       document.body.classList.remove("dialog-open");
       opener?.focus();
+    }
+    function restoreConfirmation(state) {
+      if (confirmationState !== state) return;
+      const dialog = document.getElementById("app-dialog"),
+        body = document.getElementById("dialog-body");
+      confirmationState = null;
+      body.replaceChildren(state.fragment);
+      document.getElementById("dialog-title").textContent = state.title;
+      dialog.classList.remove("confirmation-dialog");
+      dialog.removeAttribute("role");
+      dialog.removeAttribute("aria-describedby");
+      dirty = state.dirty;
+    }
+    function confirmCard(message, onConfirm, options = {}) {
+      if (confirmationState) return;
+      const dialog = document.getElementById("app-dialog"),
+        body = document.getElementById("dialog-body"),
+        wasOpen = Boolean(dialog?.open);
+      if (!wasOpen) open("Confirmar ação", "");
+      const fragment = document.createDocumentFragment();
+      while (body.firstChild) fragment.appendChild(body.firstChild);
+      confirmationState = {
+        title: document.getElementById("dialog-title").textContent,
+        fragment,
+        wasOpen,
+        dirty,
+        focus: document.activeElement,
+      };
+      document.getElementById("dialog-title").textContent = "Confirmar ação";
+      dialog.classList.add("confirmation-dialog");
+      dialog.setAttribute("role", "alertdialog");
+      dialog.setAttribute("aria-describedby", "confirm-card-message");
+      body.innerHTML = `<section class="confirm-card"><p id="confirm-card-message">${esc(message)}</p><div class="confirm-card-actions"><button type="button" class="${options.danger ? "btn-danger" : "btn-primary"}" data-confirm="yes">${esc(options.confirmText || "Confirmar")}</button><button type="button" class="btn-secondary" data-confirm="no">${esc(options.cancelText || "Voltar")}</button></div></section>`;
+      const state = confirmationState;
+      body.querySelector('[data-confirm="no"]').addEventListener("click", () => {
+        if (confirmationState !== state) return;
+        restoreConfirmation(state);
+        if (!state.wasOpen) close(true);
+        else state.focus?.focus();
+      });
+      body.querySelector('[data-confirm="yes"]').addEventListener("click", () => {
+        if (confirmationState !== state) return;
+        restoreConfirmation(state);
+        try {
+          onConfirm();
+          if (!state.wasOpen && dialog.open) close(true);
+        } catch (error) {
+          toast(error.message, true);
+          if (!state.wasOpen && dialog.open) close(true);
+        }
+      });
+      body.querySelector('[data-confirm="yes"]').focus();
     }
     // Considera pendente apenas um formulário aberto que recebeu alterações.
     function hasUnsavedChanges() {
@@ -932,13 +955,13 @@ window.UI = (
     return {
       hasUnsavedChanges,
       markDirty,
-      formatCPF,
-      formatCNPJ,
       formatPhone,
       applyInputMask,
       prepareMasks,
       esc,
       money,
+      moneyCents,
+      formatMoneyInput,
       num,
       date,
       badge,
@@ -948,6 +971,7 @@ window.UI = (
       actions,
       open,
       close,
+      confirmCard,
       toast,
       bindForm,
       form,
