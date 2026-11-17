@@ -108,13 +108,14 @@ window.MF_PAGE_MODULES.pedidosVendas = {
           `<div class="form-grid">${ S("client", "Cliente cadastrado *", options("clients"), v.client)}${ F("due", "Data e hora combinadas *", (v.due || D.date(1) + "T15:00").slice(0, 16), "datetime-local", "required")}</div><div class="order-mode-options" role="radiogroup" aria-label="Modalidade do pedido"><label class="order-mode-option"><input type="radio" name="mode" value="retirada" ${!v.mode || v.mode === "retirada" ? "checked" : ""}><span>Retirada</span></label><label class="order-mode-option"><input type="radio" name="mode" value="entrega" ${v.mode === "entrega" ? "checked" : ""}><span>Entrega</span></label></div><div id="order-delivery-fields" class="order-mode-fields ${v.mode === "entrega" ? "" : "is-hidden"}" aria-hidden="${v.mode !== "entrega"}"><div class="form-grid"><div id="order-address-control"></div>${ F("fee", "Taxa de entrega", (v.fee || 0) / 100, "money", "")}</div></div><div class="form-grid">${ F("phone", "Telefone para contato *", v.phone || "", "tel", 'required minlength="10" maxlength="30"')}${
              S(
               "payment",
-              "Forma de pagamento *",
+              "Forma de pagamento",
               paymentOptions().filter(
                  (
                   p,
                 ) => p[0] !== "pendente",
               ),
               v.payment,
+              "",
             )
           }</div>${!o ?  B("Cadastrar cliente e retomar pedido", "order-new-client", "", "btn-secondary") : ""}${cartFields()}${ F("note", "Observações da encomenda", v.note || "", "text", 'maxlength="500"')}`,
           `<h3>Resumo do pedido</h3><div id="order-summary-items" class="checkout-items"></div><div id="order-summary-fee-row" class="checkout-total-row ${v.mode === "entrega" ? "" : "is-hidden"}"><span>Taxa de entrega</span><strong id="order-summary-fee">${M(v.fee || 0)}</strong></div><div class="checkout-total-row grand-total"><span>Total do pedido</span><strong id="cart-total">${M(cart.reduce((sum, item) => sum + item.price * item.qty, 0) + (v.fee || 0))}</strong></div>`,
@@ -380,12 +381,14 @@ window.MF_PAGE_MODULES.pedidosVendas = {
           `<div class="sale-client-row">${ S("client", "Cliente — opcional", options("clients", "Cliente Balcão"), draft?.fields.client || "", "")}${/* Cadastra um cliente e retoma esta venda sem perder os dados preenchidos. */ B("Adicionar cliente", "sale-new-client", "", "btn-secondary")}</div>${cartFields()}${
              S(
               "payment",
-              "Forma de pagamento *",
+              "Forma de pagamento",
               paymentOptions().filter(
                  (
                   p,
                 ) => p[0] !== "pendente",
               ),
+              "",
+              "",
             )
           }<div id="received-field" class="conditional-money is-hidden">${ F("received", "Valor recebido em dinheiro", "", "money", "")}</div>`,
           `<h3>Resumo da venda</h3><div id="sale-summary-items" class="checkout-items"></div><div class="checkout-total-row grand-total"><span>Total</span><strong id="sale-total"></strong></div><div id="sale-change-row" class="checkout-total-row is-hidden"><span>Troco</span><strong id="sale-change">R$ 0,00</strong></div>`,
@@ -491,13 +494,14 @@ window.MF_PAGE_MODULES.pedidosVendas = {
           `<p class="notice">Total a receber: <strong>${M(total(o))}</strong></p>${
              S(
               "payment",
-              "Forma de pagamento *",
+              "Forma de pagamento",
               paymentOptions().filter(
                  (
                   p,
                 ) => p[0] !== "pendente",
               ),
               o.payment,
+              "",
             )
           }<label class="check-row"><input type="checkbox" name="confirmed" required> Confirmei o recebimento do valor total.</label>`,
           "Registrar recebimento",

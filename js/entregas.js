@@ -49,7 +49,7 @@ window.MF_PAGE_MODULES.entregas = {
       U.open(
         "Confirmar entrega " + o.code,
         U.form(
-          `<p class="notice">Confirme a entrega de <strong>${E(address(o.address))}</strong>.<br>Total do pedido: <strong>${U.money(total(o))}</strong></p>${needsPayment ? `${S("payment", "Forma de pagamento *", paymentOptions().filter((option) => option[0] !== "pendente"), o.payment)}<label class="check-row"><input type="checkbox" name="paymentReceived" required> Confirmo que recebi o valor total.</label>` : `<p class="notice">Recebimento já registrado por ${E(payName(o.payment))}.</p>`}<label class="check-row"><input type="checkbox" name="deliveryConfirmed" required> Confirmo que o pedido foi entregue ao cliente.</label>`,
+          `<p class="notice">Confirme a entrega de <strong>${E(address(o.address))}</strong>.<br>Total do pedido: <strong>${U.money(total(o))}</strong></p>${needsPayment ? `${S("payment", "Forma de pagamento", paymentOptions().filter((option) => option[0] !== "pendente"), o.payment, "")}<label class="check-row"><input type="checkbox" name="paymentReceived" required> Confirmo que recebi o valor total.</label>` : `<p class="notice">Recebimento já registrado por ${E(payName(o.payment))}.</p>`}<label class="check-row"><input type="checkbox" name="deliveryConfirmed" required> Confirmo que o pedido foi entregue ao cliente.</label>`,
           "Confirmar recebimento e entrega",
         ),
       );

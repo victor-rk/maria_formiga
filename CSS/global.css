@@ -453,6 +453,13 @@ dialog:has(.checkout-form)    { width: min(1100px, calc(100% - 32px)); }
 .summary-box    { height: auto; margin: 16px 0; }
 .summary-row    { gap: 16px; }
 .summary-row strong    { color: var(--text-main); }.cart-line { display: grid; grid-template-columns: minmax(140px, 2fr) minmax(80px, 1fr) auto; gap: 12px; align-items: end; margin: 12px 0; }
+.cart-line > .btn-add-item { margin-bottom: 18px; }
+.client-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.client-form-left, .client-form-right { display: flex; flex-direction: column; }
+.client-form-left .input-group, .client-form-right .input-group { margin-bottom: 18px; }
+@media (max-width: 520px) {
+  .client-form-grid { grid-template-columns: minmax(0, 1fr); }
+}
 .kpi-mini-grid    { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
 .kpi-mini-val    { display: block; }
 .status-critico    { color: var(--danger); }
