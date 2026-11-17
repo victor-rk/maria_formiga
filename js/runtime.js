@@ -201,7 +201,7 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
       root.setAttribute("aria-busy", "false");
     }
     const clientPage = window.MF_PAGE_MODULES.clientes?.create({
-      D, U, get, F, required, val, E, address, B, save,
+      D, U, get, F, S, required, val, E, address, B, save,
     });
     const supplierPage = window.MF_PAGE_MODULES.fornecedores?.create({
       D, U, get, F, required, val, integer, save,
@@ -234,6 +234,7 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
       /* Cadastra um cliente a partir de Vendas e retoma o preenchimento da venda. */ "sale-new-client":
         saleNewClient,
        "order-new-client": operationsPage?.orderNewClient,
+       "order-new-address": operationsPage?.orderNewAddress,
        "clear-filters": () => listPage.clearFilters(render),
        settings:
         /* Alterna as telas de perfil, usuários e histórico local conforme a permissão. */ () =>
