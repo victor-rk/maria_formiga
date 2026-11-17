@@ -1,0 +1,8 @@
+
+body[data-page="redefinir-senha"] .reset-password-field input    { padding-right: 56px; }
+body[data-page="redefinir-senha"] .reset-password-field .pwd-toggle    { right: 4px; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+
+body[data-page="redefinir-senha"] .auth-card form    { width: 335px; max-width: 100%; margin-top: 0; }
+body[data-page="redefinir-senha"] .auth-card    { padding: 24px; }
+@media (max-width: 390px)    {
+  body[data-page="redefinir-senha"] .auth-card    { padding: 20px; }}

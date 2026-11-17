@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#D96B84" />
+    <link rel="icon" href="../assets/img/cupcake.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../CSS/global.css" />
+    <title>Maria Formiga — Gestão de Entregas</title>
+  </head>
+  <body data-page="entregas">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <div class="dashboard-layout">
+      <aside class="sidebar" id="menu-lateral" aria-label="Menu principal">
+        <div class="sidebar-header">
+          <img
+            src="../assets/img/cupcake.png"
+            alt="Logotipo Maria Formiga"
+            class="brand-logo"
+          />
+          <h2>Maria Formiga</h2>
+        </div>
+
+        <nav class="sidebar-menu">
+          <div class="nav-group">
+            <span class="nav-group-title">Operação</span>
+            <a href="home.html" class="nav-link">
+              <i class="fa-solid fa-house" aria-hidden="true"></i> Início
+            </a>
+            <a href="pedidos.html" class="nav-link">
+              <i class="fa-solid fa-receipt" aria-hidden="true"></i> Pedidos
+            </a>
+            <a href="vendas.html" class="nav-link">
+              <i class="fa-solid fa-cash-register" aria-hidden="true"></i>
+              Vendas
+            </a>
+            <a href="entregas.html" class="nav-link active" aria-current="page">
+              <i class="fa-solid fa-truck" aria-hidden="true"></i> Entregas
+            </a>
+          </div>
+
+          <div class="nav-group">
+            <span class="nav-group-title">Estoque</span>
+            <a href="produtos.html" class="nav-link"
+              ><i class="fa-solid fa-cake-candles" aria-hidden="true"></i>
+              Produtos e Receitas</a
+            >
+            <a href="estoque.html" class="nav-link">
+              <i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i>
+              Matéria-Prima
+            </a>
+            <a href="produtos-prontos.html" class="nav-link">
+              <i class="fa-solid fa-cookie-bite" aria-hidden="true"></i>
+              Produtos Prontos
+            </a>
+          </div>
+
+          <div class="nav-group">
+            <span class="nav-group-title">Gestão</span>
+            <a href="clientes.html" class="nav-link">
+              <i class="fa-solid fa-address-book" aria-hidden="true"></i>
+              Clientes
+            </a>
+            <a href="fornecedores.html" class="nav-link">
+              <i class="fa-solid fa-building" aria-hidden="true"></i>
+              Fornecedores
+            </a>
+            <a href="relatorios.html" class="nav-link">
+              <i class="fa-solid fa-file-invoice" aria-hidden="true"></i>
+              Relatórios
+            </a>
+          </div>
+        </nav>
+
+        <div class="sidebar-footer">
+          <a
+            href="#configuracoes"
+            class="nav-link"
+            id="btnConfig"
+            aria-haspopup="dialog"
+          >
+            <i class="fa-solid fa-gear" aria-hidden="true"></i> Configurações
+          </a>
+          <a href="index.html" class="nav-link" id="btnSair">
+            <i
+              class="fa-solid fa-arrow-right-from-bracket"
+              aria-hidden="true"
+            ></i>
+            Sair
+          </a>
+        </div>
+      </aside>
+      <button
+        class="nav-backdrop"
+        type="button"
+        aria-label="Fechar menu"
+        hidden
+      ></button>
+      <main class="main-content" id="conteudo" tabindex="-1">
+        <div class="main-inner">
+          <div class="topbar">
+            <button
+              type="button"
+              class="btn-secondary mobile-menu"
+              aria-controls="menu-lateral"
+              aria-label="Abrir menu"
+              aria-expanded="false"
+            >
+              <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+          </div>
+          <header class="page-header">
+            <div>
+              <span class="breadcrumb">Maria Formiga</span>
+              <h1>Gestão de Entregas</h1>
+            </div>
+            <time class="header-date" id="today"></time>
+          </header>
+          <div id="app" aria-busy="true"></div>
+          <noscript
+            >Ative o JavaScript para utilizar as funções desta
+            demonstração.</noscript
+          >
+        </div>
+      </main>
+    </div>
+    <dialog id="app-dialog" aria-labelledby="dialog-title">
+      <div class="dialog-heading">
+        <h2 id="dialog-title"></h2>
+        <button
+          type="button"
+          class="btn-secondary icon-button"
+          id="dialog-close"
+          aria-label="Fechar janela"
+        >
+          ×
+        </button>
+      </div>
+      <div id="dialog-body"></div>
+    </dialog>
+    <div
+      id="notifications"
+      class="notifications"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+    <script src="../js/entregas.js" defer></script>
+    <script src="../js/listagens.js" defer></script>
+    <script src="../js/pedidos-vendas.js" defer></script>
+    <script src="../js/configuracoes.js" defer></script>
+    <script src="../js/global.js" defer></script>
+    <script src="../js/runtime.js" defer></script>
+  </body>
+</html>

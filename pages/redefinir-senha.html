@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#D96B84" />
+    <link rel="icon" href="../assets/img/cupcake.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../CSS/global.css" />
+    <link rel="stylesheet" href="../CSS/auth.css" />
+    <link rel="stylesheet" href="../CSS/redefinir-senha.css" />
+    <title>Maria Formiga — Redefinir senha</title>
+  </head>
+  <body data-page="redefinir-senha">
+    <main class="auth-wrapper">
+      <div class="auth-card card-solid">
+        <img
+          src="../assets/img/cupcake.png"
+          alt="Maria Formiga"
+          class="brand-logo"
+          width="64"
+          height="64"
+        />
+        <h1>Redefinir senha</h1>
+
+        <form id="resetForm">
+          <div class="input-group">
+            <label for="newPassword">Nova senha *</label>
+            <div class="input-wrapper reset-password-field">
+
+              <input
+                id="newPassword"
+                name="password"
+                type="password"
+                autocomplete="new-password"
+                required
+                minlength="8"
+                maxlength="128"
+                aria-describedby="passwordHelp"
+              />
+              <button
+                type="button"
+                class="pwd-toggle"
+                data-password-toggle="newPassword"
+                aria-label="Mostrar nova senha"
+                aria-controls="newPassword"
+                aria-pressed="false"
+              >
+                <i class="fa-solid fa-eye" aria-hidden="true"></i>
+              </button>
+            </div>
+            <p id="passwordHelp" class="help">
+              Ao menos 8 caracteres, com maiúscula, minúscula, número e símbolo.
+            </p>
+          </div>
+          <div class="input-group">
+            <label for="confirmPassword">Confirmar nova senha *</label>
+            <div class="input-wrapper reset-password-field">
+
+              <input
+                id="confirmPassword"
+                name="confirm"
+                type="password"
+                autocomplete="new-password"
+                required
+              />
+              <button
+                type="button"
+                class="pwd-toggle"
+                data-password-toggle="confirmPassword"
+                aria-label="Mostrar confirmação da nova senha"
+                aria-controls="confirmPassword"
+                aria-pressed="false"
+              >
+                <i class="fa-solid fa-eye" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+          <button class="btn-primary" type="submit">Validar nova senha</button>
+        </form>
+        <a class="link-back" href="index.html">Voltar ao login</a>
+      </div>
+    </main>
+    <div
+      id="notifications"
+      class="notifications"
+      role="status"
+      aria-live="polite"
+    ></div>
+    <script src="../js/redefinir-senha.js" defer></script>
+    <script src="../js/configuracoes.js" defer></script>
+    <script src="../js/global.js" defer></script>
+    <script src="../js/runtime.js" defer></script>
+  </body>
+</html>
