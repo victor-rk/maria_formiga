@@ -1,0 +1,53 @@
+.auth-card .brand-logo { width: 64px; height: 64px; margin-bottom: 20px; }
+
+.auth-wrapper { width: 100%; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; background-color: var(--bg-main); }
+
+.auth-card { display: flex; flex-direction: column; align-items: center; }
+
+.auth-card h1 { font-size: 22px; margin-bottom: 36px; text-align: center; }
+
+.auth-card p.subtitle { margin-bottom: 28px; text-align: center; max-width: 340px; }
+
+.login-options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 13px; gap: 24px; }
+
+.checkbox-group { display: flex; align-items: center; gap: 8px; color: var(--text-muted); cursor: pointer; }
+
+.checkbox-group input[type="checkbox"] { accent-color: var(--primary); width: 15px; height: 15px; }
+
+.link-primary { color: var(--primary); text-decoration: none; font-weight: 500; font-size: 13px; transition: var(--transition); }
+
+.link-primary:hover { color: var(--primary-hover); text-decoration: underline; }
+
+.link-back { display: inline-flex; align-items: center; gap: 6px; margin-top: 20px; color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
+
+.link-back:hover { color: var(--primary); }
+
+.auth-success-msg { display: none; text-align: center; padding: 16px 20px; background-color: var(--success-bg); color: var(--success); border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; margin-bottom: 16px; width: 100%; }
+
+.auth-success-msg.show { display: block; }
+
+.auth-card { width: 100%; }
+
+.auth-card form { margin-top: 22px; }
+
+.auth-card .link-back { justify-content: center; }
+
+.auth-card input[type="password"] { padding-right: 48px; }
+
+.auth-card .pwd-toggle { min-width: 32px; min-height: 32px; }
+
+@media (max-width: 768px) {
+.auth-wrapper { padding: 20px 16px; min-height: 100dvh; }.auth-card { max-width: 480px; }
+}
+
+@media (max-width: 520px) {
+.auth-card { padding: 22px; }.login-options { flex-wrap: wrap; gap: 12px; }
+}
+
+.auth-card { max-width: 420px; }
+
+@media (prefers-reduced-motion: no-preference) {
+.auth-card {
+    animation: mf-content-in 180ms ease-out;
+  }
+}

@@ -1,0 +1,11 @@
+.recipe-line { display: grid; grid-template-columns: minmax(140px, 2fr) minmax(80px, 1fr) auto; gap: 12px; align-items: end; margin: 12px 0; }
+
+.recipe-line .input-group { margin: 0; }
+
+@media (max-width: 520px) {
+.recipe-line button { grid-column: 1/-1; }
+}
+
+@media (max-width: 520px) {
+.recipe-line { grid-template-columns: minmax(0, 1fr) 85px; }
+}
