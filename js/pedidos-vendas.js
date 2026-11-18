@@ -319,7 +319,7 @@ window.MF_PAGE_MODULES.pedidosVendas = {
       U.open(
         "Avançar pedido " + o.code,
         U.form(
-          `<p class="notice">O pedido passará de <strong>${E(o.status)}</strong> para <strong>${E(next)}</strong>.</p>`,
+          `<p>O pedido passará de <strong>${E(o.status)}</strong> para <strong>${E(next)}</strong>.</p>`,
           "Confirmar avanço",
         ),
       );
@@ -345,7 +345,7 @@ window.MF_PAGE_MODULES.pedidosVendas = {
       U.open(
         "Cancelar pedido " + o.code,
         U.form(
-          `${ F("reason", "Motivo do cancelamento *", "", "text", 'required maxlength="300"')}<p class="notice">O pedido continuará disponível no histórico. Como não houve recebimento, nenhum estoque de produto pronto foi baixado.</p>`,
+          `${ F("reason", "Motivo do cancelamento *", "", "text", 'required maxlength="300"')}`,
           "Confirmar cancelamento",
         ),
       );
@@ -491,7 +491,7 @@ window.MF_PAGE_MODULES.pedidosVendas = {
       U.open(
         "Receber pedido " + o.code,
         U.form(
-          `<p class="notice">Total a receber: <strong>${M(total(o))}</strong></p>${
+          `<p>Total a receber: <strong>${M(total(o))}</strong></p>${
              S(
               "payment",
               "Forma de pagamento",
@@ -636,6 +636,7 @@ window.MF_PAGE_MODULES.pedidosVendas = {
 
     /* Redireciona para vendas com o produto selecionado no carrinho inicial. */
     function quickSale(id) {
+      D.needPermission("manage");
       location.href = "vendas.html?product=" + encodeURIComponent(id);
     }
 

@@ -171,7 +171,7 @@ window.MF = (
           {
             id: "u1",
             name: "Gabrielly · Proprietária",
-            email: "admin@example.com",
+            email: "admin@mariaformiga.com",
             phone: "11999990000",
             birth: "1995-01-01",
             role: "admin",
@@ -180,7 +180,7 @@ window.MF = (
           {
             id: "u2",
             name: "Auxiliar Operacional",
-            email: "auxiliar@example.com",
+            email: "auxiliar@mariaformiga.com",
             phone: "11999990003",
             birth: "1995-01-01",
             role: "aux",
@@ -201,19 +201,27 @@ window.MF = (
       state = initial();
       persistent = false;
     }
-    let role = "admin";
+    state.users?.forEach((user) => {
+      if (user.email === "admin@example.com")
+        user.email = "admin@mariaformiga.com";
+      else if (user.email === "auxiliar@example.com")
+        user.email = "auxiliar@mariaformiga.com";
+    });
+    let role = null;
     try {
       role =
         sessionStorage.getItem("mf-role") ||
         localStorage.getItem("mf-role") ||
-        "admin";
+        null;
     } catch {}
+    if (!["admin", "aux"].includes(role)) role = null;
     const permission =
       /* Consulta as ações liberadas para o perfil demonstrativo selecionado. */ (
         action,
       ) =>
         role === "admin" ||
-        ["readOrders", "readStock", "deliver", "produce"].includes(action);
+        (role === "aux" &&
+          ["readOrders", "readStock", "deliver"].includes(action));
     /* Executa uma alteração local com revisão, histórico e recuperação do estado em caso de erro; não substitui uma transação no servidor. */ function commit(
       fn,
       message,
@@ -269,7 +277,9 @@ window.MF = (
       value,
       remember,
     ) {
-      role = value === "aux" ? "aux" : "admin";
+      if (!["admin", "aux"].includes(value))
+        throw Error("Perfil de acesso inválido.");
+      role = value;
       try {
         sessionStorage.setItem("mf-role", role);
         if (remember) localStorage.setItem("mf-role", role);
@@ -483,6 +493,7 @@ window.UI = (
         receipt: "fa-receipt",
         dispatch: "fa-truck",
         delivered: "fa-check",
+        "delivery-map": "fa-map-location-dot",
         print: "fa-print",
         export: "fa-file-arrow-down",
         "receipt-download": "fa-download",
@@ -920,19 +931,46 @@ window.UI = (
       handler,
     ) {
       const f = document.querySelector("#dialog-body form");
+      let pending = false;
+      const showError = (reason) => {
+        if (!f.isConnected || !f.closest("dialog")?.open) return;
+        const error = f.querySelector(".form-error");
+        error.textContent = reason?.message || String(reason);
+        error.focus();
+      };
       f.addEventListener(
         "submit",
          (e) => {
           e.preventDefault();
+          if (pending) return;
           const error = f.querySelector(".form-error");
           error.textContent = "";
           try {
             prepareMasks(f);
             if (!f.reportValidity()) return;
-            handler(new FormData(f), f);
-          } catch (e) {
-            error.textContent = e.message;
-            error.focus();
+            const result = handler(new FormData(f), f);
+            if (result && typeof result.then === "function") {
+              pending = true;
+              f.setAttribute("aria-busy", "true");
+              const controls = [...f.elements].map((control) => [
+                control,
+                control.disabled,
+              ]);
+              controls.forEach(([control]) => (control.disabled = true));
+              Promise.resolve(result)
+                .catch(showError)
+                .finally(() => {
+                  pending = false;
+                  if (!f.isConnected) return;
+                  f.removeAttribute("aria-busy");
+                  controls.forEach(
+                    ([control, wasDisabled]) =>
+                      (control.disabled = wasDisabled),
+                  );
+                });
+            }
+          } catch (reason) {
+            showError(reason);
           }
         },
       );

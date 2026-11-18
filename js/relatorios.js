@@ -49,23 +49,34 @@ window.MF_PAGE_MODULES.relatorios = {
           "Produtos / quantidades",
           "Pagamento",
           "Receita",
-          "Insumos",
-          "Resultado após insumos",
+          "Custo de insumos vendidos",
+          "Lucro bruto",
           "Margem (%)",
         ];
         rows = D.state.sales
           .filter((sale) => within(sale.created))
-          .map((sale) => [
-            sale.code,
-            U.date(sale.created),
-            sale.client ? clientName(sale.client) : "Cliente Balcão",
-            productsText(sale.items),
-            payName(sale.payment),
-            (sale.total / 100).toFixed(2),
-            (sale.cost / 100).toFixed(2),
-            ((sale.total - sale.cost) / 100).toFixed(2),
-            D.margin(sale.total, sale.cost).toFixed(1),
-          ]);
+          .map((sale) => {
+            const cost = Number.isFinite(sale.cost)
+              ? sale.cost
+              : Math.round(
+                  sale.items.reduce(
+                    (sum, item) =>
+                      sum + D.cost(get("products", item.product)) * item.qty,
+                    0,
+                  ),
+                );
+            return [
+              sale.code,
+              U.date(sale.created),
+              sale.client ? clientName(sale.client) : "Cliente Balcão",
+              productsText(sale.items),
+              payName(sale.payment),
+              (sale.total / 100).toFixed(2),
+              (cost / 100).toFixed(2),
+              ((sale.total - cost) / 100).toFixed(2),
+              D.margin(sale.total, cost).toFixed(1),
+            ];
+          });
       } else if (
         reportType === "pedidos" ||
         reportType === "entregas"
@@ -82,7 +93,7 @@ window.MF_PAGE_MODULES.relatorios = {
           "Recebido",
           "Total",
           "Custo de insumos",
-          "Resultado",
+          "Lucro bruto estimado",
           "Margem (%)",
           ...(reportType === "entregas"
             ? ["Endereço", "Responsável", "Status entrega"]
@@ -133,6 +144,7 @@ window.MF_PAGE_MODULES.relatorios = {
           "Tipo",
           "Quantidade",
           "Unidade",
+          "Valor da compra",
           "Motivo",
         ];
         rows = D.state.movements
@@ -147,6 +159,10 @@ window.MF_PAGE_MODULES.relatorios = {
             movement.material
               ? get("materials", movement.material)?.unit
               : "un",
+            movement.type === "entrada" &&
+              Number.isFinite(movement.amount)
+              ? (movement.amount / 100).toFixed(2)
+              : "",
             movement.reason,
           ]);
       }
@@ -154,15 +170,40 @@ window.MF_PAGE_MODULES.relatorios = {
       currentRows = rows;
       const sales = D.state.sales.filter((sale) => within(sale.created));
       const revenue = sales.reduce((sum, sale) => sum + sale.total, 0);
-      const cost = sales.reduce((sum, sale) => sum + sale.cost, 0);
+      const cost = sales.reduce(
+        (sum, sale) =>
+          sum +
+          (Number.isFinite(sale.cost)
+            ? sale.cost
+            : Math.round(
+                sale.items.reduce(
+                  (itemSum, item) =>
+                    itemSum +
+                    D.cost(get("products", item.product)) * item.qty,
+                  0,
+                ),
+              )),
+        0,
+      );
+      const purchases = D.state.movements
+        .filter(
+          (movement) =>
+            within(movement.at) &&
+            movement.type === "entrada" &&
+            Number.isFinite(movement.amount),
+        )
+        .reduce((sum, movement) => sum + movement.amount, 0);
+      const grossProfit = revenue - cost;
 
       root.innerHTML =
         kpis([
-          ["Recebimentos no período", M(revenue)],
-          ["Custo dos insumos vendidos", M(cost)],
-          ["Resultado após insumos", M(revenue - cost)],
+          ["Vendas recebidas", M(revenue)],
+          ["Compras de insumos", M(purchases)],
+          ["Custo de insumos vendidos", M(cost)],
+          ["Lucro bruto estimado", M(grossProfit)],
+          ["Margem bruta", U.num(D.margin(revenue, cost)) + "%"],
         ]) +
-        `<p class="notice">Os resultados consideram apenas os insumos das fichas técnicas; não representam lucro líquido. Custos de vendas são preservados na confirmação. Pedidos sem recebimento apresentam estimativa pelo custo atual.</p><div class="toolbar"><form id="report-form" class="report-period">${
+        `<p class="help report-financial-note">Lucro bruto estimado = vendas recebidas menos custo dos produtos vendidos. Compras registradas representam saída de caixa com insumos; despesas fixas não são lançadas neste relatório.</p><div class="toolbar report-toolbar"><form id="report-form" class="report-period">${
           S(
             "reportType",
             "Relatório",

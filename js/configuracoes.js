@@ -15,6 +15,7 @@ window.MF_PAGE_MODULES.configuracoes = {
     }
     // Apresenta abas de navegação com indicador de seleção, separadas dos botões de ação.
     function settings(tab = "profile", focusTab = false) {
+      D.needPermission("manage");
       const admin = D.role === "admin";
       const user =
         D.state.users.find((u) => u.role === D.role && u.active) ||
