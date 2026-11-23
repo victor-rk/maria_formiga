@@ -12,7 +12,16 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
       M = U.money,
       B = U.btn,
       F = U.field,
-      S = U.select;
+      S = (name, label, options, value, extra) =>
+        U.select(
+          name,
+          label,
+          options,
+          name === "payment" && ["debito", "credito"].includes(value)
+            ? "cartao"
+            : value,
+          extra,
+        );
     const page = document.body.dataset.page;
     const get =
       /* Localiza um registro pelo identificador no conjunto de dados solicitado. */ (
@@ -137,8 +146,7 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
       return [
         ["", "Selecione..."],
         ["pix", "Pix"],
-        ["debito", "Cartão de débito"],
-        ["credito", "Cartão de crédito"],
+        ["cartao", "Cartão"],
         ["dinheiro", "Dinheiro"],
         ["boleto", "Boleto"],
         ["transferencia", "Transferência"],
@@ -153,7 +161,7 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
            (
             p,
           ) => p[0] === v,
-        )?.[1] || "Não definido";
+        )?.[1] || (["debito", "credito"].includes(v) ? "Cartão" : "Não definido");
     const total =
       /* Calcula o total dos itens do pedido e acrescenta a taxa de entrega. */ (
         o,
@@ -233,6 +241,11 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
     const handlers = {
       /* Cadastra um cliente a partir de Vendas e retoma o preenchimento da venda. */ "sale-new-client":
         saleNewClient,
+      "sale-card-cancel":
+       operationsPage?.cancelCardSimulation,
+      "sale-card-return":
+       /* Fecha o resultado e devolve a venda recusada ao formulário de pagamento. */ () =>
+         U.close(true),
        "order-new-client": operationsPage?.orderNewClient,
        "order-new-address": operationsPage?.orderNewAddress,
        "clear-filters": () => listPage.clearFilters(render),

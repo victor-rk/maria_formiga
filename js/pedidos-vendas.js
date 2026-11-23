@@ -3,7 +3,146 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
 window.MF_PAGE_MODULES.pedidosVendas = {
   /* Creates order and sales operations using shared application services. */
   create({ D, U, $, get, val, cents, required, options, address, paymentOptions, payName, total, clientName, F, S, B, E, M, save, clientPage }) {
-    let cart = [], draftTimer, currentOrderId;
+    let cart = [], draftTimer, currentOrderId, cardSimulation;
+    function clientPicker(label, value = "", optional = false) {
+      const emptyLabel = optional ? "Cliente Balcão" : "Selecione...",
+        selectedClient = get("clients", value),
+        choices = [
+          ["", emptyLabel],
+          ...D.state.clients.map((client) => [client.id, client.name]),
+        ];
+      return `<div class="input-group client-picker"><label for="f-client-search">${E(label)}</label><div class="client-picker-control"><input id="f-client-search" type="text" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="f-client-options" placeholder="Buscar cliente..." autocomplete="off" value="${E(selectedClient?.name || "")}"><button type="button" class="client-picker-toggle" aria-label="Mostrar clientes"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button></div><input id="f-client" type="hidden" name="client" value="${E(value)}"><ul id="f-client-options" class="client-picker-options" role="listbox" hidden>${choices.map(([id, name]) => {
+        const client = get("clients", id),
+          searchText = [name, client?.cpf, client?.email, client?.phone]
+            .filter(Boolean)
+            .join(" ")
+            .toLocaleLowerCase()
+            .replace(/[()\-\s]/g, ""),
+          numberText = [client?.cpf, client?.phone]
+            .filter(Boolean)
+            .map((text) => String(text).replace(/\D/g, ""))
+            .join(" ");
+        return `<li id="client-option-${E(id || "empty")}" role="option" aria-selected="${String(id) === String(value)}" data-client-id="${E(id)}" data-search="${E(searchText)}" data-numbers="${E(numberText)}">${E(name)}</li>`;
+      }).join("")}<li class="client-picker-empty" role="presentation" hidden><span role="status">Nenhum cliente encontrado.</span></li></ul></div>`;
+    }
+    function bindClientSearch() {
+      const search = $("#f-client-search"),
+        selected = $("#f-client"),
+        list = $("#f-client-options"),
+        items = [...list.querySelectorAll('[role="option"]')],
+        empty = list.querySelector(".client-picker-empty"),
+        toggle = $(".client-picker-toggle");
+      let activeIndex = -1;
+      function visibleItems() {
+        return items.filter((item) => !item.hidden);
+      }
+      function filterOptions(query = "") {
+        const normalized = query.toLocaleLowerCase().replace(/[()\-\s]/g, ""),
+          numericQuery = /^[\d().\-\s]+$/.test(query)
+            ? query.replace(/\D/g, "")
+            : "";
+        let matches = 0;
+        items.forEach((item) => {
+          item.hidden =
+            Boolean(normalized) &&
+            !item.dataset.search.includes(normalized) &&
+            !(numericQuery && item.dataset.numbers.includes(numericQuery));
+          if (!item.hidden) matches++;
+        });
+        empty.hidden = matches > 0;
+        activeIndex = -1;
+        search.removeAttribute("aria-activedescendant");
+      }
+      function openOptions(query = "") {
+        filterOptions(query);
+        list.hidden = false;
+        search.setAttribute("aria-expanded", "true");
+      }
+      function closeOptions() {
+        list.hidden = true;
+        search.setAttribute("aria-expanded", "false");
+        activeIndex = -1;
+        search.removeAttribute("aria-activedescendant");
+        items.forEach((item) => item.classList.remove("is-active"));
+        search.value = get("clients", selected.value)?.name || "";
+      }
+      function choose(item) {
+        const clientId = item.dataset.clientId;
+        if (selected.value !== clientId) {
+          selected.value = clientId;
+          selected.dispatchEvent(new Event("input", { bubbles: true }));
+          selected.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        search.value = clientId ? get("clients", clientId).name : "";
+        items.forEach((option) =>
+          option.setAttribute(
+            "aria-selected",
+            String(option.dataset.clientId === clientId),
+          ),
+        );
+        closeOptions();
+      }
+      search.onfocus = () => {
+        const client = get("clients", selected.value);
+        if (client && search.value === client.name) search.select();
+      };
+      search.onclick = () => {
+        const client = get("clients", selected.value);
+        if (client && search.value === client.name) {
+          search.select();
+          openOptions();
+        } else if (list.hidden) {
+          openOptions(search.value);
+        }
+      };
+      search.oninput = (event) => {
+        event.stopPropagation();
+        openOptions(search.value);
+      };
+      search.onkeydown = (event) => {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          event.stopPropagation();
+          closeOptions();
+          return;
+        }
+        if (event.key !== "ArrowDown" && event.key !== "ArrowUp" && event.key !== "Enter")
+          return;
+        if (event.key === "Enter" && list.hidden) return;
+        if (list.hidden) openOptions();
+        const visible = visibleItems();
+        if (!visible.length) return;
+        if (event.key === "Enter") {
+          event.preventDefault();
+          choose(visible[activeIndex >= 0 ? activeIndex : 0]);
+          return;
+        }
+        event.preventDefault();
+        activeIndex =
+          event.key === "ArrowDown"
+            ? (activeIndex + 1) % visible.length
+            : (activeIndex <= 0 ? visible.length - 1 : activeIndex - 1);
+        items.forEach((item) => item.classList.remove("is-active"));
+        const active = visible[activeIndex];
+        active.classList.add("is-active");
+        search.setAttribute("aria-activedescendant", active.id);
+      };
+      search.onblur = () => setTimeout(closeOptions, 120);
+      toggle.onmousedown = (event) => event.preventDefault();
+      toggle.onclick = () => {
+        if (list.hidden) {
+          search.focus();
+          openOptions();
+        } else {
+          closeOptions();
+        }
+      };
+      list.onmousedown = (event) => event.preventDefault();
+      list.onclick = (event) => {
+        const item = event.target.closest('[role="option"][data-client-id]');
+        if (item) choose(item);
+      };
+    }
     function checkoutForm(main, summary, submit) {
       return `<form class="checkout-form"><p class="form-error" role="alert" tabindex="-1"></p><div class="checkout-main">${main}</div><aside class="checkout-summary" aria-live="polite">${summary}${U.actions(submit)}</aside></form>`;
     }
@@ -50,6 +189,26 @@ window.MF_PAGE_MODULES.pedidosVendas = {
     }
     /* Gera os controles para selecionar e incluir produtos no pedido ou venda. */ function cartFields() {
       return `<h3 class="section-heading">Produtos</h3><div class="cart-line">${ S("itemProduct", "Produto", options("products"), "", "")}${ F("itemQty", "Quantidade", 1, "number", 'min="1" step="1"')}${ B("Incluir", "cart-add", "", "btn-add-item")}</div><div id="cart-items">${cartMarkup()}</div>`;
+    }
+    function persistSale(client, payment, change, amount) {
+      save(
+        (s) => {
+          const cost = D.consume(cart);
+          s.sales.push({
+            id: D.uid(),
+            code: "#VD-" + (305 + s.sales.length),
+            client,
+            items: structuredClone(cart),
+            total: amount,
+            fee: 0,
+            cost,
+            payment,
+            change,
+            created: D.now(),
+          });
+        },
+        "Venda registrada.",
+      );
     }
     function orderAddressControl(client, selectedAddress = "") {
       if (!client)
@@ -105,7 +264,7 @@ window.MF_PAGE_MODULES.pedidosVendas = {
       U.open(
         o ? "Editar pedido " + o.code : "Registrar novo pedido",
         checkoutForm(
-          `<div class="form-grid">${ S("client", "Cliente cadastrado *", options("clients"), v.client)}${ F("due", "Data e hora combinadas *", (v.due || D.date(1) + "T15:00").slice(0, 16), "datetime-local", "required")}</div><div class="order-mode-options" role="radiogroup" aria-label="Modalidade do pedido"><label class="order-mode-option"><input type="radio" name="mode" value="retirada" ${!v.mode || v.mode === "retirada" ? "checked" : ""}><span>Retirada</span></label><label class="order-mode-option"><input type="radio" name="mode" value="entrega" ${v.mode === "entrega" ? "checked" : ""}><span>Entrega</span></label></div><div id="order-delivery-fields" class="order-mode-fields ${v.mode === "entrega" ? "" : "is-hidden"}" aria-hidden="${v.mode !== "entrega"}"><div class="form-grid"><div id="order-address-control"></div>${ F("fee", "Taxa de entrega", (v.fee || 0) / 100, "money", "")}</div></div><div class="form-grid">${ F("phone", "Telefone para contato *", v.phone || "", "tel", 'required minlength="10" maxlength="30"')}${
+          `<div class="form-grid">${clientPicker("Cliente cadastrado *", v.client)}${ F("due", "Data e hora combinadas *", (v.due || D.date(1) + "T15:00").slice(0, 16), "datetime-local", "required")}</div><div class="order-mode-options" role="radiogroup" aria-label="Modalidade do pedido"><label class="order-mode-option"><input type="radio" name="mode" value="retirada" ${!v.mode || v.mode === "retirada" ? "checked" : ""}><span>Retirada</span></label><label class="order-mode-option"><input type="radio" name="mode" value="entrega" ${v.mode === "entrega" ? "checked" : ""}><span>Entrega</span></label></div><div id="order-delivery-fields" class="order-mode-fields ${v.mode === "entrega" ? "" : "is-hidden"}" aria-hidden="${v.mode !== "entrega"}"><div class="form-grid"><div id="order-address-control"></div>${ F("fee", "Taxa de entrega", (v.fee || 0) / 100, "money", "")}</div></div><div class="form-grid">${ F("phone", "Telefone para contato *", v.phone || "", "tel", 'required minlength="10" maxlength="30"')}${
              S(
               "payment",
               "Forma de pagamento",
@@ -122,6 +281,7 @@ window.MF_PAGE_MODULES.pedidosVendas = {
           "Salvar pedido",
         ),
       );
+      bindClientSearch();
       const updateAddress =
         /* Atualiza os endereços e o telefone disponíveis ao selecionar um cliente. */ () => {
           const c = get("clients", $("#f-client").value),
@@ -222,6 +382,7 @@ window.MF_PAGE_MODULES.pedidosVendas = {
               ) => a.id === val(fd, "address"),
             );
           if (!cart.length) throw Error("Inclua pelo menos um produto.");
+          if (!c) throw Error("Selecione um cliente cadastrado.");
           if (mode === "entrega" && !a)
             throw Error(
               "Cadastre um endereço válido em Clientes antes de selecionar entrega.",
@@ -378,7 +539,7 @@ window.MF_PAGE_MODULES.pedidosVendas = {
       U.open(
         "Registrar venda de balcão",
         checkoutForm(
-          `<div class="sale-client-row">${ S("client", "Cliente — opcional", options("clients", "Cliente Balcão"), draft?.fields.client || "", "")}${/* Cadastra um cliente e retoma esta venda sem perder os dados preenchidos. */ B("Adicionar cliente", "sale-new-client", "", "btn-secondary")}</div>${cartFields()}${
+          `<div class="sale-client-row">${clientPicker("Cliente — opcional", draft?.fields.client || "", true)}${/* Cadastra um cliente e retoma esta venda sem perder os dados preenchidos. */ B("Adicionar cliente", "sale-new-client", "", "btn-secondary")}</div>${cartFields()}${
              S(
               "payment",
               "Forma de pagamento",
@@ -395,6 +556,7 @@ window.MF_PAGE_MODULES.pedidosVendas = {
           "Confirmar",
         ),
       );
+      bindClientSearch();
       // Restaura também os valores ainda não incluídos no carrinho e o dinheiro recebido.
       if (draft) {
         for (const [name, value] of Object.entries(draft.fields)) {
@@ -416,50 +578,99 @@ window.MF_PAGE_MODULES.pedidosVendas = {
       $("#f-payment").onchange = update;
       $("#f-received").addEventListener("input", updateCart);
       update();
+      const registerSale = (fd) => {
+        const amount = cart.reduce(
+            (sum, item) => sum + item.qty * item.price,
+            0,
+          ),
+          payment = val(fd, "payment");
+        let change = 0;
+        if (payment === "dinheiro") {
+          const received = cents(fd, "received");
+          if (received < amount)
+            throw Error("Valor recebido menor que o total.");
+          change = received - amount;
+        }
+        persistSale(val(fd, "client"), payment, change, amount);
+      };
       U.bindForm(
         /* Valida os campos enviados e executa a operação do formulário — Registra uma venda de balcão, confere estoque e valor recebido e calcula o troco. */ (
           fd,
         ) => {
           if (!cart.length) throw Error("Inclua ao menos um produto.");
           D.available(cart);
-          const amount = cart.reduce(
-               (
-                s,
-                i,
-              ) => s + i.qty * i.price,
-              0,
-            ),
-            payment = val(fd, "payment");
-          let change = 0;
-          if (payment === "dinheiro") {
-            const received = cents(fd, "received");
-            if (received < amount)
-              throw Error("Valor recebido menor que o total.");
-            change = received - amount;
+          if (val(fd, "payment") === "cartao") {
+            const fields = Object.fromEntries(
+              ["client", "payment", "received", "itemProduct", "itemQty"].map(
+                (name) => [name, fd.get(name) || ""],
+              ),
+            );
+            const draft = {
+              fields,
+              items: structuredClone(cart),
+              dirty: U.hasUnsavedChanges(),
+            };
+            const resume = () => saleForm(undefined, draft);
+            cardSimulation = { draft, fields, resume };
+            U.open(
+              "Pagamento com cartão",
+              `<section class="card-payment-state" role="status" aria-live="polite"><span class="card-payment-spinner" aria-hidden="true"></span><h3>Aguardando pagamento</h3><p>Aguardando a confirmação da maquininha.</p><div class="card-payment-actions">${B("Cancelar", "sale-card-cancel", "", "btn-secondary")}</div></section>`,
+              undefined,
+              () => {
+                if (!cardSimulation) return;
+                cardSimulation = null;
+                resume();
+              },
+            );
+            return;
           }
-          save(
-             (
-              s,
-            ) => {
-              const cost = D.consume(cart);
-              s.sales.push({
-                id: D.uid(),
-                code: "#VD-" + (305 + s.sales.length),
-                client: val(fd, "client"),
-                items: structuredClone(cart),
-                total: amount,
-                fee: 0,
-                cost,
-                payment,
-                change,
-                created: D.now(),
-              });
-            },
-            "Venda registrada.",
-          );
+          registerSale(fd);
         },
       );
     }
+    function resolveCardSimulation(approved) {
+      if (!cardSimulation) return;
+      const simulation = cardSimulation;
+      cardSimulation = null;
+      if (approved) {
+        try {
+          registerPendingCardSale(simulation.fields);
+          U.open(
+            "Resultado do pagamento",
+            `<section class="card-payment-state is-approved" role="status" aria-live="polite"><span class="card-payment-result-icon" aria-hidden="true"><i class="fa-solid fa-circle-check"></i></span><h3>Cartão aprovado</h3><div class="card-payment-actions"><button type="button" class="btn-primary" data-action="close">Concluir</button></div></section>`,
+          );
+        } catch (error) {
+          simulation.resume();
+          U.toast(error.message || String(error), true);
+        }
+        return;
+      }
+      U.open(
+        "Resultado do pagamento",
+        `<section class="card-payment-state is-declined" role="status" aria-live="polite"><span class="card-payment-result-icon" aria-hidden="true"><i class="fa-solid fa-circle-xmark"></i></span><h3>Cartão recusado</h3><div class="card-payment-actions"><button type="button" class="btn-secondary" data-action="sale-card-return">Voltar ao pagamento</button></div></section>`,
+        undefined,
+        simulation.resume,
+      );
+    }
+    function registerPendingCardSale(fields) {
+      const amount = cart.reduce(
+        (sum, item) => sum + item.qty * item.price,
+        0,
+      );
+      persistSale(fields.client, "cartao", 0, amount);
+    }
+    function cancelCardSimulation() {
+      if (!cardSimulation) return;
+      U.close(true);
+    }
+    document.addEventListener("keydown", (event) => {
+      if (!cardSimulation || event.repeat || event.ctrlKey || event.altKey || event.metaKey)
+        return;
+      const key = event.key.toLocaleLowerCase();
+      if (key !== "y" && key !== "n") return;
+      event.preventDefault();
+      resolveCardSimulation(key === "y");
+    });
     // Mantém a venda em memória enquanto o cadastro auxiliar de cliente está aberto.
     function saleNewClient() {
       const draft = {
@@ -681,6 +892,7 @@ window.MF_PAGE_MODULES.pedidosVendas = {
       cartRemove,
       quickSale,
       receiptDownload,
+      cancelCardSimulation,
     };
   },
 };
