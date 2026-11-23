@@ -20,7 +20,7 @@ window.MF_PAGE_MODULES.clientes = {
       U.open(
         client ? "Editar cliente" : "Cadastrar cliente",
         U.form(
-          `<div class="form-grid">${F("name", "Nome completo *", client?.name || "", "text", required)}${F("document", "CPF (opcional)", client?.cpf || "", "text", 'data-mask="cpf" inputmode="numeric" maxlength="14"')}${F("email", "E-mail *", client?.email || "", "email", 'required maxlength="120" autocomplete="email"')}${F("phone", "Telefone / WhatsApp *", client?.phone || "", "tel", 'required minlength="10" maxlength="30"')}</div>${!client ? '<label class="toggle-row"><input type="checkbox" name="addAddress" checked><span class="toggle-switch" aria-hidden="true"></span><span>Cadastrar endereço agora</span></label>' : ""}<p class="help">Os endereços são gerenciados separadamente, permitindo mais de um local por cliente.</p>`,
+          `<div class="client-form-grid"><div class="client-form-left">${F("name", "Nome completo *", client?.name || "", "text", required)}${F("phone", "Telefone / WhatsApp *", client?.phone || "", "tel", 'required minlength="10" maxlength="30"')}</div><div class="client-form-right">${F("document", "CPF (opcional)", client?.cpf || "", "text", 'data-mask="cpf" inputmode="numeric" maxlength="14"')}${F("email", "E-mail (opcional)", client?.email || "", "email", 'maxlength="120" autocomplete="email"')}</div></div>${!client ? '<label class="toggle-row"><input type="checkbox" name="addAddress" checked><span class="toggle-switch" aria-hidden="true"></span><span>Cadastrar endereço agora</span></label>' : ""}<p class="help">Os endereços são gerenciados separadamente, permitindo mais de um local por cliente.</p>`,
         ),
         undefined,
         flow.onCancel,
