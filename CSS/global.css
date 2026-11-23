@@ -395,6 +395,7 @@ textarea    { min-height: 90px; resize: vertical; }
 .order-mode-fields    { display: grid; grid-template-rows: 1fr; opacity: 1; transition: opacity var(--motion-normal) ease, grid-template-rows var(--motion-normal) ease; }
 .order-mode-fields.is-hidden    { grid-template-rows: 0fr; opacity: 0; }
 .order-mode-fields > div    { overflow: hidden; }
+.order-address-button    { width: 100%; min-height: 46px; }
 .btn-add-item    { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 16px; border: 1px solid var(--primary); border-radius: var(--radius-sm); background: var(--primary); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; transition: var(--transition); white-space: nowrap; }
 .btn-add-item:hover    { background: var(--primary-hover); border-color: var(--primary-hover); color: #fff; }
 .form-grid    { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }

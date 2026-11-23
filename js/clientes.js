@@ -3,7 +3,16 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
 
 window.MF_PAGE_MODULES.clientes = {
   /* Cria as operações de cliente com os serviços compartilhados do sistema. */
-  create({ D, U, get, F, required, val, E, address, B, save }) {
+  create({ D, U, get, F, S, required, val, E, address, B, save }) {
+    const cities = [
+      ["Biritiba-Mirim", "Biritiba-Mirim"],
+      ["Mogi das Cruzes", "Mogi das Cruzes"],
+      ["Salesópolis", "Salesópolis"],
+      ["Guararema", "Guararema"],
+      ["Bertioga", "Bertioga"],
+      ["Suzano", "Suzano"],
+      ["Santa Branca", "Santa Branca"],
+    ];
     /* Abre cadastro/edição e valida telefone e duplicidade. */
     function clientForm(id, flow = {}) {
       D.needPermission("manage");
@@ -11,7 +20,7 @@ window.MF_PAGE_MODULES.clientes = {
       U.open(
         client ? "Editar cliente" : "Cadastrar cliente",
         U.form(
-          `<div class="form-grid">${F("name", "Nome completo *", client?.name || "", "text", required)}${F("document", "CPF (opcional)", client?.cpf || "", "text", 'inputmode="numeric" maxlength="14"')}${F("email", "E-mail *", client?.email || "", "email", 'required maxlength="120" autocomplete="email"')}${F("phone", "Telefone / WhatsApp *", client?.phone || "", "tel", 'required minlength="10" maxlength="30"')}</div>${!client ? '<label class="toggle-row"><input type="checkbox" name="addAddress" checked><span class="toggle-switch" aria-hidden="true"></span><span>Cadastrar endereço agora</span></label>' : ""}<p class="help">Os endereços são gerenciados separadamente, permitindo mais de um local por cliente.</p>`,
+          `<div class="form-grid">${F("name", "Nome completo *", client?.name || "", "text", required)}${F("document", "CPF (opcional)", client?.cpf || "", "text", 'data-mask="cpf" inputmode="numeric" maxlength="14"')}${F("email", "E-mail *", client?.email || "", "email", 'required maxlength="120" autocomplete="email"')}${F("phone", "Telefone / WhatsApp *", client?.phone || "", "tel", 'required minlength="10" maxlength="30"')}</div>${!client ? '<label class="toggle-row"><input type="checkbox" name="addAddress" checked><span class="toggle-switch" aria-hidden="true"></span><span>Cadastrar endereço agora</span></label>' : ""}<p class="help">Os endereços são gerenciados separadamente, permitindo mais de um local por cliente.</p>`,
         ),
         undefined,
         flow.onCancel,
@@ -84,11 +93,19 @@ window.MF_PAGE_MODULES.clientes = {
       const clientAddress = client.addresses.find(
         (item) => item.id === addressId,
       );
+      const cityOptions =
+        clientAddress?.city &&
+        !cities.some(([value]) => value === clientAddress.city)
+          ? [
+              [clientAddress.city, clientAddress.city + " (atual)"],
+              ...cities,
+            ]
+          : cities;
       let addressSaved = false;
       U.open(
         clientAddress ? "Editar endereço" : "Novo endereço",
         U.form(
-          `<div class="form-grid">${F("street", "Rua / avenida *", clientAddress?.street || "", "text", required)}${F("number", "Número ou S/N *", clientAddress?.number || "", "text", 'required maxlength="20"')}${F("district", "Bairro *", clientAddress?.district || "", "text", required)}${F("city", "Cidade *", clientAddress?.city || "Biritiba-Mirim", "text", required)}${F("zip", "CEP *", clientAddress?.zip || "", "text", 'required pattern="[0-9]{5}-?[0-9]{3}" inputmode="numeric" maxlength="9"')}${F("extra", "Complemento", clientAddress?.extra || "", "text", 'maxlength="120"')}</div>`,
+          `<div class="form-grid">${F("street", "Rua / avenida *", clientAddress?.street || "", "text", required)}${F("number", "Número ou S/N *", clientAddress?.number || "", "text", 'required maxlength="20"')}${F("district", "Bairro *", clientAddress?.district || "", "text", required)}${S("city", "Cidade *", cityOptions, clientAddress?.city || "Biritiba-Mirim", "required")}${F("zip", "CEP *", clientAddress?.zip || "", "text", 'required pattern="[0-9]{5}-?[0-9]{3}" data-mask="cep" inputmode="numeric" maxlength="9"')}${F("extra", "Complemento", clientAddress?.extra || "", "text", 'maxlength="120"')}</div>`,
         ),
         undefined,
         onCancel

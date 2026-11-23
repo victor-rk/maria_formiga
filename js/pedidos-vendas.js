@@ -3,7 +3,7 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
 window.MF_PAGE_MODULES.pedidosVendas = {
   /* Creates order and sales operations using shared application services. */
   create({ D, U, $, get, val, cents, required, options, address, paymentOptions, payName, total, clientName, F, S, B, E, M, save, clientPage }) {
-    let cart = [], draftTimer;
+    let cart = [], draftTimer, currentOrderId;
     function checkoutForm(main, summary, submit) {
       return `<form class="checkout-form"><p class="form-error" role="alert" tabindex="-1"></p><div class="checkout-main">${main}</div><aside class="checkout-summary" aria-live="polite">${summary}${U.actions(submit)}</aside></form>`;
     }
@@ -51,10 +51,39 @@ window.MF_PAGE_MODULES.pedidosVendas = {
     /* Gera os controles para selecionar e incluir produtos no pedido ou venda. */ function cartFields() {
       return `<h3 class="section-heading">Produtos</h3><div class="cart-line">${ S("itemProduct", "Produto", options("products"), "", "")}${ F("itemQty", "Quantidade", 1, "number", 'min="1" step="1"')}${ B("Incluir", "cart-add", "", "btn-add-item")}</div><div id="cart-items">${cartMarkup()}</div>`;
     }
+    function orderAddressControl(client, selectedAddress = "") {
+      if (!client)
+        return '<div class="input-group"><label>Endereço de entrega *</label><p class="help">Selecione um cliente para carregar os endereços.</p></div>';
+      if (!client.addresses?.length)
+        return `<div class="input-group"><label>Endereço de entrega *</label>${B("Cadastrar endereço", "order-new-address", client.id, "btn-secondary order-address-button")}</div>`;
+      return S(
+        "address",
+        "Endereço de entrega *",
+        [
+          ["", "Selecione..."],
+          ...client.addresses.map((item) => [item.id, address(item)]),
+        ],
+        selectedAddress,
+        "",
+      );
+    }
+    function orderFormValues() {
+      const fd = new FormData($("#dialog-body form"));
+      const fields = Object.fromEntries(
+        ["client", "mode", "address", "due", "phone", "payment", "note"].map(
+          (key) => [key, val(fd, key)],
+        ),
+      );
+      fields.addressId = fields.address;
+      fields.fee = U.moneyCents(fd.get("fee"));
+      return { fields, items: structuredClone(cart) };
+    }
     /* Cadastra ou edita pedido, recupera rascunho e valida cliente, itens, pagamento e endereço. */ function orderForm(
       id,
+      resumedDraft,
     ) {
       D.needPermission("manage");
+      currentOrderId = id;
       if (!D.state.clients.length || !D.state.products.length)
         throw Error(
           "Cadastre clientes e produtos antes de registrar um pedido.",
@@ -65,17 +94,18 @@ window.MF_PAGE_MODULES.pedidosVendas = {
           "Somente pedidos pendentes e ainda não pagos podem ser editados.",
         );
       const draft =
-        !o &&
+        resumedDraft ||
+        (!o &&
         D.state.drafts.order &&
         Date.now() - D.state.drafts.order.at < 86400000
           ? D.state.drafts.order
-          : null;
-      cart = structuredClone(o?.items || draft?.items || []);
-      const v = o || draft?.fields || {};
+          : null);
+      cart = structuredClone(draft?.items || o?.items || []);
+      const v = draft?.fields || o || {};
       U.open(
         o ? "Editar pedido " + o.code : "Registrar novo pedido",
         checkoutForm(
-          `<div class="form-grid">${ S("client", "Cliente cadastrado *", options("clients"), v.client)}${ F("due", "Data e hora combinadas *", (v.due || D.date(1) + "T15:00").slice(0, 16), "datetime-local", "required")}</div><div class="order-mode-options" role="radiogroup" aria-label="Modalidade do pedido"><label class="order-mode-option"><input type="radio" name="mode" value="retirada" ${!v.mode || v.mode === "retirada" ? "checked" : ""}><span>Retirada</span></label><label class="order-mode-option"><input type="radio" name="mode" value="entrega" ${v.mode === "entrega" ? "checked" : ""}><span>Entrega</span></label></div><div id="order-delivery-fields" class="order-mode-fields ${v.mode === "entrega" ? "" : "is-hidden"}" aria-hidden="${v.mode !== "entrega"}"><div class="form-grid">${ S("address", "Endereço de entrega *", [], v.addressId || "", "")}${ F("fee", "Taxa de entrega", (v.fee || 0) / 100, "money", "")}</div></div><div class="form-grid">${ F("phone", "Telefone para contato *", v.phone || "", "tel", 'required minlength="10" maxlength="30"')}${
+          `<div class="form-grid">${ S("client", "Cliente cadastrado *", options("clients"), v.client)}${ F("due", "Data e hora combinadas *", (v.due || D.date(1) + "T15:00").slice(0, 16), "datetime-local", "required")}</div><div class="order-mode-options" role="radiogroup" aria-label="Modalidade do pedido"><label class="order-mode-option"><input type="radio" name="mode" value="retirada" ${!v.mode || v.mode === "retirada" ? "checked" : ""}><span>Retirada</span></label><label class="order-mode-option"><input type="radio" name="mode" value="entrega" ${v.mode === "entrega" ? "checked" : ""}><span>Entrega</span></label></div><div id="order-delivery-fields" class="order-mode-fields ${v.mode === "entrega" ? "" : "is-hidden"}" aria-hidden="${v.mode !== "entrega"}"><div class="form-grid"><div id="order-address-control"></div>${ F("fee", "Taxa de entrega", (v.fee || 0) / 100, "money", "")}</div></div><div class="form-grid">${ F("phone", "Telefone para contato *", v.phone || "", "tel", 'required minlength="10" maxlength="30"')}${
              S(
               "payment",
               "Forma de pagamento *",
@@ -94,16 +124,8 @@ window.MF_PAGE_MODULES.pedidosVendas = {
       const updateAddress =
         /* Atualiza os endereços e o telefone disponíveis ao selecionar um cliente. */ () => {
           const c = get("clients", $("#f-client").value),
-            select = $("#f-address");
-          select.innerHTML =
-            '<option value="">Selecione...</option>' +
-            (c?.addresses || [])
-              .map(
-                 (
-                  a,
-                ) => `<option value="${E(a.id)}">${E(address(a))}</option>`,
-              )
-              .join("");
+            control = $("#order-address-control");
+          control.innerHTML = orderAddressControl(c);
           if (c) {
             $("#f-phone").value = c.phone;
             U.applyInputMask($("#f-phone"));
@@ -114,7 +136,7 @@ window.MF_PAGE_MODULES.pedidosVendas = {
         $("#f-phone").value = v.phone;
         U.applyInputMask($("#f-phone"));
       }
-      $("#f-address").value = v.addressId || "";
+      if ($("#f-address")) $("#f-address").value = v.addressId || "";
       const selectedMode = () =>
         $("#dialog-body input[name=mode]:checked")?.value || "retirada";
       const updateMode =
@@ -124,13 +146,18 @@ window.MF_PAGE_MODULES.pedidosVendas = {
           fields.classList.toggle("is-hidden", !delivery);
           fields.setAttribute("aria-hidden", String(!delivery));
           $("#order-summary-fee-row").classList.toggle("is-hidden", !delivery);
-          $("#f-address").required = delivery;
-          $("#f-address").disabled = !delivery;
+          if ($("#f-address")) {
+            $("#f-address").required = delivery;
+            $("#f-address").disabled = !delivery;
+          }
           $("#f-fee").disabled = !delivery;
           if (!delivery) $("#f-fee").value = U.formatMoneyInput("0");
           updateCart();
         };
-      $("#f-client").onchange = updateAddress;
+      $("#f-client").onchange = () => {
+        updateAddress();
+        updateMode();
+      };
       document.querySelectorAll("#dialog-body input[name=mode]").forEach((input) =>
         input.addEventListener("change", updateMode),
       );
@@ -535,19 +562,12 @@ window.MF_PAGE_MODULES.pedidosVendas = {
     }
     /* Keeps an order draft while the auxiliary customer form is open. */
     function orderNewClient() {
-      const fd = new FormData($("#dialog-body form"));
-      const fields = Object.fromEntries(
-        ["client", "mode", "address", "due", "phone", "payment", "note"].map(
-          (key) => [key, val(fd, key)],
-        ),
-      );
-      fields.addressId = fields.address;
-      fields.fee = U.moneyCents(fd.get("fee"));
+      const { fields, items } = orderFormValues();
       D.commit(
         (state) => (state.drafts.order = {
           at: Date.now(),
           fields,
-          items: structuredClone(cart),
+          items,
         }),
         "Pedido mantido como rascunho.",
       );
@@ -560,6 +580,33 @@ window.MF_PAGE_MODULES.pedidosVendas = {
           $("#f-client").dispatchEvent(new Event("change"));
         },
       });
+    }
+    function orderNewAddress(clientId) {
+      const orderId = currentOrderId;
+      const draft = orderFormValues();
+      if (!orderId) {
+        D.commit(
+          (state) =>
+            (state.drafts.order = { at: Date.now(), ...draft }),
+          "Pedido mantido como rascunho.",
+        );
+      }
+      clearTimeout(draftTimer);
+      const resumeOrder = () => {
+        const client = get("clients", clientId);
+        const newAddress = client?.addresses.at(-1);
+        if (newAddress) {
+          draft.fields.client = clientId;
+          draft.fields.address = newAddress.id;
+          draft.fields.addressId = newAddress.id;
+        }
+        orderForm(orderId, draft);
+      };
+      clientPage.addressForm(
+        clientId + "|",
+        resumeOrder,
+        () => orderForm(orderId, draft),
+      );
     }
 
     /* Inclui produto e quantidade no carrinho, agrupando produtos repetidos. */
@@ -617,6 +664,7 @@ window.MF_PAGE_MODULES.pedidosVendas = {
     return {
       orderForm,
       orderNewClient,
+      orderNewAddress,
       orderDetail,
       nextOrder,
       cancelOrder,

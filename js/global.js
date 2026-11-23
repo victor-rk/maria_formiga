@@ -505,11 +505,41 @@ window.UI = (
       ].includes(action);
       return `<button type="button" class="${cls}${destructive ? " action-danger" : ""}" data-action="${esc(action)}" data-id="${esc(id)}">${icon ? `<i class="fa-solid ${icon}" aria-hidden="true"></i>` : ""}<span>${esc(text)}</span></button>`;
     }
-    // Retorna apenas os números, limitando o tamanho de telefones.
+    // Retorna apenas os números, respeitando o limite de cada máscara.
     function numericDigits(value, limit = 11) {
       return String(value ?? "")
         .replace(/\D/g, "")
         .slice(0, limit);
+    }
+    // Formata CPF sem verificar se o documento é válido.
+    function formatCpf(value) {
+      const digits = numericDigits(value, 11);
+      if (digits.length <= 3) return digits;
+      if (digits.length <= 6)
+        return digits.slice(0, 3) + "." + digits.slice(3);
+      if (digits.length <= 9)
+        return (
+          digits.slice(0, 3) +
+          "." +
+          digits.slice(3, 6) +
+          "." +
+          digits.slice(6)
+        );
+      return (
+        digits.slice(0, 3) +
+        "." +
+        digits.slice(3, 6) +
+        "." +
+        digits.slice(6, 9) +
+        "-" +
+        digits.slice(9)
+      );
+    }
+    function formatCep(value) {
+      const digits = numericDigits(value, 8);
+      return digits.length > 5
+        ? digits.slice(0, 5) + "-" + digits.slice(5)
+        : digits;
     }
     // Ajusta automaticamente telefone fixo (10 dígitos) e celular (11 dígitos), com DDD.
     function formatPhone(value) {
@@ -526,7 +556,11 @@ window.UI = (
         (local.length > split ? "-" + local.slice(split) : "")
       );
     }
-    const maskFormatters = { phone: formatPhone };
+    const maskFormatters = {
+      phone: formatPhone,
+      cpf: formatCpf,
+      cep: formatCep,
+    };
     // Encontra a posição visual do cursor pelo número de dígitos antes dele.
     function digitCaret(value, digitCount) {
       if (digitCount <= 0) return 0;
@@ -547,7 +581,7 @@ window.UI = (
       const digits = numericDigits(raw);
       input.value = maskFormatters[mask](digits);
       input.setCustomValidity(
-        digits.length && ![10, 11].includes(digits.length)
+        mask === "phone" && digits.length && ![10, 11].includes(digits.length)
           ? "Informe o telefone com DDD e 10 ou 11 números."
           : "",
       );
