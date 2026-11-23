@@ -4,6 +4,34 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
 window.MF_PAGE_MODULES.clientes = {
   /* Cria as operações de cliente com os serviços compartilhados do sistema. */
   create({ D, U, get, F, S, required, val, E, address, B, save }) {
+    async function lookupAddress(zip) {
+      if (zip.length !== 8) throw Error("Informe um CEP válido.");
+      let response;
+      try {
+        response = await fetch(`https://viacep.com.br/ws/${zip}/json/`);
+      } catch {
+        throw Error("Não foi possível validar o CEP. Verifique sua conexão.");
+      }
+      if (!response.ok)
+        throw Error("O serviço de CEP não respondeu corretamente.");
+      let result;
+      try {
+        result = await response.json();
+      } catch {
+        throw Error("O serviço de CEP retornou uma resposta inválida.");
+      }
+      if (result.erro)
+        throw Error("O CEP informado não foi encontrado.");
+      if (!result.logradouro)
+        throw Error(
+          "Não foi possível confirmar o logradouro para este CEP. Confira o CEP e a rua.",
+        );
+      if (!result.bairro || !result.localidade)
+        throw Error(
+          "O CEP não retornou bairro ou cidade. Confira o CEP informado.",
+        );
+      return result;
+    }
     const cities = [
       ["Biritiba-Mirim", "Biritiba-Mirim"],
       ["Mogi das Cruzes", "Mogi das Cruzes"],
@@ -105,7 +133,7 @@ window.MF_PAGE_MODULES.clientes = {
       U.open(
         clientAddress ? "Editar endereço" : "Novo endereço",
         U.form(
-          `<div class="form-grid">${F("street", "Rua / avenida *", clientAddress?.street || "", "text", required)}${F("number", "Número ou S/N *", clientAddress?.number || "", "text", 'required maxlength="20"')}${F("district", "Bairro *", clientAddress?.district || "", "text", required)}${S("city", "Cidade *", cityOptions, clientAddress?.city || "Biritiba-Mirim", "required")}${F("zip", "CEP *", clientAddress?.zip || "", "text", 'required pattern="[0-9]{5}-?[0-9]{3}" data-mask="cep" inputmode="numeric" maxlength="9"')}${F("extra", "Complemento", clientAddress?.extra || "", "text", 'maxlength="120"')}</div>`,
+          `<div class="form-grid"><div class="full">${F("zip", "CEP *", clientAddress?.zip || "", "text", 'required pattern="[0-9]{5}-?[0-9]{3}" data-mask="cep" inputmode="numeric" maxlength="9" autocomplete="postal-code"')}</div>${F("street", "Rua / avenida *", clientAddress?.street || "", "text", required)}${F("number", "Número ou S/N *", clientAddress?.number || "", "text", 'required maxlength="20"')}${F("district", "Bairro *", clientAddress?.district || "", "text", required)}${S("city", "Cidade *", cityOptions, clientAddress?.city || "Biritiba-Mirim", "required")}${F("extra", "Complemento", clientAddress?.extra || "", "text", 'maxlength="120"')}</div>`,
         ),
         undefined,
         onCancel
@@ -115,13 +143,101 @@ window.MF_PAGE_MODULES.clientes = {
             }
           : undefined,
       );
-      U.bindForm((formData) => {
+      const form = document.querySelector("#dialog-body form");
+      const zipField = form.elements.namedItem("zip");
+      const streetField = form.elements.namedItem("street");
+      const districtField = form.elements.namedItem("district");
+      const cityField = form.elements.namedItem("city");
+      const addressError = form.querySelector(".form-error");
+      let requestId = 0;
+      let cachedLookup;
+
+      function lockAddressParts(locked) {
+        streetField.readOnly = locked;
+        districtField.readOnly = locked;
+        cityField.disabled = locked;
+      }
+
+      function applyLookup(result) {
+        streetField.value = result.logradouro;
+        if (result.bairro) districtField.value = result.bairro;
+        if (result.localidade) {
+          if (
+            ![...cityField.options].some(
+              (option) => option.value === result.localidade,
+            )
+          )
+            cityField.add(new Option(result.localidade, result.localidade));
+          cityField.value = result.localidade;
+        }
+        lockAddressParts(true);
+      }
+
+      function getLookup(zip) {
+        if (cachedLookup?.zip === zip) return cachedLookup.promise;
+        const promise = lookupAddress(zip);
+        cachedLookup = { zip, promise };
+        promise.catch(() => {
+          if (cachedLookup?.promise === promise) cachedLookup = undefined;
+        });
+        return promise;
+      }
+
+      async function updateAddressFromZip() {
+        const zip = zipField.value.replace(/\D/g, "");
+        const currentRequest = ++requestId;
+        addressError.textContent = "";
+        if (!zip) {
+          cachedLookup = undefined;
+          lockAddressParts(false);
+          return;
+        }
+        if (zip.length !== 8) return;
+
+        lockAddressParts(true);
+        if (cachedLookup?.zip !== zip) {
+          streetField.value = "";
+          districtField.value = "";
+          cityField.selectedIndex = -1;
+        }
+        try {
+          const result = await getLookup(zip);
+          if (
+            currentRequest !== requestId ||
+            zipField.value.replace(/\D/g, "") !== zip
+          )
+            return;
+          applyLookup(result);
+        } catch (error) {
+          if (currentRequest === requestId)
+            addressError.textContent = error.message;
+        }
+      }
+
+      zipField.addEventListener("input", updateAddressFromZip);
+      if (zipField.value.replace(/\D/g, "").length === 8)
+        updateAddressFromZip();
+
+      U.bindForm(async (_formData, submittedForm) => {
+        const zip = zipField.value.replace(/\D/g, "");
+        const result = await getLookup(zip);
+        if (!submittedForm.isConnected || !submittedForm.closest("dialog")?.open)
+          return;
+        applyLookup(result);
+        const data = Object.fromEntries(
+          ["street", "number", "district", "city", "zip", "extra"].map(
+            (keyName) => [
+              keyName,
+              String(submittedForm.elements.namedItem(keyName).value).trim(),
+            ],
+          ),
+        );
+        if (
+          !submittedForm.isConnected ||
+          !submittedForm.closest("dialog")?.open
+        )
+          return;
         save(() => {
-          const data = Object.fromEntries(
-            ["street", "number", "district", "city", "zip", "extra"].map(
-              (keyName) => [keyName, val(formData, keyName)],
-            ),
-          );
           if (clientAddress) Object.assign(clientAddress, data);
           else client.addresses.push({ id: D.uid(), ...data });
           addressSaved = true;

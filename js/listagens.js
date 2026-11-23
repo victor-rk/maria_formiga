@@ -3,13 +3,38 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
 window.MF_PAGE_MODULES.listagens = {
   /* Creates listings and keeps search state local to this module. */
   create({ D, U, E, M, B, page, get, total, clientName, productsText, payName, address }) {
-    let query = "", filter = "Todos";
+    let query = "";
+    const activeFilters = new Set();
+    let filterOpen = false;
     /* Monta busca, filtros e ações disponíveis para a página atual. */
     function toolbar(
       actions,
       filters = ["Todos"],
     ) {
-      return `<div class="toolbar"><div class="search-box"><label class="sr-only" for="list-search">Buscar registros</label><input type="search" id="list-search" placeholder="Buscar nesta página..." value="${E(query)}" autocomplete="off"></div><div class="filters" role="group" aria-label="Filtrar resultados">${filters.map( (f) => `<button type="button" class="filter-btn ${filter === f ? "active" : ""}" data-filter="${E(f)}" aria-pressed="${filter === f}">${E(f)}</button>`).join("")}</div><div class="toolbar-actions">${query || filter !== "Todos" ?  B("Limpar filtros", "clear-filters", "", "btn-secondary") : ""}${actions}</div></div>`;
+      const filterOptions = filters
+        .map((option) => {
+          const checked =
+            option === "Todos"
+              ? activeFilters.size === 0
+              : activeFilters.has(option);
+          return `<label class="filter-option"><input type="checkbox" data-filter-option="${E(option)}" ${checked ? "checked" : ""}><span>${E(option)}</span></label>`;
+        })
+        .join("");
+      const filterControl =
+        filters.length > 1
+          ? `<div class="filter-dropdown">
+              <button type="button" class="filter-toggle${activeFilters.size ? " is-active" : ""}" data-filter-toggle aria-label="Filtros${activeFilters.size ? ` (${activeFilters.size} selecionados)` : ""}" aria-expanded="${filterOpen}" aria-controls="list-filter-menu">
+                <i class="fa-solid fa-filter" aria-hidden="true"></i>
+                ${activeFilters.size ? `<span class="filter-count">${activeFilters.size}</span>` : ""}
+              </button>
+              <div class="filter-menu" id="list-filter-menu"${filterOpen ? "" : " hidden"}>
+                <h3>Filtrar resultados</h3>
+                <div class="filter-options">${filterOptions}</div>
+                <button type="button" class="filter-clear" data-action="clear-filters"${query || activeFilters.size ? "" : " disabled"}>Limpar todos os filtros</button>
+              </div>
+            </div>`
+          : "";
+      return `<div class="toolbar"><div class="list-search-controls"><div class="search-box"><label class="sr-only" for="list-search">Buscar registros</label><input type="search" id="list-search" placeholder="Buscar nesta página..." value="${E(query)}" autocomplete="off"></div>${filterControl}</div><div class="toolbar-actions">${actions}</div></div>`;
     }
     /* Monta o cartão de listagem com título, total de resultados e tabela. */ function list(
       title,
@@ -32,6 +57,12 @@ window.MF_PAGE_MODULES.listagens = {
             .replace(/[\u0300-\u036f]/g, "")
             .toLowerCase(),
         );
+    }
+    function matchesFilter(...options) {
+      return (
+        activeFilters.size === 0 ||
+        options.some((option) => activeFilters.has(option))
+      );
     }
     /* Gera os cartões de indicadores a partir de rótulos e valores. */ function kpis(
       items,
@@ -79,12 +110,32 @@ window.MF_PAGE_MODULES.listagens = {
     /* Conecta busca e filtros às atualizações da listagem. */
     function bind(render) {
       document.addEventListener("click", (event) => {
-        const filterButton = event.target.closest("[data-filter]");
-        if (!filterButton) return;
-        filter = filterButton.dataset.filter;
+        const toggle = event.target.closest("[data-filter-toggle]");
+        if (toggle) {
+          filterOpen = !filterOpen;
+          render();
+          document.querySelector("[data-filter-toggle]")?.focus();
+          return;
+        }
+        if (event.target.closest('[data-action="clear-filters"]')) return;
+        if (filterOpen && !event.target.closest(".filter-dropdown")) {
+          filterOpen = false;
+          render();
+        }
+      });
+      document.addEventListener("change", (event) => {
+        const checkbox = event.target.closest("[data-filter-option]");
+        if (!checkbox) return;
+        const option = checkbox.dataset.filterOption;
+        if (option === "Todos") activeFilters.clear();
+        else {
+          activeFilters.delete("Todos");
+          if (checkbox.checked) activeFilters.add(option);
+          else activeFilters.delete(option);
+        }
         render();
         document
-          .querySelector(`[data-filter="${CSS.escape(filter)}"]`)
+          .querySelector(`[data-filter-option="${CSS.escape(option)}"]`)
           ?.focus();
       });
       document.addEventListener("input", (event) => {
@@ -96,14 +147,21 @@ window.MF_PAGE_MODULES.listagens = {
         input.focus();
         input.setSelectionRange(position, position);
       });
+      document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape" || !filterOpen) return;
+        filterOpen = false;
+        render();
+        document.querySelector("[data-filter-toggle]")?.focus();
+      });
     }
 
     /* Limpa busca e filtros e devolve o foco ao campo de busca. */
     function clearFilters(render) {
       query = "";
-      filter = "Todos";
+      activeFilters.clear();
+      filterOpen = true;
       render();
-      document.querySelector("#list-search")?.focus();
+      document.querySelector("[data-filter-toggle]")?.focus();
     }
 
     /* Monta a listagem do domínio atual com filtros e ações correspondentes. */
@@ -224,10 +282,9 @@ window.MF_PAGE_MODULES.listagens = {
               m,
             ) =>
               matches(m) &&
-              (filter === "Todos" ||
-                (filter === "Estoque baixo"
-                  ? m.stock <= m.min
-                  : m.stock > m.min)),
+              matchesFilter(
+                m.stock <= m.min ? "Estoque baixo" : "Nível seguro",
+              ),
           )
           .map(
              (
@@ -332,12 +389,9 @@ window.MF_PAGE_MODULES.listagens = {
               return (
                 b.qty > 0 &&
                 matches({ ...b, name: p?.name }) &&
-                (filter === "Todos" ||
-                  (filter === "Vencidos"
-                    ? b.expires < D.date()
-                    : filter === "Disponíveis"
-                      ? b.expires >= D.date()
-                      : D.stock(b.product) <= 5))
+                (matchesFilter("Vencidos") && b.expires < D.date() ||
+                  matchesFilter("Disponíveis") && b.expires >= D.date() ||
+                  matchesFilter("Estoque baixo") && D.stock(b.product) <= 5)
               );
             },
           )
@@ -417,7 +471,7 @@ window.MF_PAGE_MODULES.listagens = {
                 name: clientName(o.client),
                 products: productsText(o.items),
               }) &&
-              (filter === "Todos" || o.status === filter),
+              matchesFilter(o.status),
           )
           .sort(
              (
@@ -475,7 +529,7 @@ window.MF_PAGE_MODULES.listagens = {
               ...s,
               name: s.client ? clientName(s.client) : "Cliente Balcão",
               products: productsText(s.items),
-            }) && filter !== "Pendentes",
+            }) && matchesFilter("Pagas"),
         );
         rows = sales
           .slice()
@@ -497,7 +551,7 @@ window.MF_PAGE_MODULES.listagens = {
               ),
             ],
           );
-        if (filter !== "Pagas")
+        if (matchesFilter("Pendentes"))
           rows.push(
             ...D.state.orders
               .filter(
@@ -550,8 +604,7 @@ window.MF_PAGE_MODULES.listagens = {
                 name: clientName(o.client),
                 address: address(o.address),
               }) &&
-              (filter === "Todos" ||
-                (o.delivery || "Aguardando envio") === filter),
+              matchesFilter(o.delivery || "Aguardando envio"),
           )
           .sort(
              (
@@ -572,7 +625,8 @@ window.MF_PAGE_MODULES.listagens = {
                 o.delivery || "Aguardando envio",
                 o.delivery === "Entregue" ? "pronto" : "pendente",
               ),
-              o.delivery === "Entregue"
+              B("Ver no mapa", "delivery-map", o.id) +
+              (o.delivery === "Entregue"
                 ?  B(
                     "Detalhes",
                     "order-detail",
@@ -590,7 +644,7 @@ window.MF_PAGE_MODULES.listagens = {
                       "dispatch",
                       o.id,
                     )
-                    : '<span class="muted">Aguardando ficar pronto</span>',
+                    : '<span class="muted">Aguardando ficar pronto</span>'),
             ],
           );
       }

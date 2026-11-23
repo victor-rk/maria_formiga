@@ -21,17 +21,19 @@ Os itens abaixo descrevem o comportamento encontrado no código deste repositór
 
 | Módulo | Recursos implementados |
 |---|---|
-| **Clientes** | Cadastro e edição de clientes e endereços; CPF opcional formatado durante a digitação, sem validar se é válido, CEP formatado automaticamente e cidade escolhida em uma lista com Biritiba-Mirim pré-selecionada. Novos clientes podem seguir diretamente para o cadastro de endereço. |
+| **Clientes** | Cadastro e edição de clientes e endereços; CPF opcional formatado durante a digitação; CEP como primeiro campo do endereço, com preenchimento automático de rua, bairro e cidade via ViaCEP. Esses campos ficam bloqueados após a consulta e só podem ser editados quando o CEP é apagado. Novos clientes podem seguir diretamente para o cadastro de endereço. |
 | **Fornecedores** | Cadastro e manutenção dos dados de contato e categoria dos fornecedores. |
 | **Matéria-prima** | Cadastro de insumos com unidade, saldo, custo e nível mínimo; registro de entradas e saídas; indicação de estoque baixo. |
 | **Produtos e receitas** | Fichas técnicas com insumos, quantidades e rendimento; cálculo de custo por unidade e validação do preço em relação à margem mínima configurada. |
 | **Produção e produtos prontos** | Registro da produção com consumo proporcional dos insumos e criação de lotes de produtos acabados; controle por lote e validade. |
 | **Pedidos** | Registro de encomendas associadas a clientes, modalidade, data combinada, itens, pagamento e observações; cadastro de endereço diretamente pelo pedido quando necessário; edição de pedidos pendentes não pagos; rascunho local recuperável por até 24 horas. |
 | **Vendas** | Registro de venda de balcão e recebimento integral de pedidos; verificação de disponibilidade de produtos prontos; cálculo de troco para pagamentos em dinheiro e geração de comprovante/exportação. |
-| **Entregas** | Despacho de pedidos prontos para entrega com endereço e responsável; acompanhamento dos estados “Em rota” e “Entregue”. A confirmação da entrega permite registrar o recebimento pendente no mesmo fluxo e finaliza o pedido. |
-| **Relatórios** | Filtros por período para vendas, pedidos, entregas e movimentações de estoque; exportação dos resultados em CSV e impressão pela função do navegador. |
+| **Entregas** | Despacho de pedidos prontos para entrega com endereço e responsável; acompanhamento dos estados “Em rota” e “Entregue”; mapa do Google incorporado no sistema a partir do CEP, número e demais dados do endereço. A administração também pode registrar o recebimento pendente no fluxo de confirmação da entrega. |
+| **Relatórios** | Filtros por período para vendas, pedidos, entregas e movimentações de estoque; indicadores de vendas recebidas, compras registradas de insumos, custo histórico dos produtos vendidos, lucro bruto estimado e margem; exportação CSV e impressão pelo navegador. |
 | **Início e configurações** | Painel com atalhos e indicadores; configurações locais de perfil, usuários demonstrativos e histórico de alterações. |
-| **Login e recuperação de senha** | Telas de login, recuperação e redefinição com validações e estados visuais demonstrativos. Não há autenticação de credenciais nem envio real de e-mail. |
+| **Login e recuperação de senha** | Login demonstrativo para `admin@mariaformiga.com` e `auxiliar@mariaformiga.com`; qualquer senha não vazia é aceita para esses dois e-mails. A recuperação e a redefinição não enviam e-mail. |
+
+Nas listagens com filtros, as opções ficam em um menu de ícone com seleção múltipla por checkbox e ação para limpar também a busca. Em Produtos Prontos, **Vender** abre a tela de vendas com o produto do lote já incluído no carrinho.
 
 ### Regras de negócio observadas
 
@@ -42,7 +44,7 @@ Os itens abaixo descrevem o comportamento encontrado no código deste repositór
 - O preço de um produto é validado em relação à margem mínima informada na ficha técnica.
 - Pedidos para entrega exigem um endereço cadastrado válido; o despacho requer pedido pronto e um responsável.
 - Pedidos seguem os estados **Pendente → Em produção → Pronto → Finalizado**, com **Cancelado** como estado alternativo. A entrega possui acompanhamento próprio.
-- Nos relatórios, “resultado após insumos” considera o custo dos insumos, mas **não representa lucro líquido** nem inclui todos os custos da operação.
+- O lucro bruto estimado nos relatórios usa o custo histórico dos produtos vendidos; compras registradas de insumos são apresentadas separadamente como saída de caixa. O sistema não registra despesas fixas nem calcula lucro líquido.
 - A aplicação inicializa dados fictícios de exemplo quando não encontra dados locais compatíveis.
 
 ## Arquitetura e organização
@@ -150,9 +152,10 @@ O servidor estático é recomendado para uma execução local consistente. O pro
 
 - **Sem backend:** não há API, servidor de aplicação ou banco de dados remoto. As informações ficam no armazenamento local do navegador e não são sincronizadas entre dispositivos.
 - **Dados demonstrativos:** o estado inicial inclui registros fictícios para permitir explorar as telas. Evite inserir informações pessoais ou dados reais de clientes.
-- **Login demonstrativo:** qualquer usuário e senha não vazios permitem avançar; as credenciais não são comparadas com uma conta. O identificador `auxiliar` ou `auxiliar@example.com` seleciona o perfil auxiliar, e os demais identificadores selecionam o perfil de proprietária. As permissões são verificações no próprio JavaScript e não constituem controle de acesso seguro.
+- **Login demonstrativo:** somente os dois e-mails indicados são aceitos, mas suas senhas não são verificadas. O perfil auxiliar pode consultar pedidos, consultar estoque e atualizar o status de entrega; demais módulos e ações são restritos à administração. As permissões são verificações no próprio JavaScript e não constituem controle de acesso seguro.
+- **Mapas e endereços:** a validação do CEP e do logradouro usa o serviço ViaCEP. O mapa incorporado e o link de navegação usam o Google Maps sem chave de API; a localização depende da qualidade dos dados retornados pela busca do Maps e não confirma a existência do número com precisão de Geocoding API.
 - **Recuperação e redefinição demonstrativas:** não há envio de e-mail nem persistência de uma nova senha.
-- **Relatórios:** os valores calculados são referências operacionais locais; o resultado após insumos não equivale a lucro líquido ou demonstração contábil completa.
+- **Relatórios:** os valores calculados são referências operacionais locais. Compras sem valor registrado em movimentações antigas não podem ser reconstruídas, e o lucro bruto não equivale a lucro líquido ou demonstração contábil completa.
 - **Persistência local:** limpeza dos dados do navegador, restrições de armazenamento ou uso em outro perfil/dispositivo podem tornar os registros indisponíveis. O histórico local não substitui auditoria inviolável.
 
 Portanto, o repositório deve ser entendido como protótipo acadêmico de frontend, não como sistema pronto para operação comercial com dados reais.

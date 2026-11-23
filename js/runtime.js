@@ -191,7 +191,7 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
 
       if (!D.permission(perms[page] || "manage")) {
         root.innerHTML =
-          '<div class="notice"><h2>Acesso restrito</h2><p>Este módulo está disponível para a proprietária.</p><a href="home.html">Voltar ao início</a></div>';
+          '<section><h2>Acesso restrito</h2><p>Este módulo está disponível para a administração.</p><a href="home.html">Voltar ao início</a></section>';
         root.setAttribute("aria-busy", "false");
         return;
       }
@@ -278,6 +278,7 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
        dispatch:
         deliveryPage?.dispatchForm,
        delivered: deliveryPage?.delivered,
+       "delivery-map": deliveryPage?.showMap,
        "client-history":
         /* Consulta os pedidos do cliente. */ (id) => listPage.history("client", id),
        "material-history":
@@ -359,6 +360,10 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
     listPage?.bind(render);
     window.MF_PAGE_UTILS = { fail, validatePassword };
     if (["index", "recuperacao", "redefinir-senha"].includes(page)) return;
+    if (!D.role) {
+      location.replace("index.html");
+      return;
+    }
 
     $("#today").textContent = new Date().toLocaleDateString("pt-BR", {
       weekday: "long",
@@ -368,6 +373,7 @@ window.MF_PAGE_MODULES = window.MF_PAGE_MODULES || {};
     });
     $("#today").dateTime = D.date();
     const sidebar = $(".sidebar");
+    if (!D.permission("manage")) $("#btnConfig").hidden = true;
     sidebar.id = "menu-lateral";
     sidebar.querySelectorAll("a[href]").forEach(
        (a) => {

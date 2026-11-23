@@ -69,6 +69,7 @@ window.MF_PAGE_MODULES.estoque = {
                   material: material.id,
                   type: "entrada",
                   qty: material.stock,
+                  amount: Math.round(material.stock * material.cost),
                   reason: "Saldo inicial",
                   at: D.now(),
                 });
@@ -122,6 +123,10 @@ window.MF_PAGE_MODULES.estoque = {
             throw Error("Para unidades, informe uma quantidade inteira.");
           if (type === "saida" && qty > m.stock)
             throw Error("A saída supera o saldo disponível.");
+          if (type === "entrada" && newCost !== null && newCost < 1)
+            throw Error("Informe um custo maior que zero.");
+          const amount =
+            type === "entrada" ? Math.round(qty * (newCost ?? m.cost)) : 0;
           save(
              (
               s,
@@ -131,8 +136,6 @@ window.MF_PAGE_MODULES.estoque = {
                   (m.stock + (type === "entrada" ? qty : -qty)) * 1000,
                 ) / 1000;
               if (type === "entrada" && newCost !== null) {
-                if (newCost < 1)
-                  throw Error("Informe um custo maior que zero.");
                 m.cost = newCost;
               }
               s.movements.push({
@@ -140,6 +143,7 @@ window.MF_PAGE_MODULES.estoque = {
                 material: m.id,
                 type,
                 qty,
+                amount,
                 reason: val(fd, "reason"),
                 at: D.now(),
               });

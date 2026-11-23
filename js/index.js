@@ -36,10 +36,20 @@ document.addEventListener("DOMContentLoaded", () => {
           (username ? passwordInput : usernameInput).focus();
           return;
         }
-        // Preserva a opção de visualizar o perfil operacional pelo nome auxiliar.
-        const role = ["auxiliar", "auxiliar@example.com"].includes(username)
-          ? "aux"
-          : "admin";
+        const role =
+          username === "admin@mariaformiga.com"
+            ? "admin"
+            : username === "auxiliar@mariaformiga.com"
+              ? "aux"
+              : null;
+        if (!role) {
+          U.toast(
+            "Conta não reconhecida. Use o e-mail do administrador ou do auxiliar.",
+            true,
+          );
+          usernameInput.focus();
+          return;
+        }
         // A opção Manter-me conectado preserva somente a preferência do perfil.
         D.setRole(role, loginForm.elements.remember.checked);
         passwordInput.value = "";

@@ -248,7 +248,7 @@ window.MF_PAGE_MODULES.produtos = {
                 ["Qualidade", "Controle de qualidade"],
               ],
             )
-          }${ F("note", "Observação", "", "text", 'maxlength="200"')}<p class="notice">Esta operação reduz o saldo do lote e não gera receita financeira.</p>`,
+          }${ F("note", "Observação", "", "text", 'maxlength="200"')}`,
           "Confirmar baixa",
         ),
       );
