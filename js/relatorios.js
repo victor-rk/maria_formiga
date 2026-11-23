@@ -215,7 +215,7 @@ window.MF_PAGE_MODULES.relatorios = {
             ],
             reportType,
           )
-        }${F("start", "De *", reportStart, "date", "required")}${F("end", "Até *", reportEnd, "date", "required")}<button class="btn-secondary" type="submit">Aplicar período</button></form><div class="toolbar-actions">${B("Imprimir / PDF", "print", "", "btn-secondary")}${B("Exportar CSV", "export", "", "btn-novo")}</div></div><p class="help print-title">Período: ${U.date(reportStart)} a ${U.date(reportEnd)} · Tipo: ${E(reportType)}</p>` +
+        }${F("start", "De *", reportStart, "date", "required")}${F("end", "Até *", reportEnd, "date", "required")}<button class="btn-secondary" type="submit">Aplicar período</button><button class="btn-secondary" type="button" data-action="report-all-period">Todo o período</button></form><div class="toolbar-actions">${B("Imprimir / PDF", "print", "", "btn-secondary")}${B("Exportar CSV", "export", "", "btn-novo")}</div></div><p class="help print-title">Período: ${U.date(reportStart)} a ${U.date(reportEnd)} · Tipo: ${E(reportType)}</p>` +
         list(
           "Demonstrativo · " +
             U.date(reportStart) +
@@ -225,6 +225,23 @@ window.MF_PAGE_MODULES.relatorios = {
           rows.map((row) => row.map(E)),
           "Não há movimentações no período selecionado.",
         );
+
+      /* Define o período completo disponível e atualiza o relatório. */
+      const allPeriodButton = $("[data-action='report-all-period']", root);
+      if (allPeriodButton) {
+        allPeriodButton.onclick = () => {
+          const dates = [
+            ...D.state.sales.map((sale) => D.localDate(sale.created)),
+            ...D.state.orders.map((order) => D.localDate(order.created)),
+            ...D.state.movements.map((movement) => D.localDate(movement.at)),
+          ].filter(Boolean);
+          const today = D.date();
+          reportStart = dates.length ? dates.reduce((min, date) => (date < min ? date : min)) : today;
+          reportEnd = today;
+          reportType = val(new FormData($("#report-form")), "reportType") || reportType;
+          render();
+        };
+      }
 
       /* Valida o período informado e atualiza o relatório selecionado. */
       $("#report-form").onsubmit = (event) => {

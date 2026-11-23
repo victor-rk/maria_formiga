@@ -1163,23 +1163,36 @@ button:not(.nav-backdrop),
   border-radius: var(--radius-md);
 }
 .report-toolbar {
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  overflow-x: auto;
 }
-.report-toolbar .report-period,
-.report-toolbar .toolbar-actions {
-  width: 100%;
-  justify-content: center;
+.report-toolbar .report-period {
+  flex: 1 1 auto;
+  width: auto;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  justify-content: flex-start;
+  min-width: 0;
 }
 .report-toolbar .report-period .input-group {
   flex: 0 1 180px;
+  min-width: 140px;
 }
 .report-toolbar .toolbar-actions {
+  flex: 0 0 auto;
+  width: auto;
+  flex-wrap: nowrap;
   gap: 12px;
 }
 .report-toolbar .toolbar-actions > button {
   flex: 0 0 auto;
+  white-space: nowrap;
+}
+.report-toolbar .report-period button {
+  white-space: nowrap;
 }
 .report-toolbar .toolbar-actions > .btn-secondary + .btn-novo {
   margin-left: 0;
@@ -1200,8 +1213,15 @@ button:not(.nav-backdrop),
   .toolbar-actions {
     width: 100%;
   }
+  .report-toolbar {
+    align-items: flex-end;
+  }
+  .report-toolbar .report-period,
+  .report-toolbar .toolbar-actions {
+    width: auto;
+  }
   .report-toolbar .report-period {
-    align-items: stretch;
+    align-items: flex-end;
   }
   .material-detail-grid:not(.is-editing) > :first-child    { grid-column: auto; }
 }
